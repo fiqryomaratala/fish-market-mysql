@@ -6,5 +6,6 @@ func Migrate() {
 	DB.AutoMigrate(
 		&models.User{},
 		&models.Product{},
+		&models.Pond{},
 	)
 }
