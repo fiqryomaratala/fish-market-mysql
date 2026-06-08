@@ -1,0 +1,56 @@
+package handlers
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/gin-gonic/gin"
+)
+
+type AuthHandler struct {
+	authService services.AuthService
+}
+
+func NewAuthHandler(authService services.AuthService) *AuthHandler {
+	return &AuthHandler{authService: authService}
+}
+
+type RegisterRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8"`
+}
+
+type RegisterResponse struct {
+	ID    uint   `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+func (h *AuthHandler) Register(c *gin.Context) {
+	var req RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		return
+	}
+
+	user, err := h.authService.Register(req.Name, req.Email, req.Password)
+	if err != nil {
+		if errors.Is(err, services.ErrEmailAlreadyExists) {
+			ErrorResponse(c, http.StatusConflict, "Email already exists")
+			return
+		}
+
+		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	SuccessResponse(c, http.StatusCreated, "Register berhasil", RegisterResponse{
+		ID:    user.ID,
+		Name:  user.Name,
+		Email: user.Email,
+		Role:  user.Role,
+	})
+}

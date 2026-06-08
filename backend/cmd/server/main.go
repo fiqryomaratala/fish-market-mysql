@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/fiqryomaratala/backend/config"
+	"github.com/fiqryomaratala/backend/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -12,7 +13,7 @@ import (
 func main() {
 	godotenv.Load()
 
-	config.ConnectDB()
+	db := config.ConnectDB()
 	config.Migrate()
 
 	r := gin.Default()
@@ -22,6 +23,8 @@ func main() {
 			"message": "Fish Market API Running",
 		})
 	})
+
+	routes.RegisterAuthRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
