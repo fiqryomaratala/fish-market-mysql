@@ -29,6 +29,23 @@ type RegisterResponse struct {
 	Role  string `json:"role"`
 }
 
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+type UserResponse struct {
+	ID    uint   `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+type LoginResponse struct {
+	Token string       `json:"token"`
+	User  UserResponse `json:"user"`
+}
+
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -52,5 +69,34 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		Name:  user.Name,
 		Email: user.Email,
 		Role:  user.Role,
+	})
+}
+
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		return
+	}
+
+	result, err := h.authService.Login(req.Email, req.Password)
+	if err != nil {
+		if errors.Is(err, services.ErrInvalidCredentials) {
+			ErrorResponse(c, http.StatusUnauthorized, "Invalid email or password")
+			return
+		}
+
+		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	SuccessResponse(c, http.StatusOK, "Login successful", LoginResponse{
+		Token: result.Token,
+		User: UserResponse{
+			ID:    result.User.ID,
+			Name:  result.User.Name,
+			Email: result.User.Email,
+			Role:  result.User.Role,
+		},
 	})
 }

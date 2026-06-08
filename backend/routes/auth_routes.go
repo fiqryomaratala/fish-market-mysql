@@ -17,5 +17,6 @@ func RegisterAuthRoutes(r *gin.Engine, db *gorm.DB) {
 	auth := r.Group("/api/auth")
 	{
 		auth.POST("/register", authHandler.Register)
+		auth.POST("/login", authHandler.Login)
 	}
 }

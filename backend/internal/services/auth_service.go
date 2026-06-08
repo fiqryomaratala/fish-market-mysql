@@ -4,15 +4,23 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrEmailAlreadyExists = errors.New("email already exists")
+var ErrInvalidCredentials = errors.New("invalid email or password")
+
+type LoginResult struct {
+	Token string
+	User  *models.User
+}
 
 type AuthService interface {
 	Register(name, email, password string) (*models.User, error)
+	Login(email, password string) (*LoginResult, error)
 }
 
 type authService struct {
@@ -52,4 +60,30 @@ func (s *authService) Register(name, email, password string) (*models.User, erro
 	}
 
 	return user, nil
+}
+
+func (s *authService) Login(email, password string) (*LoginResult, error) {
+	email = strings.TrimSpace(strings.ToLower(email))
+
+	user, err := s.userRepo.FindByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, ErrInvalidCredentials
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return nil, ErrInvalidCredentials
+	}
+
+	token, err := helpers.GenerateToken(user.ID, user.Email, user.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LoginResult{
+		Token: token,
+		User:  user,
+	}, nil
 }
