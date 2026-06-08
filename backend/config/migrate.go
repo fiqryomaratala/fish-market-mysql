@@ -9,5 +9,6 @@ func Migrate() {
 		&models.Pond{},
 		&models.FishBatch{},
 		&models.FeedingLog{},
+		&models.Harvest{},
 	)
 }
