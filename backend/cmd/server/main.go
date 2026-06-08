@@ -35,6 +35,7 @@ func main() {
 	routes.RegisterAccessRoutes(r, db)
 	routes.RegisterProductRoutes(r, db)
 	routes.RegisterPondRoutes(r, db)
+	routes.RegisterFishBatchRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }

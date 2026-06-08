@@ -7,5 +7,6 @@ func Migrate() {
 		&models.User{},
 		&models.Product{},
 		&models.Pond{},
+		&models.FishBatch{},
 	)
 }
