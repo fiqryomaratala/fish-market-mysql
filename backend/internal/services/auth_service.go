@@ -12,6 +12,7 @@ import (
 
 var ErrEmailAlreadyExists = errors.New("email already exists")
 var ErrInvalidCredentials = errors.New("invalid email or password")
+var ErrUserNotFound = errors.New("user not found")
 
 type LoginResult struct {
 	Token string
@@ -21,6 +22,7 @@ type LoginResult struct {
 type AuthService interface {
 	Register(name, email, password string) (*models.User, error)
 	Login(email, password string) (*LoginResult, error)
+	GetProfile(userID uint) (*models.User, error)
 }
 
 type authService struct {
@@ -86,4 +88,16 @@ func (s *authService) Login(email, password string) (*LoginResult, error) {
 		Token: token,
 		User:  user,
 	}, nil
+}
+
+func (s *authService) GetProfile(userID uint) (*models.User, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+
+	return user, nil
 }

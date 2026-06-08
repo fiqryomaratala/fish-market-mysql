@@ -100,3 +100,35 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		},
 	})
 }
+
+func (h *AuthHandler) Profile(c *gin.Context) {
+	userIDValue, exists := c.Get("user_id")
+	if !exists {
+		ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	userID, ok := userIDValue.(uint)
+	if !ok {
+		ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	user, err := h.authService.GetProfile(userID)
+	if err != nil {
+		if errors.Is(err, services.ErrUserNotFound) {
+			ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+			return
+		}
+
+		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	SuccessResponse(c, http.StatusOK, "", gin.H{
+		"id":    user.ID,
+		"name":  user.Name,
+		"email": user.Email,
+		"role":  user.Role,
+	})
+}

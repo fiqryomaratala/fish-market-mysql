@@ -4,7 +4,7 @@ import "github.com/gin-gonic/gin"
 
 type APIResponse struct {
 	Success bool        `json:"success"`
-	Message string      `json:"message"`
+	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 	Errors  interface{} `json:"errors,omitempty"`
 }
