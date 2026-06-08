@@ -11,5 +11,7 @@ type Product struct {
 	Stock       int     `gorm:"default:0"`
 	Category    string
 	ImageURL    string
+	FishBatchID uint
+	FishBatch   FishBatch
 	Status      string `gorm:"default:active"`
 }

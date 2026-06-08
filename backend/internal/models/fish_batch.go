@@ -19,5 +19,7 @@ type FishBatch struct {
 	ExpectedHarvest time.Time
 	Status          string
 
-	Pond Pond
+	Pond        Pond
+	FeedingLogs []FeedingLog
+	Harvests    []Harvest
 }

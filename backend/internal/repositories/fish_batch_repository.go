@@ -19,6 +19,7 @@ type FishBatchRepository interface {
 	Create(batch *models.FishBatch) error
 	FindAll(filter FishBatchFilter) ([]models.FishBatch, int64, error)
 	FindByID(id uint) (*models.FishBatch, error)
+	FindByBatchCode(batchCode string) (*models.FishBatch, error)
 	Update(batch *models.FishBatch) error
 	Delete(batch *models.FishBatch) error
 	CountByYear(year int) (int64, error)
@@ -69,6 +70,24 @@ func (r *fishBatchRepository) FindAll(filter FishBatchFilter) ([]models.FishBatc
 func (r *fishBatchRepository) FindByID(id uint) (*models.FishBatch, error) {
 	var batch models.FishBatch
 	err := r.db.Preload("Pond").First(&batch, id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &batch, nil
+}
+
+func (r *fishBatchRepository) FindByBatchCode(batchCode string) (*models.FishBatch, error) {
+	var batch models.FishBatch
+	err := r.db.
+		Preload("Pond").
+		Preload("FeedingLogs").
+		Preload("Harvests").
+		Where("batch_code = ?", batchCode).
+		First(&batch).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

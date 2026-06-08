@@ -38,6 +38,7 @@ func main() {
 	routes.RegisterFishBatchRoutes(r, db)
 	routes.RegisterFeedingLogRoutes(r, db)
 	routes.RegisterHarvestRoutes(r, db)
+	routes.RegisterTrackingRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
