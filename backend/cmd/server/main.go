@@ -25,6 +25,7 @@ func main() {
 	})
 
 	routes.RegisterAuthRoutes(r, db)
+	routes.RegisterAccessRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
