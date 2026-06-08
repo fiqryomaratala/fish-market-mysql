@@ -1,0 +1,86 @@
+package repositories
+
+import (
+	"errors"
+	"strings"
+
+	"github.com/fiqryomaratala/backend/internal/models"
+	"gorm.io/gorm"
+)
+
+type ProductFilter struct {
+	Search   string
+	Category string
+	Page     int
+	Limit    int
+}
+
+type ProductRepository interface {
+	Create(product *models.Product) error
+	FindAll(filter ProductFilter) ([]models.Product, int64, error)
+	FindByID(id uint) (*models.Product, error)
+	Update(product *models.Product) error
+	Delete(product *models.Product) error
+}
+
+type productRepository struct {
+	db *gorm.DB
+}
+
+func NewProductRepository(db *gorm.DB) ProductRepository {
+	return &productRepository{db: db}
+}
+
+func (r *productRepository) Create(product *models.Product) error {
+	return r.db.Create(product).Error
+}
+
+func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int64, error) {
+	var (
+		products []models.Product
+		total    int64
+	)
+
+	query := r.db.Model(&models.Product{})
+
+	if filter.Search != "" {
+		search := "%" + strings.TrimSpace(filter.Search) + "%"
+		query = query.Where("name LIKE ? OR description LIKE ?", search, search)
+	}
+
+	if filter.Category != "" {
+		query = query.Where("category = ?", strings.TrimSpace(filter.Category))
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (filter.Page - 1) * filter.Limit
+	if err := query.Order("created_at DESC").Offset(offset).Limit(filter.Limit).Find(&products).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return products, total, nil
+}
+
+func (r *productRepository) FindByID(id uint) (*models.Product, error) {
+	var product models.Product
+	err := r.db.First(&product, id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &product, nil
+}
+
+func (r *productRepository) Update(product *models.Product) error {
+	return r.db.Save(product).Error
+}
+
+func (r *productRepository) Delete(product *models.Product) error {
+	return r.db.Delete(product).Error
+}

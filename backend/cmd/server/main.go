@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/fiqryomaratala/backend/config"
 	"github.com/fiqryomaratala/backend/routes"
@@ -16,7 +18,12 @@ func main() {
 	db := config.ConnectDB()
 	config.Migrate()
 
+	if err := os.MkdirAll(filepath.Join("uploads", "products"), os.ModePerm); err != nil {
+		log.Fatal("Failed to create upload directory:", err)
+	}
+
 	r := gin.Default()
+	r.Static("/uploads", "./uploads")
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -26,6 +33,7 @@ func main() {
 
 	routes.RegisterAuthRoutes(r, db)
 	routes.RegisterAccessRoutes(r, db)
+	routes.RegisterProductRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
