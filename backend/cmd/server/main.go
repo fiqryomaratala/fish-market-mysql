@@ -19,6 +19,7 @@ func main() {
 	db := config.ConnectDB()
 	config.Migrate()
 	helpers.InitActivityLogger(db)
+	helpers.InitNotificationCenter(db)
 
 	if err := os.MkdirAll(filepath.Join("uploads", "products"), os.ModePerm); err != nil {
 		log.Fatal("Failed to create upload directory:", err)
@@ -48,6 +49,7 @@ func main() {
 	routes.RegisterCartRoutes(r, db)
 	routes.RegisterCheckoutRoutes(r, db)
 	routes.RegisterOrderRoutes(r, db)
+	routes.RegisterNotificationRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }

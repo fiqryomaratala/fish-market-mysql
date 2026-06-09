@@ -6,6 +6,7 @@ func Migrate() {
 	DB.AutoMigrate(
 		&models.User{},
 		&models.ActivityLog{},
+		&models.Notification{},
 		&models.Product{},
 		&models.Pond{},
 		&models.FishBatch{},

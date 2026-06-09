@@ -97,6 +97,14 @@ func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error)
 
 	if input.Audit != nil {
 		helpers.LogActivity(input.Audit.UserID, "CREATE", "HARVEST", "Membuat harvest untuk batch "+batch.BatchCode, input.Audit.IPAddress, input.Audit.UserAgent)
+		helpers.CreateNotification(
+			input.Audit.UserID,
+			"Harvest Completed",
+			"Batch "+batch.BatchCode+" berhasil dipanen.",
+			"HARVEST",
+			"FISH_BATCH",
+			batch.ID,
+		)
 	}
 
 	return s.harvestRepo.FindByID(harvest.ID)

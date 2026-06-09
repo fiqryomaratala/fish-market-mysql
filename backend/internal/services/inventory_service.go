@@ -2,10 +2,12 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/fiqryomaratala/backend/internal/dto"
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 )
@@ -37,7 +39,7 @@ type InventoryService interface {
 	GetTransactions(params InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
 	CreateHarvestInventory(batch *models.FishBatch, totalWeight float64) error
 	Adjust(input InventoryAdjustmentInput) (*dto.InventoryItem, error)
-	DeductProductInventory(productID uint, quantity float64, reference string, description string) error
+	DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error
 }
 
 type inventoryService struct {
@@ -185,11 +187,22 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 		return nil, err
 	}
 
+	if input.Audit != nil && updated.Quantity <= 5 {
+		helpers.CreateNotification(
+			input.Audit.UserID,
+			"Low Stock",
+			fmt.Sprintf("Stok %s tinggal %.2f %s.", updated.Product.Name, updated.Quantity, updated.Unit),
+			"INVENTORY",
+			"INVENTORY",
+			updated.ID,
+		)
+	}
+
 	result := toInventoryDTO(updated)
 	return &result, nil
 }
 
-func (s *inventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string) error {
+func (s *inventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error {
 	items, err := s.inventoryRepo.FindAvailableByProduct(productID)
 	if err != nil {
 		return err
@@ -223,6 +236,17 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 			Reference:   strings.TrimSpace(reference),
 		}); err != nil {
 			return err
+		}
+
+		if audit != nil && item.Quantity <= 5 {
+			helpers.CreateNotification(
+				audit.UserID,
+				"Low Stock",
+				fmt.Sprintf("Stok %s tinggal %.2f %s.", item.Product.Name, item.Quantity, item.Unit),
+				"INVENTORY",
+				"INVENTORY",
+				item.ID,
+			)
 		}
 
 		remaining -= deducted

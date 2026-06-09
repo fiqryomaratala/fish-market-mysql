@@ -104,6 +104,7 @@ func (r *inventoryRepository) FindByProductAndBatch(productID, batchID uint) (*m
 func (r *inventoryRepository) FindAvailableByProduct(productID uint) ([]models.Inventory, error) {
 	var items []models.Inventory
 	err := r.db.
+		Preload("Product").
 		Where("product_id = ? AND quantity > 0", productID).
 		Order("created_at ASC").
 		Find(&items).Error

@@ -68,6 +68,7 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 				float64(cartItem.Quantity),
 				invoiceNumber,
 				"Checkout Order",
+				input.Audit,
 			); err != nil {
 				return err
 			}
@@ -119,6 +120,15 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 			input.Audit.UserAgent,
 		)
 	}
+
+	helpers.CreateNotification(
+		input.UserID,
+		"Order Created",
+		"Order "+invoiceNumber+" berhasil dibuat.",
+		"ORDER",
+		"ORDER",
+		0,
+	)
 
 	return &dto.CheckoutResponse{Invoice: invoiceNumber}, nil
 }
