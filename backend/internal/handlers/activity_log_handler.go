@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,11 +46,11 @@ func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 		UserID: parseUintQuery(c.Query("user_id")),
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity logs")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity logs")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
 		"items": result.Items,
 		"meta":  result.Meta,
 	})
@@ -72,20 +73,20 @@ func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 func (h *ActivityLogHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid activity log ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid activity log ID")
 		return
 	}
 
 	result, err := h.activityLogService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrActivityLogNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Activity log not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Activity log not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity log")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity log")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", result)
+	utils.SuccessResponse(c, http.StatusOK, "", result)
 }

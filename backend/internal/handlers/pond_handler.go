@@ -8,6 +8,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,18 +57,18 @@ func NewPondHandler(pondService services.PondService) *PondHandler {
 func (h *PondHandler) Create(c *gin.Context) {
 	input, err := parsePondRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	input.Audit = auditContextFromGin(c)
 
 	pond, err := h.pondService.Create(*input)
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to create pond")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create pond")
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Pond created successfully", toPondResponse(pond))
+	utils.SuccessResponse(c, http.StatusCreated, "Pond created successfully", toPondResponse(pond))
 }
 
 // GetAll godoc
@@ -94,7 +95,7 @@ func (h *PondHandler) GetAll(c *gin.Context) {
 		Limit:  limit,
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch ponds")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch ponds")
 		return
 	}
 
@@ -103,7 +104,7 @@ func (h *PondHandler) GetAll(c *gin.Context) {
 		ponds = append(ponds, toPondResponse(&pond))
 	}
 
-	SuccessResponse(c, http.StatusOK, "Ponds fetched successfully", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "Ponds fetched successfully", gin.H{
 		"items": ponds,
 		"meta": gin.H{
 			"page":  result.Page,
@@ -130,22 +131,22 @@ func (h *PondHandler) GetAll(c *gin.Context) {
 func (h *PondHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
 		return
 	}
 
 	pond, err := h.pondService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrPondNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Pond not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Pond not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch pond")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch pond")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Pond fetched successfully", toPondResponse(pond))
+	utils.SuccessResponse(c, http.StatusOK, "Pond fetched successfully", toPondResponse(pond))
 }
 
 // Update godoc
@@ -167,28 +168,28 @@ func (h *PondHandler) GetByID(c *gin.Context) {
 func (h *PondHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
 		return
 	}
 
 	input, err := parsePondRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	pond, err := h.pondService.Update(uint(id), *input)
 	if err != nil {
 		if errors.Is(err, services.ErrPondNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Pond not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Pond not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to update pond")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update pond")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Pond updated successfully", toPondResponse(pond))
+	utils.SuccessResponse(c, http.StatusOK, "Pond updated successfully", toPondResponse(pond))
 }
 
 // Delete godoc
@@ -208,21 +209,21 @@ func (h *PondHandler) Update(c *gin.Context) {
 func (h *PondHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid pond ID")
 		return
 	}
 
 	if err := h.pondService.Delete(uint(id)); err != nil {
 		if errors.Is(err, services.ErrPondNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Pond not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Pond not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to delete pond")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete pond")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Pond deleted successfully", nil)
+	utils.SuccessResponse(c, http.StatusOK, "Pond deleted successfully", nil)
 }
 
 func parsePondRequest(c *gin.Context) (*services.SavePondInput, error) {

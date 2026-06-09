@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -61,22 +62,22 @@ type LoginResponse struct {
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
 	user, err := h.authService.Register(req.Name, req.Email, req.Password)
 	if err != nil {
 		if errors.Is(err, services.ErrEmailAlreadyExists) {
-			ErrorResponse(c, http.StatusConflict, "Email already exists")
+			utils.ErrorResponse(c, http.StatusConflict, "Email already exists")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Register berhasil", RegisterResponse{
+	utils.SuccessResponse(c, http.StatusCreated, "Register berhasil", RegisterResponse{
 		ID:    user.ID,
 		Name:  user.Name,
 		Email: user.Email,
@@ -99,7 +100,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
@@ -109,15 +110,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	})
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidCredentials) {
-			ErrorResponse(c, http.StatusUnauthorized, "Invalid email or password")
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid email or password")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Login successful", LoginResponse{
+	utils.SuccessResponse(c, http.StatusOK, "Login successful", LoginResponse{
 		Token: result.Token,
 		User: UserResponse{
 			ID:    result.User.ID,
@@ -141,28 +142,28 @@ func (h *AuthHandler) Login(c *gin.Context) {
 func (h *AuthHandler) Profile(c *gin.Context) {
 	userIDValue, exists := c.Get("user_id")
 	if !exists {
-		ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		utils.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	userID, ok := userIDValue.(uint)
 	if !ok {
-		ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+		utils.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	user, err := h.authService.GetProfile(userID)
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {
-			ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
 		"id":    user.ID,
 		"name":  user.Name,
 		"email": user.Email,

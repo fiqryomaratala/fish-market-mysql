@@ -7,6 +7,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -70,15 +71,15 @@ func (h *TrackingHandler) GetByBatchCode(c *gin.Context) {
 	batch, err := h.trackingService.GetByBatchCode(batchCode)
 	if err != nil {
 		if errors.Is(err, services.ErrFishBatchNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Batch not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Batch not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch batch tracking")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch batch tracking")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", toTrackingResponse(batch))
+	utils.SuccessResponse(c, http.StatusOK, "", toTrackingResponse(batch))
 }
 
 func toTrackingResponse(batch *models.FishBatch) TrackingResponse {

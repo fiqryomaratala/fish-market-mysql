@@ -9,6 +9,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,7 +58,7 @@ func NewHarvestHandler(harvestService services.HarvestService) *HarvestHandler {
 func (h *HarvestHandler) Create(c *gin.Context) {
 	input, err := parseHarvestRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -65,15 +66,15 @@ func (h *HarvestHandler) Create(c *gin.Context) {
 	harvest, err := h.harvestService.Create(*input)
 	if err != nil {
 		if errors.Is(err, services.ErrFishBatchNotFound) {
-			ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to create harvest")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create harvest")
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Harvest created successfully", toHarvestResponse(harvest, true))
+	utils.SuccessResponse(c, http.StatusCreated, "Harvest created successfully", toHarvestResponse(harvest, true))
 }
 
 // GetAll godoc
@@ -99,7 +100,7 @@ func (h *HarvestHandler) GetAll(c *gin.Context) {
 
 	params, err := parseHarvestFilters(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -111,7 +112,7 @@ func (h *HarvestHandler) GetAll(c *gin.Context) {
 		Limit:       limit,
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvests")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvests")
 		return
 	}
 
@@ -120,7 +121,7 @@ func (h *HarvestHandler) GetAll(c *gin.Context) {
 		items = append(items, toHarvestResponse(&harvest, true))
 	}
 
-	SuccessResponse(c, http.StatusOK, "Harvests fetched successfully", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "Harvests fetched successfully", gin.H{
 		"items": items,
 		"meta": gin.H{
 			"page":  result.Page,
@@ -147,22 +148,22 @@ func (h *HarvestHandler) GetAll(c *gin.Context) {
 func (h *HarvestHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
 		return
 	}
 
 	harvest, err := h.harvestService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrHarvestNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Harvest not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Harvest not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvest")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvest")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Harvest fetched successfully", toHarvestResponse(harvest, true))
+	utils.SuccessResponse(c, http.StatusOK, "Harvest fetched successfully", toHarvestResponse(harvest, true))
 }
 
 // Update godoc
@@ -184,13 +185,13 @@ func (h *HarvestHandler) GetByID(c *gin.Context) {
 func (h *HarvestHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
 		return
 	}
 
 	input, err := parseHarvestRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -198,16 +199,16 @@ func (h *HarvestHandler) Update(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrHarvestNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Harvest not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Harvest not found")
 		case errors.Is(err, services.ErrFishBatchNotFound):
-			ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to update harvest")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update harvest")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Harvest updated successfully", toHarvestResponse(harvest, true))
+	utils.SuccessResponse(c, http.StatusOK, "Harvest updated successfully", toHarvestResponse(harvest, true))
 }
 
 // Delete godoc
@@ -227,21 +228,21 @@ func (h *HarvestHandler) Update(c *gin.Context) {
 func (h *HarvestHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid harvest ID")
 		return
 	}
 
 	if err := h.harvestService.Delete(uint(id)); err != nil {
 		if errors.Is(err, services.ErrHarvestNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Harvest not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Harvest not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to delete harvest")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete harvest")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Harvest deleted successfully", nil)
+	utils.SuccessResponse(c, http.StatusOK, "Harvest deleted successfully", nil)
 }
 
 // Summary godoc
@@ -258,11 +259,11 @@ func (h *HarvestHandler) Delete(c *gin.Context) {
 func (h *HarvestHandler) Summary(c *gin.Context) {
 	summary, err := h.harvestService.GetSummary()
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvest summary")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvest summary")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Harvest summary fetched successfully", summary)
+	utils.SuccessResponse(c, http.StatusOK, "Harvest summary fetched successfully", summary)
 }
 
 func parseHarvestRequest(c *gin.Context) (*services.SaveHarvestInput, error) {

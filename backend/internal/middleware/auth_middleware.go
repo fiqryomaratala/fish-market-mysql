@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fiqryomaratala/backend/internal/handlers"
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,14 +14,14 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			handlers.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 			c.Abort()
 			return
 		}
 
 		tokenParts := strings.SplitN(authHeader, " ", 2)
 		if len(tokenParts) != 2 || !strings.EqualFold(tokenParts[0], "Bearer") || strings.TrimSpace(tokenParts[1]) == "" {
-			handlers.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
 			c.Abort()
 			return
 		}
@@ -29,12 +29,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, err := helpers.ValidateToken(strings.TrimSpace(tokenParts[1]))
 		if err != nil {
 			if errors.Is(err, helpers.ErrInvalidToken) {
-				handlers.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+				utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
 				c.Abort()
 				return
 			}
 
-			handlers.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
 			c.Abort()
 			return
 		}

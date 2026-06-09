@@ -9,6 +9,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,7 +65,7 @@ func NewFeedingLogHandler(logService services.FeedingLogService) *FeedingLogHand
 func (h *FeedingLogHandler) Create(c *gin.Context) {
 	input, err := parseFeedingLogRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -72,15 +73,15 @@ func (h *FeedingLogHandler) Create(c *gin.Context) {
 	log, err := h.logService.Create(*input)
 	if err != nil {
 		if errors.Is(err, services.ErrFishBatchNotFound) {
-			ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to create feeding log")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create feeding log")
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Feeding log created successfully", toFeedingLogResponse(log, true))
+	utils.SuccessResponse(c, http.StatusCreated, "Feeding log created successfully", toFeedingLogResponse(log, true))
 }
 
 // GetAll godoc
@@ -106,7 +107,7 @@ func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 
 	params, err := parseFeedingLogFilters(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -118,7 +119,7 @@ func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 		Limit:       limit,
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch feeding logs")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch feeding logs")
 		return
 	}
 
@@ -127,7 +128,7 @@ func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 		items = append(items, toFeedingLogResponse(&log, true))
 	}
 
-	SuccessResponse(c, http.StatusOK, "Feeding logs fetched successfully", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "Feeding logs fetched successfully", gin.H{
 		"items": items,
 		"meta": gin.H{
 			"page":  result.Page,
@@ -154,22 +155,22 @@ func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 func (h *FeedingLogHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
 		return
 	}
 
 	log, err := h.logService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrFeedingLogNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch feeding log")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch feeding log")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Feeding log fetched successfully", toFeedingLogResponse(log, true))
+	utils.SuccessResponse(c, http.StatusOK, "Feeding log fetched successfully", toFeedingLogResponse(log, true))
 }
 
 // Update godoc
@@ -191,13 +192,13 @@ func (h *FeedingLogHandler) GetByID(c *gin.Context) {
 func (h *FeedingLogHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
 		return
 	}
 
 	input, err := parseFeedingLogRequest(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -205,16 +206,16 @@ func (h *FeedingLogHandler) Update(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrFeedingLogNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
 		case errors.Is(err, services.ErrFishBatchNotFound):
-			ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Fish batch not found")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to update feeding log")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update feeding log")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Feeding log updated successfully", toFeedingLogResponse(log, true))
+	utils.SuccessResponse(c, http.StatusOK, "Feeding log updated successfully", toFeedingLogResponse(log, true))
 }
 
 // Delete godoc
@@ -234,21 +235,21 @@ func (h *FeedingLogHandler) Update(c *gin.Context) {
 func (h *FeedingLogHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid feeding log ID")
 		return
 	}
 
 	if err := h.logService.Delete(uint(id)); err != nil {
 		if errors.Is(err, services.ErrFeedingLogNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Feeding log not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to delete feeding log")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete feeding log")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Feeding log deleted successfully", nil)
+	utils.SuccessResponse(c, http.StatusOK, "Feeding log deleted successfully", nil)
 }
 
 func parseFeedingLogRequest(c *gin.Context) (*services.SaveFeedingLogInput, error) {

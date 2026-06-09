@@ -8,6 +8,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,13 +53,13 @@ func NewProductHandler(productService services.ProductService) *ProductHandler {
 func (h *ProductHandler) Create(c *gin.Context) {
 	input, err := parseProductForm(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	image, err := c.FormFile("image")
 	if err != nil && !errors.Is(err, http.ErrMissingFile) {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid image upload")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid image upload")
 		return
 	}
 
@@ -72,11 +73,11 @@ func (h *ProductHandler) Create(c *gin.Context) {
 		Audit:       auditContextFromGin(c),
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to create product")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create product")
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Product created successfully", toProductResponse(product))
+	utils.SuccessResponse(c, http.StatusCreated, "Product created successfully", toProductResponse(product))
 }
 
 // GetAll godoc
@@ -102,7 +103,7 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 		Limit:    limit,
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch products")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch products")
 		return
 	}
 
@@ -111,7 +112,7 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 		products = append(products, toProductResponse(&product))
 	}
 
-	SuccessResponse(c, http.StatusOK, "Products fetched successfully", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "Products fetched successfully", gin.H{
 		"items": products,
 		"meta": gin.H{
 			"page":  result.Page,
@@ -135,22 +136,22 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 func (h *ProductHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
 	product, err := h.productService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Product not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Product not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch product")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch product")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Product fetched successfully", toProductResponse(product))
+	utils.SuccessResponse(c, http.StatusOK, "Product fetched successfully", toProductResponse(product))
 }
 
 // Update godoc
@@ -177,19 +178,19 @@ func (h *ProductHandler) GetByID(c *gin.Context) {
 func (h *ProductHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
 	input, err := parseProductForm(c)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	image, err := c.FormFile("image")
 	if err != nil && !errors.Is(err, http.ErrMissingFile) {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid image upload")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid image upload")
 		return
 	}
 
@@ -204,15 +205,15 @@ func (h *ProductHandler) Update(c *gin.Context) {
 	})
 	if err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Product not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Product not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to update product")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update product")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Product updated successfully", toProductResponse(product))
+	utils.SuccessResponse(c, http.StatusOK, "Product updated successfully", toProductResponse(product))
 }
 
 // Delete godoc
@@ -232,21 +233,21 @@ func (h *ProductHandler) Update(c *gin.Context) {
 func (h *ProductHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
 	if err := h.productService.Delete(uint(id), auditContextFromGin(c)); err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Product not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Product not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to delete product")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete product")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Product deleted successfully", nil)
+	utils.SuccessResponse(c, http.StatusOK, "Product deleted successfully", nil)
 }
 
 type productFormInput struct {

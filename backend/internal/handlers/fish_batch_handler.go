@@ -9,6 +9,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -80,13 +81,13 @@ func NewFishBatchHandler(batchService services.FishBatchService) *FishBatchHandl
 func (h *FishBatchHandler) Create(c *gin.Context) {
 	var req CreateFishBatchRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
 	input, err := validateCreateFishBatchRequest(req)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -95,16 +96,16 @@ func (h *FishBatchHandler) Create(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrPondNotFound):
-			ErrorResponse(c, http.StatusBadRequest, "Pond not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Pond not found")
 		case errors.Is(err, services.ErrPondInactive):
-			ErrorResponse(c, http.StatusBadRequest, "Pond is not active")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Pond is not active")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to create fish batch")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create fish batch")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusCreated, "Fish batch created successfully", toFishBatchResponse(batch, true))
+	utils.SuccessResponse(c, http.StatusCreated, "Fish batch created successfully", toFishBatchResponse(batch, true))
 }
 
 // GetAll godoc
@@ -136,7 +137,7 @@ func (h *FishBatchHandler) GetAll(c *gin.Context) {
 		Limit:    limit,
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch fish batches")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch fish batches")
 		return
 	}
 
@@ -145,7 +146,7 @@ func (h *FishBatchHandler) GetAll(c *gin.Context) {
 		items = append(items, toFishBatchResponse(&batch, true))
 	}
 
-	SuccessResponse(c, http.StatusOK, "Fish batches fetched successfully", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "Fish batches fetched successfully", gin.H{
 		"items": items,
 		"meta": gin.H{
 			"page":  result.Page,
@@ -172,22 +173,22 @@ func (h *FishBatchHandler) GetAll(c *gin.Context) {
 func (h *FishBatchHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
 		return
 	}
 
 	batch, err := h.batchService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrFishBatchNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch fish batch")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch fish batch")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Fish batch fetched successfully", toFishBatchResponse(batch, true))
+	utils.SuccessResponse(c, http.StatusOK, "Fish batch fetched successfully", toFishBatchResponse(batch, true))
 }
 
 // Update godoc
@@ -209,19 +210,19 @@ func (h *FishBatchHandler) GetByID(c *gin.Context) {
 func (h *FishBatchHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
 		return
 	}
 
 	var req UpdateFishBatchRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
 	input, err := validateUpdateFishBatchRequest(req)
 	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -229,18 +230,18 @@ func (h *FishBatchHandler) Update(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrFishBatchNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
 		case errors.Is(err, services.ErrPondNotFound):
-			ErrorResponse(c, http.StatusBadRequest, "Pond not found")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Pond not found")
 		case errors.Is(err, services.ErrPondInactive):
-			ErrorResponse(c, http.StatusBadRequest, "Pond is not active")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Pond is not active")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to update fish batch")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update fish batch")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Fish batch updated successfully", toFishBatchResponse(batch, true))
+	utils.SuccessResponse(c, http.StatusOK, "Fish batch updated successfully", toFishBatchResponse(batch, true))
 }
 
 // Delete godoc
@@ -260,21 +261,21 @@ func (h *FishBatchHandler) Update(c *gin.Context) {
 func (h *FishBatchHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid fish batch ID")
 		return
 	}
 
 	if err := h.batchService.Delete(uint(id)); err != nil {
 		if errors.Is(err, services.ErrFishBatchNotFound) {
-			ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Fish batch not found")
 			return
 		}
 
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to delete fish batch")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete fish batch")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Fish batch deleted successfully", nil)
+	utils.SuccessResponse(c, http.StatusOK, "Fish batch deleted successfully", nil)
 }
 
 func validateCreateFishBatchRequest(req CreateFishBatchRequest) (*services.CreateFishBatchInput, error) {

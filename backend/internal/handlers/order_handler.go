@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/fiqryomaratala/backend/internal/services"
+	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -48,11 +49,11 @@ func (h *OrderHandler) GetAll(c *gin.Context) {
 		Role:   currentUserRole(c),
 	})
 	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch orders")
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch orders")
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
 		"items": items,
 		"meta":  meta,
 	})
@@ -75,7 +76,7 @@ func (h *OrderHandler) GetAll(c *gin.Context) {
 func (h *OrderHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
 		return
 	}
 
@@ -83,16 +84,16 @@ func (h *OrderHandler) GetByID(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrOrderNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Order not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Order not found")
 		case errors.Is(err, services.ErrForbiddenOrderAccess):
-			ErrorResponse(c, http.StatusForbidden, "Forbidden")
+			utils.ErrorResponse(c, http.StatusForbidden, "Forbidden")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch order")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch order")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "", item)
+	utils.SuccessResponse(c, http.StatusOK, "", item)
 }
 
 // UpdateStatus godoc
@@ -114,13 +115,13 @@ func (h *OrderHandler) GetByID(c *gin.Context) {
 func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
 		return
 	}
 
 	var req UpdateOrderStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
@@ -131,16 +132,16 @@ func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrOrderNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Order not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Order not found")
 		case errors.Is(err, services.ErrInvalidOrderStatus):
-			ErrorResponse(c, http.StatusBadRequest, "Invalid order status")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Invalid order status")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to update order status")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update order status")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Order status updated successfully", item)
+	utils.SuccessResponse(c, http.StatusOK, "Order status updated successfully", item)
 }
 
 // UpdatePayment godoc
@@ -162,13 +163,13 @@ func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
 		return
 	}
 
 	var req UpdateOrderPaymentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
 		return
 	}
 
@@ -179,16 +180,16 @@ func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrOrderNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Order not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Order not found")
 		case errors.Is(err, services.ErrInvalidPaymentStatus):
-			ErrorResponse(c, http.StatusBadRequest, "Invalid payment status")
+			utils.ErrorResponse(c, http.StatusBadRequest, "Invalid payment status")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to update payment status")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update payment status")
 		}
 		return
 	}
 
-	SuccessResponse(c, http.StatusOK, "Order payment updated successfully", item)
+	utils.SuccessResponse(c, http.StatusOK, "Order payment updated successfully", item)
 }
 
 // GetInvoice godoc
@@ -208,7 +209,7 @@ func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 func (h *OrderHandler) GetInvoice(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
 		return
 	}
 
@@ -216,11 +217,11 @@ func (h *OrderHandler) GetInvoice(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrOrderNotFound):
-			ErrorResponse(c, http.StatusNotFound, "Order not found")
+			utils.ErrorResponse(c, http.StatusNotFound, "Order not found")
 		case errors.Is(err, services.ErrForbiddenOrderAccess):
-			ErrorResponse(c, http.StatusForbidden, "Forbidden")
+			utils.ErrorResponse(c, http.StatusForbidden, "Forbidden")
 		default:
-			ErrorResponse(c, http.StatusInternalServerError, "Failed to generate invoice")
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to generate invoice")
 		}
 		return
 	}
