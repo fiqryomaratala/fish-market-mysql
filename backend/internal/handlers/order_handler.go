@@ -133,6 +133,31 @@ func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Order payment updated successfully", item)
 }
 
+func (h *OrderHandler) GetInvoice(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		ErrorResponse(c, http.StatusBadRequest, "Invalid order ID")
+		return
+	}
+
+	content, filename, err := h.orderService.GenerateInvoicePDF(uint(id), currentUserID(c), currentUserRole(c))
+	if err != nil {
+		switch {
+		case errors.Is(err, services.ErrOrderNotFound):
+			ErrorResponse(c, http.StatusNotFound, "Order not found")
+		case errors.Is(err, services.ErrForbiddenOrderAccess):
+			ErrorResponse(c, http.StatusForbidden, "Forbidden")
+		default:
+			ErrorResponse(c, http.StatusInternalServerError, "Failed to generate invoice")
+		}
+		return
+	}
+
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename="+filename)
+	c.Data(http.StatusOK, "application/pdf", content)
+}
+
 func currentUserRole(c *gin.Context) string {
 	value, _ := c.Get("role")
 	role, _ := value.(string)

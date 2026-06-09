@@ -21,6 +21,7 @@ func RegisterOrderRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		orders.GET("", orderHandler.GetAll)
 		orders.GET("/:id", orderHandler.GetByID)
+		orders.GET("/:id/invoice", orderHandler.GetInvoice)
 		orders.PUT("/:id/status", middleware.RoleMiddleware("admin"), orderHandler.UpdateStatus)
 		orders.PUT("/:id/payment", middleware.RoleMiddleware("admin"), orderHandler.UpdatePayment)
 	}

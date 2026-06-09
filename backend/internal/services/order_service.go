@@ -1,7 +1,9 @@
 package services
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"github.com/jung-kurt/gofpdf"
 )
 
 var ErrOrderNotFound = errors.New("order not found")
@@ -38,6 +41,7 @@ type OrderService interface {
 	GetByID(id, requesterID uint, role string) (*dto.OrderResponse, error)
 	UpdateStatus(id uint, input UpdateOrderStatusInput) (*dto.OrderResponse, error)
 	UpdatePayment(id uint, input UpdateOrderPaymentInput) (*dto.OrderResponse, error)
+	GenerateInvoicePDF(id, requesterID uint, role string) ([]byte, string, error)
 }
 
 type orderService struct {
@@ -150,6 +154,78 @@ func (s *orderService) UpdatePayment(id uint, input UpdateOrderPaymentInput) (*d
 	}
 	result := toOrderDTO(updated)
 	return &result, nil
+}
+
+func (s *orderService) GenerateInvoicePDF(id, requesterID uint, role string) ([]byte, string, error) {
+	order, err := s.orderRepo.FindByID(id)
+	if err != nil {
+		return nil, "", err
+	}
+	if order == nil {
+		return nil, "", ErrOrderNotFound
+	}
+	if !strings.EqualFold(strings.TrimSpace(role), "admin") && order.UserID != requesterID {
+		return nil, "", ErrForbiddenOrderAccess
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.AddPage()
+
+	// Logo placeholder.
+	pdf.Rect(10, 10, 25, 15, "")
+	pdf.SetFont("Arial", "B", 16)
+	pdf.SetXY(40, 12)
+	pdf.Cell(0, 8, "INVOICE")
+
+	pdf.SetFont("Arial", "", 11)
+	pdf.SetXY(40, 20)
+	pdf.Cell(0, 6, "Invoice Number: "+order.InvoiceNumber)
+	pdf.Ln(12)
+
+	pdf.SetFont("Arial", "", 11)
+	pdf.Cell(0, 7, "Customer: "+order.User.Name)
+	pdf.Ln(7)
+	pdf.Cell(0, 7, "Tanggal: "+order.CreatedAt.UTC().Format("2006-01-02 15:04:05"))
+	pdf.Ln(10)
+
+	headers := []string{"Produk", "Qty", "Price", "Subtotal"}
+	widths := []float64{85, 25, 35, 35}
+
+	pdf.SetFont("Arial", "B", 11)
+	for index, header := range headers {
+		pdf.CellFormat(widths[index], 8, header, "1", 0, "C", false, 0, "")
+	}
+	pdf.Ln(-1)
+
+	pdf.SetFont("Arial", "", 10)
+	for _, item := range order.OrderItems {
+		values := []string{
+			item.Product.Name,
+			fmt.Sprintf("%d", item.Quantity),
+			fmt.Sprintf("%.2f", item.Price),
+			fmt.Sprintf("%.2f", item.Subtotal),
+		}
+		for index, value := range values {
+			pdf.CellFormat(widths[index], 8, value, "1", 0, "L", false, 0, "")
+		}
+		pdf.Ln(-1)
+	}
+
+	pdf.Ln(6)
+	pdf.SetFont("Arial", "B", 11)
+	pdf.Cell(0, 7, fmt.Sprintf("Grand Total: %.2f", order.TotalPrice))
+	pdf.Ln(7)
+	pdf.Cell(0, 7, "Status: "+order.Status)
+	pdf.Ln(7)
+	pdf.Cell(0, 7, "Payment Status: "+order.PaymentStatus)
+
+	var buffer bytes.Buffer
+	if err := pdf.Output(&buffer); err != nil {
+		return nil, "", err
+	}
+
+	filename := order.InvoiceNumber + ".pdf"
+	return buffer.Bytes(), filename, nil
 }
 
 func toOrderDTO(order *models.Order) dto.OrderResponse {
