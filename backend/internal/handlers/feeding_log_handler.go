@@ -47,6 +47,20 @@ func NewFeedingLogHandler(logService services.FeedingLogService) *FeedingLogHand
 	return &FeedingLogHandler{logService: logService}
 }
 
+// Create godoc
+// @Summary Create feeding log
+// @Description Create a new feeding log for a fish batch
+// @Tags Feeding Log
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body FeedingLogRequest true "Feeding log payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /feeding-logs [post]
 func (h *FeedingLogHandler) Create(c *gin.Context) {
 	input, err := parseFeedingLogRequest(c)
 	if err != nil {
@@ -69,6 +83,23 @@ func (h *FeedingLogHandler) Create(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Feeding log created successfully", toFeedingLogResponse(log, true))
 }
 
+// GetAll godoc
+// @Summary Get all feeding logs
+// @Description Get feeding logs with filters and pagination
+// @Tags Feeding Log
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param fish_batch_id query int false "Fish batch ID"
+// @Param start_date query string false "Start date (YYYY-MM-DD)"
+// @Param end_date query string false "End date (YYYY-MM-DD)"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /feeding-logs [get]
 func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -106,6 +137,20 @@ func (h *FeedingLogHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get feeding log detail
+// @Description Get feeding log detail by ID
+// @Tags Feeding Log
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Feeding log ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /feeding-logs/{id} [get]
 func (h *FeedingLogHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -127,6 +172,22 @@ func (h *FeedingLogHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Feeding log fetched successfully", toFeedingLogResponse(log, true))
 }
 
+// Update godoc
+// @Summary Update feeding log
+// @Description Update feeding log by ID
+// @Tags Feeding Log
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Feeding log ID"
+// @Param request body FeedingLogRequest true "Feeding log payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /feeding-logs/{id} [put]
 func (h *FeedingLogHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -156,6 +217,20 @@ func (h *FeedingLogHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Feeding log updated successfully", toFeedingLogResponse(log, true))
 }
 
+// Delete godoc
+// @Summary Delete feeding log
+// @Description Delete feeding log by ID
+// @Tags Feeding Log
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Feeding log ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /feeding-logs/{id} [delete]
 func (h *FeedingLogHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

@@ -6,12 +6,24 @@ import (
 	"path/filepath"
 
 	"github.com/fiqryomaratala/backend/config"
+	_ "github.com/fiqryomaratala/backend/docs"
 	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// @title Fish Market & Aquaculture API
+// @version 1.0
+// @description Backend API for fish marketplace and aquaculture management.
+// @BasePath /api
+// @schemes http https
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 func main() {
 	godotenv.Load()
@@ -27,6 +39,7 @@ func main() {
 
 	r := gin.Default()
 	r.Static("/uploads", "./uploads")
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{

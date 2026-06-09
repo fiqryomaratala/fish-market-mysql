@@ -21,6 +21,20 @@ func NewCheckoutHandler(checkoutService services.CheckoutService) *CheckoutHandl
 	return &CheckoutHandler{checkoutService: checkoutService}
 }
 
+// Checkout godoc
+// @Summary Checkout cart
+// @Description Create an order from the authenticated customer's cart
+// @Tags Checkout
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body CheckoutRequest false "Checkout payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /checkout [post]
 func (h *CheckoutHandler) Checkout(c *gin.Context) {
 	var req CheckoutRequest
 	if c.Request.ContentLength > 0 {

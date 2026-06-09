@@ -54,6 +54,16 @@ func NewTrackingHandler(trackingService services.TrackingService) *TrackingHandl
 	return &TrackingHandler{trackingService: trackingService}
 }
 
+// GetByBatchCode godoc
+// @Summary Track fish batch
+// @Description Get public fish batch traceability data by batch code
+// @Tags Tracking
+// @Produce json
+// @Param batchCode path string true "Batch code"
+// @Success 200 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /tracking/{batchCode} [get]
 func (h *TrackingHandler) GetByBatchCode(c *gin.Context) {
 	batchCode := c.Param("batchCode")
 

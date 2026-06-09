@@ -25,6 +25,18 @@ func NewOrderHandler(orderService services.OrderService) *OrderHandler {
 	return &OrderHandler{orderService: orderService}
 }
 
+// GetAll godoc
+// @Summary Get orders
+// @Description Get paginated orders for admin or current customer
+// @Tags Order
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders [get]
 func (h *OrderHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -46,6 +58,20 @@ func (h *OrderHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get order detail
+// @Description Get order detail by ID
+// @Tags Order
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders/{id} [get]
 func (h *OrderHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -69,6 +95,22 @@ func (h *OrderHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "", item)
 }
 
+// UpdateStatus godoc
+// @Summary Update order status
+// @Description Update order lifecycle status
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Param request body UpdateOrderStatusRequest true "Order status payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders/{id}/status [put]
 func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -101,6 +143,22 @@ func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Order status updated successfully", item)
 }
 
+// UpdatePayment godoc
+// @Summary Update payment status
+// @Description Update order payment status
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Param request body UpdateOrderPaymentRequest true "Payment status payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders/{id}/payment [put]
 func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -133,6 +191,20 @@ func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Order payment updated successfully", item)
 }
 
+// GetInvoice godoc
+// @Summary Download order invoice
+// @Description Generate and download order invoice PDF
+// @Tags Order
+// @Produce application/pdf
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Success 200 {file} binary
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders/{id}/invoice [get]
 func (h *OrderHandler) GetInvoice(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

@@ -30,6 +30,25 @@ func NewProductHandler(productService services.ProductService) *ProductHandler {
 	return &ProductHandler{productService: productService}
 }
 
+// Create godoc
+// @Summary Create product
+// @Description Create a new product with optional image upload
+// @Tags Product
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param name formData string true "Product name"
+// @Param description formData string false "Product description"
+// @Param price formData number true "Product price"
+// @Param stock formData int false "Product stock"
+// @Param category formData string false "Product category"
+// @Param image formData file false "Product image"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /admin/products [post]
 func (h *ProductHandler) Create(c *gin.Context) {
 	input, err := parseProductForm(c)
 	if err != nil {
@@ -60,6 +79,18 @@ func (h *ProductHandler) Create(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Product created successfully", toProductResponse(product))
 }
 
+// GetAll godoc
+// @Summary Get all products
+// @Description Get public product list with search, category, and pagination
+// @Tags Product
+// @Produce json
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param search query string false "Search keyword"
+// @Param category query string false "Filter by category"
+// @Success 200 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /products [get]
 func (h *ProductHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -90,6 +121,17 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get product detail
+// @Description Get product detail by ID
+// @Tags Product
+// @Produce json
+// @Param id path int true "Product ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /products/{id} [get]
 func (h *ProductHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -111,6 +153,27 @@ func (h *ProductHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Product fetched successfully", toProductResponse(product))
 }
 
+// Update godoc
+// @Summary Update product
+// @Description Update product data and optionally replace image
+// @Tags Product
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Product ID"
+// @Param name formData string true "Product name"
+// @Param description formData string false "Product description"
+// @Param price formData number true "Product price"
+// @Param stock formData int false "Product stock"
+// @Param category formData string false "Product category"
+// @Param image formData file false "Product image"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /admin/products/{id} [put]
 func (h *ProductHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -152,6 +215,20 @@ func (h *ProductHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Product updated successfully", toProductResponse(product))
 }
 
+// Delete godoc
+// @Summary Delete product
+// @Description Delete product by ID
+// @Tags Product
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Product ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /admin/products/{id} [delete]
 func (h *ProductHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

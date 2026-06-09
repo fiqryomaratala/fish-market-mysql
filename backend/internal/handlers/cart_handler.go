@@ -26,6 +26,21 @@ func NewCartHandler(cartService services.CartService) *CartHandler {
 	return &CartHandler{cartService: cartService}
 }
 
+// Add godoc
+// @Summary Add product to cart
+// @Description Add a product to the authenticated customer's cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body AddToCartRequest true "Cart payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /cart [post]
 func (h *CartHandler) Add(c *gin.Context) {
 	var req AddToCartRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -62,6 +77,17 @@ func (h *CartHandler) Add(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Product added to cart", result)
 }
 
+// GetAll godoc
+// @Summary Get cart items
+// @Description Get all cart items for the authenticated customer
+// @Tags Cart
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /cart [get]
 func (h *CartHandler) GetAll(c *gin.Context) {
 	result, err := h.cartService.GetByUserID(currentUserID(c))
 	if err != nil {
@@ -72,6 +98,22 @@ func (h *CartHandler) GetAll(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "", result)
 }
 
+// Update godoc
+// @Summary Update cart item
+// @Description Update quantity of a cart item
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Cart item ID"
+// @Param request body UpdateCartRequest true "Cart update payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /cart/{id} [put]
 func (h *CartHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -108,6 +150,20 @@ func (h *CartHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Cart updated successfully", result)
 }
 
+// Delete godoc
+// @Summary Delete cart item
+// @Description Remove a cart item by ID
+// @Tags Cart
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Cart item ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /cart/{id} [delete]
 func (h *CartHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -127,6 +183,17 @@ func (h *CartHandler) Delete(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Cart item deleted successfully", nil)
 }
 
+// Clear godoc
+// @Summary Clear cart
+// @Description Remove all items from the authenticated customer's cart
+// @Tags Cart
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /cart [delete]
 func (h *CartHandler) Clear(c *gin.Context) {
 	if err := h.cartService.Clear(currentUserID(c)); err != nil {
 		ErrorResponse(c, http.StatusInternalServerError, "Failed to clear cart")

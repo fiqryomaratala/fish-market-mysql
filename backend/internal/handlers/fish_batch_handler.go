@@ -63,6 +63,20 @@ func NewFishBatchHandler(batchService services.FishBatchService) *FishBatchHandl
 	return &FishBatchHandler{batchService: batchService}
 }
 
+// Create godoc
+// @Summary Create fish batch
+// @Description Create a new fish cultivation batch
+// @Tags Fish Batch
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body CreateFishBatchRequest true "Fish batch payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /batches [post]
 func (h *FishBatchHandler) Create(c *gin.Context) {
 	var req CreateFishBatchRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -93,6 +107,22 @@ func (h *FishBatchHandler) Create(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Fish batch created successfully", toFishBatchResponse(batch, true))
 }
 
+// GetAll godoc
+// @Summary Get all fish batches
+// @Description Get fish batch list with filters and pagination
+// @Tags Fish Batch
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param fish_type query string false "Fish type"
+// @Param pond_id query int false "Pond ID"
+// @Param status query string false "Batch status"
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /batches [get]
 func (h *FishBatchHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -125,6 +155,20 @@ func (h *FishBatchHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get fish batch detail
+// @Description Get fish batch detail by ID
+// @Tags Fish Batch
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Fish batch ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /batches/{id} [get]
 func (h *FishBatchHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -146,6 +190,22 @@ func (h *FishBatchHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Fish batch fetched successfully", toFishBatchResponse(batch, true))
 }
 
+// Update godoc
+// @Summary Update fish batch
+// @Description Update fish batch by ID
+// @Tags Fish Batch
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Fish batch ID"
+// @Param request body UpdateFishBatchRequest true "Fish batch payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /batches/{id} [put]
 func (h *FishBatchHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -183,6 +243,20 @@ func (h *FishBatchHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Fish batch updated successfully", toFishBatchResponse(batch, true))
 }
 
+// Delete godoc
+// @Summary Delete fish batch
+// @Description Delete fish batch by ID
+// @Tags Fish Batch
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Fish batch ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /batches/{id} [delete]
 func (h *FishBatchHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

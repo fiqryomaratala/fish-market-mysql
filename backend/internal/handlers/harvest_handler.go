@@ -40,6 +40,20 @@ func NewHarvestHandler(harvestService services.HarvestService) *HarvestHandler {
 	return &HarvestHandler{harvestService: harvestService}
 }
 
+// Create godoc
+// @Summary Create harvest
+// @Description Create a harvest record for a fish batch
+// @Tags Harvest
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body HarvestRequest true "Harvest payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests [post]
 func (h *HarvestHandler) Create(c *gin.Context) {
 	input, err := parseHarvestRequest(c)
 	if err != nil {
@@ -62,6 +76,23 @@ func (h *HarvestHandler) Create(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Harvest created successfully", toHarvestResponse(harvest, true))
 }
 
+// GetAll godoc
+// @Summary Get all harvests
+// @Description Get harvest list with filters and pagination
+// @Tags Harvest
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param fish_batch_id query int false "Fish batch ID"
+// @Param start_date query string false "Start date (YYYY-MM-DD)"
+// @Param end_date query string false "End date (YYYY-MM-DD)"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests [get]
 func (h *HarvestHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -99,6 +130,20 @@ func (h *HarvestHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get harvest detail
+// @Description Get harvest detail by ID
+// @Tags Harvest
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Harvest ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests/{id} [get]
 func (h *HarvestHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -120,6 +165,22 @@ func (h *HarvestHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Harvest fetched successfully", toHarvestResponse(harvest, true))
 }
 
+// Update godoc
+// @Summary Update harvest
+// @Description Update harvest by ID
+// @Tags Harvest
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Harvest ID"
+// @Param request body HarvestRequest true "Harvest payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests/{id} [put]
 func (h *HarvestHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -149,6 +210,20 @@ func (h *HarvestHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Harvest updated successfully", toHarvestResponse(harvest, true))
 }
 
+// Delete godoc
+// @Summary Delete harvest
+// @Description Delete harvest by ID
+// @Tags Harvest
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Harvest ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests/{id} [delete]
 func (h *HarvestHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -169,6 +244,17 @@ func (h *HarvestHandler) Delete(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Harvest deleted successfully", nil)
 }
 
+// Summary godoc
+// @Summary Get harvest summary
+// @Description Get aggregate summary of harvest data
+// @Tags Harvest
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /harvests/summary [get]
 func (h *HarvestHandler) Summary(c *gin.Context) {
 	summary, err := h.harvestService.GetSummary()
 	if err != nil {

@@ -39,6 +39,20 @@ func NewPondHandler(pondService services.PondService) *PondHandler {
 	return &PondHandler{pondService: pondService}
 }
 
+// Create godoc
+// @Summary Create pond
+// @Description Create a new pond
+// @Tags Pond
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body PondRequest true "Pond payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /ponds [post]
 func (h *PondHandler) Create(c *gin.Context) {
 	input, err := parsePondRequest(c)
 	if err != nil {
@@ -56,6 +70,20 @@ func (h *PondHandler) Create(c *gin.Context) {
 	SuccessResponse(c, http.StatusCreated, "Pond created successfully", toPondResponse(pond))
 }
 
+// GetAll godoc
+// @Summary Get all ponds
+// @Description Get pond list with search and pagination
+// @Tags Pond
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param search query string false "Search keyword"
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /ponds [get]
 func (h *PondHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -85,6 +113,20 @@ func (h *PondHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get pond detail
+// @Description Get pond detail by ID
+// @Tags Pond
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Pond ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /ponds/{id} [get]
 func (h *PondHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -106,6 +148,22 @@ func (h *PondHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Pond fetched successfully", toPondResponse(pond))
 }
 
+// Update godoc
+// @Summary Update pond
+// @Description Update pond by ID
+// @Tags Pond
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Pond ID"
+// @Param request body PondRequest true "Pond payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /ponds/{id} [put]
 func (h *PondHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -133,6 +191,20 @@ func (h *PondHandler) Update(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "Pond updated successfully", toPondResponse(pond))
 }
 
+// Delete godoc
+// @Summary Delete pond
+// @Description Delete pond by ID
+// @Tags Pond
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Pond ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /ponds/{id} [delete]
 func (h *PondHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

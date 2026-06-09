@@ -17,6 +17,22 @@ func NewActivityLogHandler(activityLogService services.ActivityLogService) *Acti
 	return &ActivityLogHandler{activityLogService: activityLogService}
 }
 
+// GetAll godoc
+// @Summary Get activity logs
+// @Description Get paginated activity logs with optional filters
+// @Tags Activity Log
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number"
+// @Param limit query int false "Items per page"
+// @Param module query string false "Module filter"
+// @Param action query string false "Action filter"
+// @Param user_id query int false "User ID filter"
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /activity-logs [get]
 func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
@@ -39,6 +55,20 @@ func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Get activity log detail
+// @Description Get activity log detail by ID
+// @Tags Activity Log
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Activity log ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /activity-logs/{id} [get]
 func (h *ActivityLogHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

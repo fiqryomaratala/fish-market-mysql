@@ -46,6 +46,18 @@ type LoginResponse struct {
 	User  UserResponse `json:"user"`
 }
 
+// Register godoc
+// @Summary Register user
+// @Description Register a new customer account
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body RegisterRequest true "Register payload"
+// @Success 201 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 409 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -72,6 +84,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	})
 }
 
+// Login godoc
+// @Summary Login user
+// @Description Authenticate user and return JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "Login payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -104,6 +128,16 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	})
 }
 
+// Profile godoc
+// @Summary Get user profile
+// @Description Get currently authenticated user profile
+// @Tags Authentication
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /auth/profile [get]
 func (h *AuthHandler) Profile(c *gin.Context) {
 	userIDValue, exists := c.Get("user_id")
 	if !exists {

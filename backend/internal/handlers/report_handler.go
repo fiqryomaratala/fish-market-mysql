@@ -22,6 +22,22 @@ func NewReportHandler(reportService services.ReportService, exportService servic
 	}
 }
 
+// GetHarvestReport godoc
+// @Summary Get harvest report
+// @Description Get harvest report with optional filters
+// @Tags Reports
+// @Produce json
+// @Security BearerAuth
+// @Param start_date query string false "Start date (YYYY-MM-DD)"
+// @Param end_date query string false "End date (YYYY-MM-DD)"
+// @Param pond_id query int false "Pond ID"
+// @Param fish_type query string false "Fish type"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /reports/harvest [get]
 func (h *ReportHandler) GetHarvestReport(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
@@ -38,6 +54,17 @@ func (h *ReportHandler) GetHarvestReport(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "", data)
 }
 
+// GetProductionReport godoc
+// @Summary Get production report
+// @Description Get production report grouped by pond
+// @Tags Reports
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /reports/production [get]
 func (h *ReportHandler) GetProductionReport(c *gin.Context) {
 	data, err := h.reportService.GetProductionReport()
 	if err != nil {
@@ -48,6 +75,17 @@ func (h *ReportHandler) GetProductionReport(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "", data)
 }
 
+// GetFeedingReport godoc
+// @Summary Get feeding report
+// @Description Get feeding report with total feed usage
+// @Tags Reports
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /reports/feeding [get]
 func (h *ReportHandler) GetFeedingReport(c *gin.Context) {
 	data, err := h.reportService.GetFeedingReport()
 	if err != nil {
@@ -58,6 +96,23 @@ func (h *ReportHandler) GetFeedingReport(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, "", data)
 }
 
+// ExportExcel godoc
+// @Summary Export report to Excel
+// @Description Export harvest, production, or feeding report to Excel
+// @Tags Reports
+// @Produce application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+// @Security BearerAuth
+// @Param type query string true "Report type"
+// @Param start_date query string false "Start date (YYYY-MM-DD)"
+// @Param end_date query string false "End date (YYYY-MM-DD)"
+// @Param pond_id query int false "Pond ID"
+// @Param fish_type query string false "Fish type"
+// @Success 200 {file} binary
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /reports/export/excel [get]
 func (h *ReportHandler) ExportExcel(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
@@ -81,6 +136,23 @@ func (h *ReportHandler) ExportExcel(c *gin.Context) {
 	c.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", content)
 }
 
+// ExportPDF godoc
+// @Summary Export report to PDF
+// @Description Export harvest, production, or feeding report to PDF
+// @Tags Reports
+// @Produce application/pdf
+// @Security BearerAuth
+// @Param type query string true "Report type"
+// @Param start_date query string false "Start date (YYYY-MM-DD)"
+// @Param end_date query string false "End date (YYYY-MM-DD)"
+// @Param pond_id query int false "Pond ID"
+// @Param fish_type query string false "Fish type"
+// @Success 200 {file} binary
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /reports/export/pdf [get]
 func (h *ReportHandler) ExportPDF(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
