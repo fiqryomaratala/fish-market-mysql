@@ -12,5 +12,6 @@ type Order struct {
 	PaymentStatus   string
 	ShippingAddress string
 
-	User User
+	User       User
+	OrderItems []OrderItem
 }
