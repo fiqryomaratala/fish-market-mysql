@@ -19,6 +19,7 @@ type ProductRepository interface {
 	Create(product *models.Product) error
 	FindAll(filter ProductFilter) ([]models.Product, int64, error)
 	FindByID(id uint) (*models.Product, error)
+	FindByFishType(fishType string) (*models.Product, error)
 	Update(product *models.Product) error
 	Delete(product *models.Product) error
 }
@@ -67,6 +68,22 @@ func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int
 func (r *productRepository) FindByID(id uint) (*models.Product, error) {
 	var product models.Product
 	err := r.db.First(&product, id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &product, nil
+}
+
+func (r *productRepository) FindByFishType(fishType string) (*models.Product, error) {
+	var product models.Product
+	err := r.db.
+		Joins("JOIN fish_batches ON fish_batches.id = products.fish_batch_id").
+		Where("fish_batches.fish_type = ?", strings.TrimSpace(fishType)).
+		First(&product).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

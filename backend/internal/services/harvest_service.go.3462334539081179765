@@ -53,8 +53,8 @@ type HarvestService interface {
 }
 
 type harvestService struct {
-	harvestRepo      repositories.HarvestRepository
-	batchRepo        repositories.FishBatchRepository
+	harvestRepo repositories.HarvestRepository
+	batchRepo   repositories.FishBatchRepository
 	inventoryService InventoryService
 }
 

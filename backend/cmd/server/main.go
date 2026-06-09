@@ -44,6 +44,7 @@ func main() {
 	routes.RegisterDashboardRoutes(r, db)
 	routes.RegisterReportRoutes(r, db)
 	routes.RegisterActivityLogRoutes(r, db)
+	routes.RegisterInventoryRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }

@@ -13,7 +13,11 @@ import (
 func RegisterHarvestRoutes(r *gin.Engine, db *gorm.DB) {
 	batchRepo := repositories.NewFishBatchRepository(db)
 	harvestRepo := repositories.NewHarvestRepository(db)
-	harvestService := services.NewHarvestService(harvestRepo, batchRepo)
+	productRepo := repositories.NewProductRepository(db)
+	inventoryRepo := repositories.NewInventoryRepository(db)
+	transactionRepo := repositories.NewInventoryTransactionRepository(db)
+	inventoryService := services.NewInventoryService(inventoryRepo, transactionRepo, productRepo)
+	harvestService := services.NewHarvestService(harvestRepo, batchRepo, inventoryService)
 	harvestHandler := handlers.NewHarvestHandler(harvestService)
 
 	api := r.Group("/api")

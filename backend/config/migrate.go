@@ -11,5 +11,7 @@ func Migrate() {
 		&models.FishBatch{},
 		&models.FeedingLog{},
 		&models.Harvest{},
+		&models.Inventory{},
+		&models.InventoryTransaction{},
 	)
 }
