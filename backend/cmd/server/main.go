@@ -39,6 +39,7 @@ func main() {
 	routes.RegisterFeedingLogRoutes(r, db)
 	routes.RegisterHarvestRoutes(r, db)
 	routes.RegisterTrackingRoutes(r, db)
+	routes.RegisterDashboardRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
