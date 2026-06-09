@@ -6,8 +6,10 @@ import (
 	"strings"
 
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 )
 
 var ErrProductNotFound = errors.New("product not found")
@@ -69,6 +71,7 @@ func NewProductService(productRepo repositories.ProductRepository, uploadDir str
 func (s *productService) Create(input CreateProductInput) (*models.Product, error) {
 	imageURL, err := helpers.SaveUploadedProductImage(input.Image, s.uploadDir)
 	if err != nil {
+		logger.Error("failed to save product image", err, zap.String("module", "PRODUCT"))
 		return nil, err
 	}
 
@@ -84,12 +87,15 @@ func (s *productService) Create(input CreateProductInput) (*models.Product, erro
 
 	if err := s.productRepo.Create(product); err != nil {
 		_ = helpers.DeleteUploadedFile(imageURL)
+		logger.Error("failed to create product", err, zap.String("module", "PRODUCT"), zap.String("name", product.Name))
 		return nil, err
 	}
 
 	if input.Audit != nil {
 		helpers.LogActivity(input.Audit.UserID, "CREATE", "PRODUCT", "Membuat produk "+product.Name, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
+
+	logger.Info("product created", zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID), zap.String("name", product.Name))
 
 	return product, nil
 }
@@ -116,6 +122,7 @@ func (s *productService) GetAll(params ProductListParams) (*ProductListResult, e
 func (s *productService) GetByID(id uint) (*models.Product, error) {
 	product, err := s.productRepo.FindByID(id)
 	if err != nil {
+		logger.Error("failed to find product before update", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", id))
 		return nil, err
 	}
 	if product == nil {
@@ -138,6 +145,7 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 	if input.Image != nil {
 		newImageURL, err := helpers.SaveUploadedProductImage(input.Image, s.uploadDir)
 		if err != nil {
+			logger.Error("failed to save updated product image", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", id))
 			return nil, err
 		}
 		product.ImageURL = newImageURL
@@ -154,6 +162,7 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 			_ = helpers.DeleteUploadedFile(product.ImageURL)
 			product.ImageURL = oldImageURL
 		}
+		logger.Error("failed to update product", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID))
 		return nil, err
 	}
 
@@ -165,12 +174,15 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 		helpers.LogActivity(input.Audit.UserID, "UPDATE", "PRODUCT", "Memperbarui produk "+product.Name, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
+	logger.Info("product updated", zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID), zap.String("name", product.Name))
+
 	return product, nil
 }
 
 func (s *productService) Delete(id uint, audit *AuditContext) error {
 	product, err := s.productRepo.FindByID(id)
 	if err != nil {
+		logger.Error("failed to find product before delete", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", id))
 		return err
 	}
 	if product == nil {
@@ -178,6 +190,7 @@ func (s *productService) Delete(id uint, audit *AuditContext) error {
 	}
 
 	if err := s.productRepo.Delete(product); err != nil {
+		logger.Error("failed to delete product", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID))
 		return err
 	}
 
@@ -188,6 +201,8 @@ func (s *productService) Delete(id uint, audit *AuditContext) error {
 	if audit != nil {
 		helpers.LogActivity(audit.UserID, "DELETE", "PRODUCT", "Menghapus produk "+product.Name, audit.IPAddress, audit.UserAgent)
 	}
+
+	logger.Info("product deleted", zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID), zap.String("name", product.Name))
 
 	return nil
 }

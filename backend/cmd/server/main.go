@@ -8,6 +8,7 @@ import (
 	"github.com/fiqryomaratala/backend/config"
 	_ "github.com/fiqryomaratala/backend/docs"
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/fiqryomaratala/backend/routes"
@@ -29,6 +30,8 @@ import (
 
 func main() {
 	godotenv.Load()
+	logger.InitLogger()
+	defer logger.Sync()
 
 	db := config.ConnectDB()
 	config.Migrate()
@@ -40,7 +43,7 @@ func main() {
 	}
 
 	r := gin.New()
-	r.Use(gin.Logger(), middleware.RecoveryMiddleware())
+	r.Use(middleware.LoggerMiddleware(), middleware.RecoveryMiddleware())
 	r.Static("/uploads", "./uploads")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

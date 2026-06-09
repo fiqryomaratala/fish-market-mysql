@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/fiqryomaratala/backend/internal/dto"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 )
 
 var ErrNotificationNotFound = errors.New("notification not found")
@@ -75,6 +77,7 @@ func (s *notificationService) GetUnread(userID uint) ([]dto.NotificationItem, er
 func (s *notificationService) MarkAsRead(id, userID uint) error {
 	item, err := s.notificationRepo.FindByID(id)
 	if err != nil {
+		logger.Error("failed to find notification before mark as read", err, zap.String("module", "NOTIFICATION"), zap.Uint("notification_id", id))
 		return err
 	}
 	if item == nil {
@@ -85,7 +88,13 @@ func (s *notificationService) MarkAsRead(id, userID uint) error {
 	}
 
 	item.IsRead = true
-	return s.notificationRepo.Update(item)
+	if err := s.notificationRepo.Update(item); err != nil {
+		logger.Error("failed to mark notification as read", err, zap.String("module", "NOTIFICATION"), zap.Uint("notification_id", id))
+		return err
+	}
+
+	logger.Info("notification marked as read", zap.String("module", "NOTIFICATION"), zap.Uint("notification_id", id), zap.Uint("user_id", userID))
+	return nil
 }
 
 func (s *notificationService) MarkAllAsRead(userID uint) error {

@@ -9,9 +9,11 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/dto"
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 	"github.com/jung-kurt/gofpdf"
+	"go.uber.org/zap"
 )
 
 var ErrOrderNotFound = errors.New("order not found")
@@ -81,6 +83,7 @@ func (s *orderService) GetAll(params OrderListParams) ([]dto.OrderResponse, map[
 func (s *orderService) GetByID(id, requesterID uint, role string) (*dto.OrderResponse, error) {
 	order, err := s.orderRepo.FindByID(id)
 	if err != nil {
+		logger.Error("failed to find order before status update", err, zap.String("module", "ORDER"), zap.Uint("order_id", id))
 		return nil, err
 	}
 	if order == nil {
@@ -112,12 +115,14 @@ func (s *orderService) UpdateStatus(id uint, input UpdateOrderStatusInput) (*dto
 
 	order.Status = status
 	if err := s.orderRepo.Update(order); err != nil {
+		logger.Error("failed to update order status", err, zap.String("module", "ORDER"), zap.Uint("order_id", id), zap.String("status", status))
 		return nil, err
 	}
 
 	if input.Audit != nil && status == "completed" {
 		helpers.LogActivity(input.Audit.UserID, "UPDATE", "ORDER", "Order "+order.InvoiceNumber+" completed", input.Audit.IPAddress, input.Audit.UserAgent)
 	}
+	logger.Info("order status updated", zap.String("module", "ORDER"), zap.Uint("order_id", id), zap.String("status", status))
 
 	updated, err := s.orderRepo.FindByID(id)
 	if err != nil {
@@ -137,6 +142,7 @@ func (s *orderService) UpdatePayment(id uint, input UpdateOrderPaymentInput) (*d
 
 	order, err := s.orderRepo.FindByID(id)
 	if err != nil {
+		logger.Error("failed to find order before payment update", err, zap.String("module", "ORDER"), zap.Uint("order_id", id))
 		return nil, err
 	}
 	if order == nil {
@@ -145,8 +151,10 @@ func (s *orderService) UpdatePayment(id uint, input UpdateOrderPaymentInput) (*d
 
 	order.PaymentStatus = paymentStatus
 	if err := s.orderRepo.Update(order); err != nil {
+		logger.Error("failed to update order payment", err, zap.String("module", "ORDER"), zap.Uint("order_id", id), zap.String("payment_status", paymentStatus))
 		return nil, err
 	}
+	logger.Info("order payment updated", zap.String("module", "ORDER"), zap.Uint("order_id", id), zap.String("payment_status", paymentStatus))
 
 	updated, err := s.orderRepo.FindByID(id)
 	if err != nil {

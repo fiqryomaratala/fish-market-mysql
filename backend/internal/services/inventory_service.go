@@ -8,8 +8,10 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/dto"
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 )
 
 var ErrInventoryNotFound = errors.New("inventory not found")
@@ -115,6 +117,7 @@ func (s *inventoryService) GetTransactions(params InventoryTransactionListParams
 func (s *inventoryService) CreateHarvestInventory(batch *models.FishBatch, totalWeight float64) error {
 	product, err := s.productRepo.FindByFishType(batch.FishType)
 	if err != nil {
+		logger.Error("failed to find product by fish type for inventory stock in", err, zap.String("module", "INVENTORY"), zap.String("fish_type", batch.FishType))
 		return err
 	}
 	if product == nil {
@@ -123,6 +126,7 @@ func (s *inventoryService) CreateHarvestInventory(batch *models.FishBatch, total
 
 	inventory, err := s.inventoryRepo.FindByProductAndBatch(product.ID, batch.ID)
 	if err != nil {
+		logger.Error("failed to find inventory by product and batch", err, zap.String("module", "INVENTORY"), zap.Uint("product_id", product.ID), zap.Uint("batch_id", batch.ID))
 		return err
 	}
 
@@ -135,28 +139,37 @@ func (s *inventoryService) CreateHarvestInventory(batch *models.FishBatch, total
 			Status:      "available",
 		}
 		if err := s.inventoryRepo.Create(inventory); err != nil {
+			logger.Error("failed to create inventory stock in", err, zap.String("module", "INVENTORY"), zap.Uint("product_id", product.ID))
 			return err
 		}
 	} else {
 		inventory.Quantity += totalWeight
 		inventory.Status = "available"
 		if err := s.inventoryRepo.Update(inventory); err != nil {
+			logger.Error("failed to update inventory stock in", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", inventory.ID))
 			return err
 		}
 	}
 
-	return s.inventoryTransactionRepo.Create(&models.InventoryTransaction{
+	if err := s.inventoryTransactionRepo.Create(&models.InventoryTransaction{
 		InventoryID: inventory.ID,
 		Type:        "IN",
 		Quantity:    totalWeight,
 		Description: "Harvest Result",
 		Reference:   batch.BatchCode,
-	})
+	}); err != nil {
+		logger.Error("failed to create inventory transaction IN", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", inventory.ID))
+		return err
+	}
+
+	logger.Info("inventory stock in recorded", zap.String("module", "INVENTORY"), zap.Uint("inventory_id", inventory.ID), zap.Float64("quantity", totalWeight))
+	return nil
 }
 
 func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.InventoryItem, error) {
 	item, err := s.inventoryRepo.FindByID(input.InventoryID)
 	if err != nil {
+		logger.Error("failed to find inventory before adjustment", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", input.InventoryID))
 		return nil, err
 	}
 	if item == nil {
@@ -169,6 +182,7 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 	}
 
 	if err := s.inventoryRepo.Update(item); err != nil {
+		logger.Error("failed to update inventory adjustment", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
 		return nil, err
 	}
 
@@ -179,6 +193,7 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 		Description: strings.TrimSpace(input.Description),
 		Reference:   strings.TrimSpace(input.Reference),
 	}); err != nil {
+		logger.Error("failed to create inventory transaction adjustment", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
 		return nil, err
 	}
 
@@ -199,12 +214,14 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 	}
 
 	result := toInventoryDTO(updated)
+	logger.Info("inventory adjusted", zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID), zap.Float64("quantity", input.Quantity))
 	return &result, nil
 }
 
 func (s *inventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error {
 	items, err := s.inventoryRepo.FindAvailableByProduct(productID)
 	if err != nil {
+		logger.Error("failed to find available inventory for stock out", err, zap.String("module", "INVENTORY"), zap.Uint("product_id", productID))
 		return err
 	}
 
@@ -225,6 +242,7 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 		}
 
 		if err := s.inventoryRepo.Update(&item); err != nil {
+			logger.Error("failed to update inventory during stock out", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
 			return err
 		}
 
@@ -235,6 +253,7 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 			Description: strings.TrimSpace(description),
 			Reference:   strings.TrimSpace(reference),
 		}); err != nil {
+			logger.Error("failed to create inventory transaction OUT", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
 			return err
 		}
 
@@ -253,9 +272,11 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 	}
 
 	if remaining > 0 {
+		logger.Warn("inventory stock out could not be fully deducted", zap.String("module", "INVENTORY"), zap.Uint("product_id", productID), zap.Float64("remaining", remaining))
 		return ErrInsufficientInventory
 	}
 
+	logger.Info("inventory stock out recorded", zap.String("module", "INVENTORY"), zap.Uint("product_id", productID), zap.Float64("quantity", quantity))
 	return nil
 }
 

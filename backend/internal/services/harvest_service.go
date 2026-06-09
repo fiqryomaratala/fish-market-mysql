@@ -6,8 +6,10 @@ import (
 	"time"
 
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 )
 
 var ErrHarvestNotFound = errors.New("harvest not found")
@@ -69,6 +71,7 @@ func NewHarvestService(harvestRepo repositories.HarvestRepository, batchRepo rep
 func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error) {
 	batch, err := s.getFishBatch(input.FishBatchID)
 	if err != nil {
+		logger.Error("failed to get fish batch before harvest", err, zap.String("module", "HARVEST"), zap.Uint("fish_batch_id", input.FishBatchID))
 		return nil, err
 	}
 
@@ -82,6 +85,7 @@ func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error)
 	}
 
 	if err := s.harvestRepo.Create(harvest); err != nil {
+		logger.Error("failed to create harvest", err, zap.String("module", "HARVEST"), zap.Uint("fish_batch_id", input.FishBatchID))
 		return nil, err
 	}
 
@@ -91,6 +95,7 @@ func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error)
 
 	if s.inventoryService != nil {
 		if err := s.inventoryService.CreateHarvestInventory(batch, input.TotalWeight); err != nil {
+			logger.Error("failed to create harvest inventory", err, zap.String("module", "HARVEST"), zap.String("batch_code", batch.BatchCode))
 			return nil, err
 		}
 	}
@@ -106,6 +111,8 @@ func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error)
 			batch.ID,
 		)
 	}
+
+	logger.Info("harvest created", zap.String("module", "HARVEST"), zap.Uint("harvest_id", harvest.ID), zap.String("batch_code", batch.BatchCode))
 
 	return s.harvestRepo.FindByID(harvest.ID)
 }

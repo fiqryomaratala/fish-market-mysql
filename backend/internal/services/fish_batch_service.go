@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 )
 
 var ErrFishBatchNotFound = errors.New("fish batch not found")
@@ -73,6 +75,7 @@ func NewFishBatchService(batchRepo repositories.FishBatchRepository, pondRepo re
 func (s *fishBatchService) Create(input CreateFishBatchInput) (*models.FishBatch, error) {
 	pond, err := s.pondRepo.FindByID(input.PondID)
 	if err != nil {
+		logger.Error("failed to find pond before creating fish batch", err, zap.String("module", "FISH_BATCH"), zap.Uint("pond_id", input.PondID))
 		return nil, err
 	}
 	if pond == nil {
@@ -84,6 +87,7 @@ func (s *fishBatchService) Create(input CreateFishBatchInput) (*models.FishBatch
 
 	batchCode, err := s.generateBatchCode()
 	if err != nil {
+		logger.Error("failed to generate fish batch code", err, zap.String("module", "FISH_BATCH"))
 		return nil, err
 	}
 
@@ -100,12 +104,15 @@ func (s *fishBatchService) Create(input CreateFishBatchInput) (*models.FishBatch
 	}
 
 	if err := s.batchRepo.Create(batch); err != nil {
+		logger.Error("failed to create fish batch", err, zap.String("module", "FISH_BATCH"), zap.String("batch_code", batch.BatchCode))
 		return nil, err
 	}
 
 	if input.Audit != nil {
 		helpers.LogActivity(input.Audit.UserID, "CREATE", "FISH_BATCH", "Membuat batch "+batch.BatchCode, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
+
+	logger.Info("fish batch created", zap.String("module", "FISH_BATCH"), zap.String("batch_code", batch.BatchCode), zap.Uint("pond_id", batch.PondID))
 
 	return s.batchRepo.FindByID(batch.ID)
 }

@@ -3,8 +3,10 @@ package helpers
 import (
 	"strings"
 
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -12,6 +14,7 @@ var notificationRepo repositories.NotificationRepository
 
 func InitNotificationCenter(db *gorm.DB) {
 	notificationRepo = repositories.NewNotificationRepository(db)
+	logger.Info("notification center initialized")
 }
 
 func CreateNotification(
@@ -36,5 +39,18 @@ func CreateNotification(
 		IsRead:        false,
 	}
 
-	_ = notificationRepo.Create(notification)
+	if err := notificationRepo.Create(notification); err != nil {
+		logger.Error("failed to create notification", err,
+			zap.String("module", "NOTIFICATION"),
+			zap.Uint("user_id", userID),
+			zap.String("type", notification.Type),
+		)
+		return
+	}
+
+	logger.Info("notification created",
+		zap.String("module", "NOTIFICATION"),
+		zap.Uint("user_id", userID),
+		zap.String("type", notification.Type),
+	)
 }

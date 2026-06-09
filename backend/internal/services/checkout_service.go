@@ -8,8 +8,10 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/dto"
 	"github.com/fiqryomaratala/backend/internal/helpers"
+	"github.com/fiqryomaratala/backend/internal/logger"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -39,6 +41,7 @@ func NewCheckoutService(
 
 func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, error) {
 	invoiceNumber := ""
+	logger.Info("checkout started", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 	err := s.db.Transaction(func(tx *gorm.DB) error {
 		cartRepo := repositories.NewCartRepository(tx)
 		orderRepo := repositories.NewOrderRepository(tx)
@@ -49,6 +52,7 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 
 		cartItems, err := cartRepo.FindByUserID(input.UserID)
 		if err != nil {
+			logger.Error("failed to load cart items during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 			return err
 		}
 		if len(cartItems) == 0 {
@@ -57,6 +61,7 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 
 		invoiceNumber, err = s.generateInvoiceNumber(orderRepo)
 		if err != nil {
+			logger.Error("failed to generate invoice during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 			return err
 		}
 
@@ -94,6 +99,7 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 		}
 
 		if err := orderRepo.Create(order); err != nil {
+			logger.Error("failed to create order during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
 			return err
 		}
 
@@ -101,12 +107,14 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 			orderItems[index].OrderID = order.ID
 		}
 		if err := orderRepo.CreateItems(orderItems); err != nil {
+			logger.Error("failed to create order items during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
 			return err
 		}
 
 		return cartRepo.DeleteByUserID(input.UserID)
 	})
 	if err != nil {
+		logger.Error("checkout failed", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 		return nil, err
 	}
 
@@ -129,6 +137,8 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 		"ORDER",
 		0,
 	)
+
+	logger.Info("checkout successful", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID), zap.String("invoice", invoiceNumber))
 
 	return &dto.CheckoutResponse{Invoice: invoiceNumber}, nil
 }
