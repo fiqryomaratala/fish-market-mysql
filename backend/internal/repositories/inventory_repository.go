@@ -24,6 +24,7 @@ type InventoryRepository interface {
 	FindAll(filter InventoryFilter) ([]models.Inventory, int64, error)
 	FindByID(id uint) (*models.Inventory, error)
 	FindByProductAndBatch(productID, batchID uint) (*models.Inventory, error)
+	FindAvailableByProduct(productID uint) ([]models.Inventory, error)
 	GetTotalAvailableByProduct(productID uint) (float64, error)
 	Update(inventory *models.Inventory) error
 }
@@ -98,6 +99,15 @@ func (r *inventoryRepository) FindByProductAndBatch(productID, batchID uint) (*m
 		return nil, err
 	}
 	return &inventory, nil
+}
+
+func (r *inventoryRepository) FindAvailableByProduct(productID uint) ([]models.Inventory, error) {
+	var items []models.Inventory
+	err := r.db.
+		Where("product_id = ? AND quantity > 0", productID).
+		Order("created_at ASC").
+		Find(&items).Error
+	return items, err
 }
 
 func (r *inventoryRepository) GetTotalAvailableByProduct(productID uint) (float64, error) {

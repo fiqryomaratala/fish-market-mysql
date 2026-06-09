@@ -37,6 +37,7 @@ type InventoryService interface {
 	GetTransactions(params InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
 	CreateHarvestInventory(batch *models.FishBatch, totalWeight float64) error
 	Adjust(input InventoryAdjustmentInput) (*dto.InventoryItem, error)
+	DeductProductInventory(productID uint, quantity float64, reference string, description string) error
 }
 
 type inventoryService struct {
@@ -186,6 +187,52 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 
 	result := toInventoryDTO(updated)
 	return &result, nil
+}
+
+func (s *inventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string) error {
+	items, err := s.inventoryRepo.FindAvailableByProduct(productID)
+	if err != nil {
+		return err
+	}
+
+	remaining := quantity
+	for _, item := range items {
+		if remaining <= 0 {
+			break
+		}
+
+		deducted := remaining
+		if item.Quantity < deducted {
+			deducted = item.Quantity
+		}
+
+		item.Quantity -= deducted
+		if item.Quantity == 0 {
+			item.Status = "empty"
+		}
+
+		if err := s.inventoryRepo.Update(&item); err != nil {
+			return err
+		}
+
+		if err := s.inventoryTransactionRepo.Create(&models.InventoryTransaction{
+			InventoryID: item.ID,
+			Type:        "OUT",
+			Quantity:    deducted,
+			Description: strings.TrimSpace(description),
+			Reference:   strings.TrimSpace(reference),
+		}); err != nil {
+			return err
+		}
+
+		remaining -= deducted
+	}
+
+	if remaining > 0 {
+		return ErrInsufficientInventory
+	}
+
+	return nil
 }
 
 func toInventoryDTO(item *models.Inventory) dto.InventoryItem {
