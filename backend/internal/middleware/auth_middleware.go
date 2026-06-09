@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"net/http"
 	"strings"
 
 	"github.com/fiqryomaratala/backend/internal/helpers"
@@ -14,14 +13,14 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			utils.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
+			utils.Unauthorized(c)
 			c.Abort()
 			return
 		}
 
 		tokenParts := strings.SplitN(authHeader, " ", 2)
 		if len(tokenParts) != 2 || !strings.EqualFold(tokenParts[0], "Bearer") || strings.TrimSpace(tokenParts[1]) == "" {
-			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+			utils.Error(c, 401, "Invalid token")
 			c.Abort()
 			return
 		}
@@ -29,12 +28,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, err := helpers.ValidateToken(strings.TrimSpace(tokenParts[1]))
 		if err != nil {
 			if errors.Is(err, helpers.ErrInvalidToken) {
-				utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+				utils.Error(c, 401, "Invalid token")
 				c.Abort()
 				return
 			}
 
-			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid token")
+			utils.Error(c, 401, "Invalid token")
 			c.Abort()
 			return
 		}

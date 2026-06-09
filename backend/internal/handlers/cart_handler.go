@@ -45,15 +45,15 @@ func NewCartHandler(cartService services.CartService) *CartHandler {
 func (h *CartHandler) Add(c *gin.Context) {
 	var req AddToCartRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ValidationError(c, nil)
 		return
 	}
 	if req.ProductID == 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Product ID is required")
+		utils.Error(c, http.StatusBadRequest, "Product ID is required")
 		return
 	}
 	if req.Quantity <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Quantity must be greater than 0")
+		utils.Error(c, http.StatusBadRequest, "Quantity must be greater than 0")
 		return
 	}
 
@@ -66,16 +66,16 @@ func (h *CartHandler) Add(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrProductNotFound):
-			utils.ErrorResponse(c, http.StatusNotFound, "Product not found")
+			utils.NotFound(c, "Product not found")
 		case errors.Is(err, services.ErrInsufficientInventory):
-			utils.ErrorResponse(c, http.StatusBadRequest, "Inventory is not enough")
+			utils.Error(c, http.StatusBadRequest, "Inventory is not enough")
 		default:
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to add product to cart")
+			utils.InternalServerError(c)
 		}
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusCreated, "Product added to cart", result)
+	utils.Created(c, "Product added to cart", result)
 }
 
 // GetAll godoc
@@ -92,11 +92,11 @@ func (h *CartHandler) Add(c *gin.Context) {
 func (h *CartHandler) GetAll(c *gin.Context) {
 	result, err := h.cartService.GetByUserID(currentUserID(c))
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch cart")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", result)
+	utils.Success(c, "", result)
 }
 
 // Update godoc
@@ -118,17 +118,17 @@ func (h *CartHandler) GetAll(c *gin.Context) {
 func (h *CartHandler) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid cart ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid cart ID")
 		return
 	}
 
 	var req UpdateCartRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ValidationError(c, nil)
 		return
 	}
 	if req.Quantity <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Quantity must be greater than 0")
+		utils.Error(c, http.StatusBadRequest, "Quantity must be greater than 0")
 		return
 	}
 
@@ -139,16 +139,16 @@ func (h *CartHandler) Update(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrCartItemNotFound):
-			utils.ErrorResponse(c, http.StatusNotFound, "Cart item not found")
+			utils.NotFound(c, "Cart item not found")
 		case errors.Is(err, services.ErrInsufficientInventory):
-			utils.ErrorResponse(c, http.StatusBadRequest, "Inventory is not enough")
+			utils.Error(c, http.StatusBadRequest, "Inventory is not enough")
 		default:
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update cart")
+			utils.InternalServerError(c)
 		}
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Cart updated successfully", result)
+	utils.Success(c, "Cart updated successfully", result)
 }
 
 // Delete godoc
@@ -168,20 +168,20 @@ func (h *CartHandler) Update(c *gin.Context) {
 func (h *CartHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid cart ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid cart ID")
 		return
 	}
 
 	if err := h.cartService.Delete(uint(id), currentUserID(c)); err != nil {
 		if errors.Is(err, services.ErrCartItemNotFound) {
-			utils.ErrorResponse(c, http.StatusNotFound, "Cart item not found")
+			utils.NotFound(c, "Cart item not found")
 			return
 		}
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete cart item")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Cart item deleted successfully", nil)
+	utils.Success(c, "Cart item deleted successfully", nil)
 }
 
 // Clear godoc
@@ -197,11 +197,11 @@ func (h *CartHandler) Delete(c *gin.Context) {
 // @Router /cart [delete]
 func (h *CartHandler) Clear(c *gin.Context) {
 	if err := h.cartService.Clear(currentUserID(c)); err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to clear cart")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Cart cleared successfully", nil)
+	utils.Success(c, "Cart cleared successfully", nil)
 }
 
 func currentUserID(c *gin.Context) uint {

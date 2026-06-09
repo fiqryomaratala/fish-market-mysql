@@ -40,7 +40,7 @@ func (h *CheckoutHandler) Checkout(c *gin.Context) {
 	var req CheckoutRequest
 	if c.Request.ContentLength > 0 {
 		if err := c.ShouldBindJSON(&req); err != nil && !errors.Is(err, io.EOF) {
-			utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+			utils.ValidationError(c, nil)
 			return
 		}
 	}
@@ -53,14 +53,14 @@ func (h *CheckoutHandler) Checkout(c *gin.Context) {
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrCartEmpty):
-			utils.ErrorResponse(c, http.StatusBadRequest, "Cart is empty")
+			utils.Error(c, http.StatusBadRequest, "Cart is empty")
 		case errors.Is(err, services.ErrInsufficientInventory):
-			utils.ErrorResponse(c, http.StatusBadRequest, "Inventory is not enough")
+			utils.Error(c, http.StatusBadRequest, "Inventory is not enough")
 		default:
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to checkout")
+			utils.InternalServerError(c)
 		}
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusCreated, "", result)
+	utils.Created(c, "", result)
 }

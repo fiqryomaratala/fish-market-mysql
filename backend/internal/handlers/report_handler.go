@@ -42,17 +42,17 @@ func NewReportHandler(reportService services.ReportService, exportService servic
 func (h *ReportHandler) GetHarvestReport(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	data, err := h.reportService.GetHarvestReport(*filter)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch harvest report")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", data)
+	utils.Success(c, "", data)
 }
 
 // GetProductionReport godoc
@@ -69,11 +69,11 @@ func (h *ReportHandler) GetHarvestReport(c *gin.Context) {
 func (h *ReportHandler) GetProductionReport(c *gin.Context) {
 	data, err := h.reportService.GetProductionReport()
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch production report")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", data)
+	utils.Success(c, "", data)
 }
 
 // GetFeedingReport godoc
@@ -90,11 +90,11 @@ func (h *ReportHandler) GetProductionReport(c *gin.Context) {
 func (h *ReportHandler) GetFeedingReport(c *gin.Context) {
 	data, err := h.reportService.GetFeedingReport()
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch feeding report")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", data)
+	utils.Success(c, "", data)
 }
 
 // ExportExcel godoc
@@ -117,18 +117,18 @@ func (h *ReportHandler) GetFeedingReport(c *gin.Context) {
 func (h *ReportHandler) ExportExcel(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	content, filename, err := h.exportService.ExportExcel(c.Query("type"), *filter)
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidReportType) {
-			utils.ErrorResponse(c, http.StatusBadRequest, "Invalid report type")
+			utils.Error(c, http.StatusBadRequest, "Invalid report type")
 			return
 		}
 
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to export Excel report")
+		utils.InternalServerError(c)
 		return
 	}
 
@@ -157,18 +157,18 @@ func (h *ReportHandler) ExportExcel(c *gin.Context) {
 func (h *ReportHandler) ExportPDF(c *gin.Context) {
 	filter, err := parseHarvestReportFilter(c)
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+		utils.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	content, filename, err := h.exportService.ExportPDF(c.Query("type"), *filter)
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidReportType) {
-			utils.ErrorResponse(c, http.StatusBadRequest, "Invalid report type")
+			utils.Error(c, http.StatusBadRequest, "Invalid report type")
 			return
 		}
 
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to export PDF report")
+		utils.InternalServerError(c)
 		return
 	}
 

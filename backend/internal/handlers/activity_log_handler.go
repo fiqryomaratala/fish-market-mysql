@@ -46,11 +46,11 @@ func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 		UserID: parseUintQuery(c.Query("user_id")),
 	})
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity logs")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.Success(c, "", gin.H{
 		"items": result.Items,
 		"meta":  result.Meta,
 	})
@@ -73,20 +73,20 @@ func (h *ActivityLogHandler) GetAll(c *gin.Context) {
 func (h *ActivityLogHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid activity log ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid activity log ID")
 		return
 	}
 
 	result, err := h.activityLogService.GetByID(uint(id))
 	if err != nil {
 		if errors.Is(err, services.ErrActivityLogNotFound) {
-			utils.ErrorResponse(c, http.StatusNotFound, "Activity log not found")
+			utils.NotFound(c, "Activity log not found")
 			return
 		}
 
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch activity log")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", result)
+	utils.Success(c, "", result)
 }

@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 
+	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -49,11 +49,11 @@ func (h *InventoryHandler) GetAll(c *gin.Context) {
 		BatchID:   parseUintQuery(c.Query("batch_id")),
 	})
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch inventory")
+		middleware.HandleError(c, err)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.Success(c, "", gin.H{
 		"items": items,
 		"meta":  meta,
 	})
@@ -76,21 +76,17 @@ func (h *InventoryHandler) GetAll(c *gin.Context) {
 func (h *InventoryHandler) GetByID(c *gin.Context) {
 	id := parseUintQuery(c.Param("id"))
 	if id == 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid inventory ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid inventory ID")
 		return
 	}
 
 	item, err := h.inventoryService.GetByID(id)
 	if err != nil {
-		if errors.Is(err, services.ErrInventoryNotFound) {
-			utils.ErrorResponse(c, http.StatusNotFound, "Inventory not found")
-			return
-		}
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch inventory")
+		middleware.HandleError(c, err)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", item)
+	utils.Success(c, "", item)
 }
 
 // GetTransactions godoc
@@ -110,11 +106,11 @@ func (h *InventoryHandler) GetTransactions(c *gin.Context) {
 		Type: c.Query("type"),
 	})
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch inventory transactions")
+		middleware.HandleError(c, err)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", items)
+	utils.Success(c, "", items)
 }
 
 // Adjust godoc
@@ -135,11 +131,11 @@ func (h *InventoryHandler) GetTransactions(c *gin.Context) {
 func (h *InventoryHandler) Adjust(c *gin.Context) {
 	var req InventoryAdjustmentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Validation failed")
+		utils.ValidationError(c, nil)
 		return
 	}
 	if req.InventoryID == 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Inventory ID is required")
+		utils.Error(c, http.StatusBadRequest, "Inventory ID is required")
 		return
 	}
 
@@ -151,13 +147,9 @@ func (h *InventoryHandler) Adjust(c *gin.Context) {
 		Audit:       auditContextFromGin(c),
 	})
 	if err != nil {
-		if errors.Is(err, services.ErrInventoryNotFound) {
-			utils.ErrorResponse(c, http.StatusNotFound, "Inventory not found")
-			return
-		}
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to adjust inventory")
+		middleware.HandleError(c, err)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Inventory adjusted successfully", item)
+	utils.Success(c, "Inventory adjusted successfully", item)
 }

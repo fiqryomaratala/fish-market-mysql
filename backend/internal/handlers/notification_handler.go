@@ -43,11 +43,11 @@ func (h *NotificationHandler) GetAll(c *gin.Context) {
 		Type:   c.Query("type"),
 	})
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch notifications")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", gin.H{
+	utils.Success(c, "", gin.H{
 		"items": items,
 		"meta":  meta,
 	})
@@ -67,11 +67,11 @@ func (h *NotificationHandler) GetAll(c *gin.Context) {
 func (h *NotificationHandler) GetUnread(c *gin.Context) {
 	items, err := h.notificationService.GetUnread(currentUserID(c))
 	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch unread notifications")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "", items)
+	utils.Success(c, "", items)
 }
 
 // MarkAsRead godoc
@@ -91,23 +91,23 @@ func (h *NotificationHandler) GetUnread(c *gin.Context) {
 func (h *NotificationHandler) MarkAsRead(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid notification ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid notification ID")
 		return
 	}
 
 	if err := h.notificationService.MarkAsRead(uint(id), currentUserID(c)); err != nil {
 		switch {
 		case errors.Is(err, services.ErrNotificationNotFound):
-			utils.ErrorResponse(c, http.StatusNotFound, "Notification not found")
+			utils.NotFound(c, "Notification not found")
 		case errors.Is(err, services.ErrForbiddenNotificationAccess):
-			utils.ErrorResponse(c, http.StatusForbidden, "Forbidden")
+			utils.Forbidden(c)
 		default:
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to mark notification as read")
+			utils.InternalServerError(c)
 		}
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Notification marked as read", nil)
+	utils.Success(c, "Notification marked as read", nil)
 }
 
 // MarkAllAsRead godoc
@@ -123,11 +123,11 @@ func (h *NotificationHandler) MarkAsRead(c *gin.Context) {
 // @Router /notifications/read-all [put]
 func (h *NotificationHandler) MarkAllAsRead(c *gin.Context) {
 	if err := h.notificationService.MarkAllAsRead(currentUserID(c)); err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to mark all notifications as read")
+		utils.InternalServerError(c)
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "All notifications marked as read", nil)
+	utils.Success(c, "All notifications marked as read", nil)
 }
 
 // Delete godoc
@@ -147,21 +147,21 @@ func (h *NotificationHandler) MarkAllAsRead(c *gin.Context) {
 func (h *NotificationHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid notification ID")
+		utils.Error(c, http.StatusBadRequest, "Invalid notification ID")
 		return
 	}
 
 	if err := h.notificationService.Delete(uint(id), currentUserID(c)); err != nil {
 		switch {
 		case errors.Is(err, services.ErrNotificationNotFound):
-			utils.ErrorResponse(c, http.StatusNotFound, "Notification not found")
+			utils.NotFound(c, "Notification not found")
 		case errors.Is(err, services.ErrForbiddenNotificationAccess):
-			utils.ErrorResponse(c, http.StatusForbidden, "Forbidden")
+			utils.Forbidden(c)
 		default:
-			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to delete notification")
+			utils.InternalServerError(c)
 		}
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusOK, "Notification deleted successfully", nil)
+	utils.Success(c, "Notification deleted successfully", nil)
 }
