@@ -7,6 +7,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,11 +16,11 @@ type OrderHandler struct {
 }
 
 type UpdateOrderStatusRequest struct {
-	Status string `json:"status"`
+	Status string `json:"status" validate:"required,oneof=pending processing shipping completed cancelled"`
 }
 
 type UpdateOrderPaymentRequest struct {
-	PaymentStatus string `json:"payment_status"`
+	PaymentStatus string `json:"payment_status" validate:"required,oneof=unpaid paid"`
 }
 
 func NewOrderHandler(orderService services.OrderService) *OrderHandler {
@@ -114,7 +115,11 @@ func (h *OrderHandler) UpdateStatus(c *gin.Context) {
 
 	var req UpdateOrderStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 
@@ -155,7 +160,11 @@ func (h *OrderHandler) UpdatePayment(c *gin.Context) {
 
 	var req UpdateOrderPaymentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 

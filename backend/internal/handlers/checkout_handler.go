@@ -7,6 +7,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +16,7 @@ type CheckoutHandler struct {
 }
 
 type CheckoutRequest struct {
-	ShippingAddress string `json:"shipping_address"`
+	ShippingAddress string `json:"shipping_address" validate:"max=255"`
 }
 
 func NewCheckoutHandler(checkoutService services.CheckoutService) *CheckoutHandler {
@@ -40,7 +41,11 @@ func (h *CheckoutHandler) Checkout(c *gin.Context) {
 	var req CheckoutRequest
 	if c.Request.ContentLength > 0 {
 		if err := c.ShouldBindJSON(&req); err != nil && !errors.Is(err, io.EOF) {
-			utils.ValidationError(c, nil)
+			utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+			return
+		}
+		if err := appvalidator.ValidateStruct(req); err != nil {
+			utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 			return
 		}
 	}

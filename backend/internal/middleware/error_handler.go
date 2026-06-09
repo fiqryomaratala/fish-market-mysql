@@ -7,6 +7,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -38,7 +39,7 @@ func HandleError(c *gin.Context, err error) {
 		errors.Is(err, services.ErrForbiddenNotificationAccess):
 		utils.Forbidden(c)
 	case isValidationError(err):
-		utils.ValidationError(c, err.Error())
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 	default:
 		utils.InternalServerError(c)
 	}

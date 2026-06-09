@@ -11,6 +11,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,11 +20,11 @@ type HarvestHandler struct {
 }
 
 type HarvestRequest struct {
-	FishBatchID   uint    `json:"fish_batch_id"`
-	HarvestDate   string  `json:"harvest_date"`
-	TotalWeight   float64 `json:"total_weight"`
-	FishCount     int     `json:"fish_count"`
-	AverageWeight float64 `json:"average_weight"`
+	FishBatchID   uint    `json:"fish_batch_id" validate:"required"`
+	HarvestDate   string  `json:"harvest_date" validate:"required"`
+	TotalWeight   float64 `json:"total_weight" validate:"gt=0"`
+	FishCount     int     `json:"fish_count" validate:"gt=0"`
+	AverageWeight float64 `json:"average_weight" validate:"gte=0"`
 	Notes         string  `json:"notes"`
 }
 
@@ -57,9 +58,9 @@ func NewHarvestHandler(harvestService services.HarvestService) *HarvestHandler {
 // @Failure 500 {object} APIResponse
 // @Router /harvests [post]
 func (h *HarvestHandler) Create(c *gin.Context) {
-	input, err := parseHarvestRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseHarvestRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -185,9 +186,9 @@ func (h *HarvestHandler) Update(c *gin.Context) {
 		return
 	}
 
-	input, err := parseHarvestRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseHarvestRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 
@@ -257,28 +258,18 @@ func (h *HarvestHandler) Summary(c *gin.Context) {
 	utils.Success(c, "Harvest summary fetched successfully", summary)
 }
 
-func parseHarvestRequest(c *gin.Context) (*services.SaveHarvestInput, error) {
+func parseHarvestRequest(c *gin.Context) (*services.SaveHarvestInput, interface{}) {
 	var req HarvestRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, errors.New("Validation failed")
+		return nil, appvalidator.FieldError("error", "invalid request body")
 	}
-
-	if req.FishBatchID == 0 {
-		return nil, errors.New("Fish batch ID is required")
-	}
-	if req.TotalWeight <= 0 {
-		return nil, errors.New("Total weight must be greater than 0")
-	}
-	if req.FishCount <= 0 {
-		return nil, errors.New("Fish count must be greater than 0")
-	}
-	if req.AverageWeight < 0 {
-		return nil, errors.New("Average weight must be greater than or equal to 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		return nil, appvalidator.FormatValidationErrors(err)
 	}
 
 	harvestDate, err := time.Parse(dateLayout, strings.TrimSpace(req.HarvestDate))
 	if err != nil {
-		return nil, errors.New("Harvest date must use format YYYY-MM-DD")
+		return nil, appvalidator.FieldError("harvest_date", "harvest_date must use format YYYY-MM-DD")
 	}
 
 	return &services.SaveHarvestInput{

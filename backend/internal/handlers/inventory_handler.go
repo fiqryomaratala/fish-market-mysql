@@ -6,6 +6,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +15,7 @@ type InventoryHandler struct {
 }
 
 type InventoryAdjustmentRequest struct {
-	InventoryID uint    `json:"inventory_id"`
+	InventoryID uint    `json:"inventory_id" validate:"required"`
 	Quantity    float64 `json:"quantity"`
 	Description string  `json:"description"`
 }
@@ -131,11 +132,11 @@ func (h *InventoryHandler) GetTransactions(c *gin.Context) {
 func (h *InventoryHandler) Adjust(c *gin.Context) {
 	var req InventoryAdjustmentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
 		return
 	}
-	if req.InventoryID == 0 {
-		utils.Error(c, http.StatusBadRequest, "Inventory ID is required")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 

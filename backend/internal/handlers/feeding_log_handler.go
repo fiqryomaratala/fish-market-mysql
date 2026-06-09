@@ -10,6 +10,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,10 +19,10 @@ type FeedingLogHandler struct {
 }
 
 type FeedingLogRequest struct {
-	FishBatchID uint    `json:"fish_batch_id"`
-	FeedType    string  `json:"feed_type"`
-	FeedAmount  float64 `json:"feed_amount"`
-	FeedTime    string  `json:"feed_time"`
+	FishBatchID uint    `json:"fish_batch_id" validate:"required"`
+	FeedType    string  `json:"feed_type" validate:"required"`
+	FeedAmount  float64 `json:"feed_amount" validate:"gt=0"`
+	FeedTime    string  `json:"feed_time" validate:"required"`
 	Notes       string  `json:"notes"`
 }
 
@@ -63,9 +64,9 @@ func NewFeedingLogHandler(logService services.FeedingLogService) *FeedingLogHand
 // @Failure 500 {object} APIResponse
 // @Router /feeding-logs [post]
 func (h *FeedingLogHandler) Create(c *gin.Context) {
-	input, err := parseFeedingLogRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseFeedingLogRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -196,9 +197,9 @@ func (h *FeedingLogHandler) Update(c *gin.Context) {
 		return
 	}
 
-	input, err := parseFeedingLogRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseFeedingLogRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 
@@ -252,33 +253,23 @@ func (h *FeedingLogHandler) Delete(c *gin.Context) {
 	utils.Success(c, "Feeding log deleted successfully", nil)
 }
 
-func parseFeedingLogRequest(c *gin.Context) (*services.SaveFeedingLogInput, error) {
+func parseFeedingLogRequest(c *gin.Context) (*services.SaveFeedingLogInput, interface{}) {
 	var req FeedingLogRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, errors.New("Validation failed")
+		return nil, appvalidator.FieldError("error", "invalid request body")
 	}
-
-	if req.FishBatchID == 0 {
-		return nil, errors.New("Fish batch ID is required")
-	}
-
-	feedType := strings.TrimSpace(req.FeedType)
-	if feedType == "" {
-		return nil, errors.New("Feed type is required")
-	}
-
-	if req.FeedAmount <= 0 {
-		return nil, errors.New("Feed amount must be greater than 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		return nil, appvalidator.FormatValidationErrors(err)
 	}
 
 	feedTime, err := time.Parse(time.RFC3339, strings.TrimSpace(req.FeedTime))
 	if err != nil {
-		return nil, errors.New("Feed time must use RFC3339 format")
+		return nil, appvalidator.FieldError("feed_time", "feed_time must use RFC3339 format")
 	}
 
 	return &services.SaveFeedingLogInput{
 		FishBatchID: req.FishBatchID,
-		FeedType:    feedType,
+		FeedType:    strings.TrimSpace(req.FeedType),
 		FeedAmount:  req.FeedAmount,
 		FeedTime:    feedTime,
 		Notes:       strings.TrimSpace(req.Notes),

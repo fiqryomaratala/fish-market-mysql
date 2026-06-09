@@ -4,12 +4,12 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +26,14 @@ type ProductResponse struct {
 	Category    string  `json:"category"`
 	ImageURL    string  `json:"image_url"`
 	Status      string  `json:"status"`
+}
+
+type ProductRequest struct {
+	Name        string  `form:"name" validate:"required"`
+	Description string  `form:"description"`
+	Price       float64 `form:"price" validate:"gt=0"`
+	Stock       int     `form:"stock" validate:"gte=0"`
+	Category    string  `form:"category"`
 }
 
 func NewProductHandler(productService services.ProductService) *ProductHandler {
@@ -52,9 +60,9 @@ func NewProductHandler(productService services.ProductService) *ProductHandler {
 // @Failure 500 {object} APIResponse
 // @Router /admin/products [post]
 func (h *ProductHandler) Create(c *gin.Context) {
-	input, err := parseProductForm(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseProductForm(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 
@@ -178,9 +186,9 @@ func (h *ProductHandler) Update(c *gin.Context) {
 		return
 	}
 
-	input, err := parseProductForm(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parseProductForm(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 
@@ -236,42 +244,23 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 	utils.Success(c, "Product deleted successfully", nil)
 }
 
-type productFormInput struct {
-	Name        string
-	Description string
-	Price       float64
-	Stock       int
-	Category    string
-}
+type productFormInput = ProductRequest
 
-func parseProductForm(c *gin.Context) (*productFormInput, error) {
-	name := strings.TrimSpace(c.PostForm("name"))
-	if name == "" {
-		return nil, errors.New("Name is required")
+func parseProductForm(c *gin.Context) (*productFormInput, interface{}) {
+	var req ProductRequest
+	if err := c.ShouldBind(&req); err != nil {
+		return nil, appvalidator.FieldError("error", "invalid request body")
 	}
-
-	price, err := strconv.ParseFloat(strings.TrimSpace(c.PostForm("price")), 64)
-	if err != nil {
-		return nil, errors.New("Price must be a valid number")
-	}
-	if price <= 0 {
-		return nil, errors.New("Price must be greater than 0")
-	}
-
-	stock, err := strconv.Atoi(strings.TrimSpace(c.DefaultPostForm("stock", "0")))
-	if err != nil {
-		return nil, errors.New("Stock must be a valid integer")
-	}
-	if stock < 0 {
-		return nil, errors.New("Stock must be greater than or equal to 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		return nil, appvalidator.FormatValidationErrors(err)
 	}
 
 	return &productFormInput{
-		Name:        name,
-		Description: strings.TrimSpace(c.PostForm("description")),
-		Price:       price,
-		Stock:       stock,
-		Category:    strings.TrimSpace(c.PostForm("category")),
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		Stock:       req.Stock,
+		Category:    req.Category,
 	}, nil
 }
 

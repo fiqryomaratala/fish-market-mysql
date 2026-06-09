@@ -10,6 +10,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,23 +21,23 @@ type FishBatchHandler struct {
 }
 
 type CreateFishBatchRequest struct {
-	PondID          uint    `json:"pond_id"`
-	FishType        string  `json:"fish_type"`
-	SeedCount       int     `json:"seed_count"`
-	AverageWeight   float64 `json:"average_weight"`
-	StartDate       string  `json:"start_date"`
-	ExpectedHarvest string  `json:"expected_harvest"`
+	PondID          uint    `json:"pond_id" validate:"required"`
+	FishType        string  `json:"fish_type" validate:"required"`
+	SeedCount       int     `json:"seed_count" validate:"gte=0"`
+	AverageWeight   float64 `json:"average_weight" validate:"gte=0"`
+	StartDate       string  `json:"start_date" validate:"required"`
+	ExpectedHarvest string  `json:"expected_harvest" validate:"required"`
 }
 
 type UpdateFishBatchRequest struct {
-	PondID          uint    `json:"pond_id"`
-	FishType        string  `json:"fish_type"`
-	SeedCount       int     `json:"seed_count"`
-	CurrentCount    int     `json:"current_count"`
-	AverageWeight   float64 `json:"average_weight"`
-	StartDate       string  `json:"start_date"`
-	ExpectedHarvest string  `json:"expected_harvest"`
-	Status          string  `json:"status"`
+	PondID          uint    `json:"pond_id" validate:"required"`
+	FishType        string  `json:"fish_type" validate:"required"`
+	SeedCount       int     `json:"seed_count" validate:"gte=0"`
+	CurrentCount    int     `json:"current_count" validate:"gte=0"`
+	AverageWeight   float64 `json:"average_weight" validate:"gte=0"`
+	StartDate       string  `json:"start_date" validate:"required"`
+	ExpectedHarvest string  `json:"expected_harvest" validate:"required"`
+	Status          string  `json:"status" validate:"required"`
 }
 
 type PondSummaryResponse struct {
@@ -81,13 +82,17 @@ func NewFishBatchHandler(batchService services.FishBatchService) *FishBatchHandl
 func (h *FishBatchHandler) Create(c *gin.Context) {
 	var req CreateFishBatchRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 
 	input, err := validateCreateFishBatchRequest(req)
 	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+		utils.ValidationError(c, appvalidator.FieldError("date", err.Error()))
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -216,13 +221,17 @@ func (h *FishBatchHandler) Update(c *gin.Context) {
 
 	var req UpdateFishBatchRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 
 	input, err := validateUpdateFishBatchRequest(req)
 	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+		utils.ValidationError(c, appvalidator.FieldError("date", err.Error()))
 		return
 	}
 
@@ -313,14 +322,6 @@ func validateUpdateFishBatchRequest(req UpdateFishBatchRequest) (*services.Updat
 	if err != nil {
 		return nil, err
 	}
-	if req.CurrentCount < 0 {
-		return nil, errors.New("Current count must be greater than or equal to 0")
-	}
-	status := strings.TrimSpace(req.Status)
-	if status == "" {
-		return nil, errors.New("Status is required")
-	}
-
 	return &services.UpdateFishBatchInput{
 		PondID:          req.PondID,
 		FishType:        strings.TrimSpace(req.FishType),
@@ -329,32 +330,19 @@ func validateUpdateFishBatchRequest(req UpdateFishBatchRequest) (*services.Updat
 		AverageWeight:   req.AverageWeight,
 		StartDate:       startDate,
 		ExpectedHarvest: expectedHarvest,
-		Status:          status,
+		Status:          strings.TrimSpace(req.Status),
 	}, nil
 }
 
 func validateFishBatchCore(pondID uint, fishType string, seedCount int, averageWeight float64, startDateValue, expectedHarvestValue string) (time.Time, time.Time, error) {
-	if pondID == 0 {
-		return time.Time{}, time.Time{}, errors.New("Pond ID is required")
-	}
-	if strings.TrimSpace(fishType) == "" {
-		return time.Time{}, time.Time{}, errors.New("Fish type is required")
-	}
-	if seedCount < 0 {
-		return time.Time{}, time.Time{}, errors.New("Seed count must be greater than or equal to 0")
-	}
-	if averageWeight < 0 {
-		return time.Time{}, time.Time{}, errors.New("Average weight must be greater than or equal to 0")
-	}
-
 	startDate, err := time.Parse(dateLayout, strings.TrimSpace(startDateValue))
 	if err != nil {
-		return time.Time{}, time.Time{}, errors.New("Start date must use format YYYY-MM-DD")
+		return time.Time{}, time.Time{}, errors.New("start_date must use format YYYY-MM-DD")
 	}
 
 	expectedHarvest, err := time.Parse(dateLayout, strings.TrimSpace(expectedHarvestValue))
 	if err != nil {
-		return time.Time{}, time.Time{}, errors.New("Expected harvest must use format YYYY-MM-DD")
+		return time.Time{}, time.Time{}, errors.New("expected_harvest must use format YYYY-MM-DD")
 	}
 
 	return startDate, expectedHarvest, nil

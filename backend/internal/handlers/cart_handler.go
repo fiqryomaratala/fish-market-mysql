@@ -7,6 +7,7 @@ import (
 
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,12 +16,12 @@ type CartHandler struct {
 }
 
 type AddToCartRequest struct {
-	ProductID uint `json:"product_id"`
-	Quantity  int  `json:"quantity"`
+	ProductID uint `json:"product_id" validate:"required"`
+	Quantity  int  `json:"quantity" validate:"gt=0"`
 }
 
 type UpdateCartRequest struct {
-	Quantity int `json:"quantity"`
+	Quantity int `json:"quantity" validate:"gt=0"`
 }
 
 func NewCartHandler(cartService services.CartService) *CartHandler {
@@ -45,15 +46,11 @@ func NewCartHandler(cartService services.CartService) *CartHandler {
 func (h *CartHandler) Add(c *gin.Context) {
 	var req AddToCartRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
 		return
 	}
-	if req.ProductID == 0 {
-		utils.Error(c, http.StatusBadRequest, "Product ID is required")
-		return
-	}
-	if req.Quantity <= 0 {
-		utils.Error(c, http.StatusBadRequest, "Quantity must be greater than 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 
@@ -124,11 +121,11 @@ func (h *CartHandler) Update(c *gin.Context) {
 
 	var req UpdateCartRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ValidationError(c, nil)
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
 		return
 	}
-	if req.Quantity <= 0 {
-		utils.Error(c, http.StatusBadRequest, "Quantity must be greater than 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
 		return
 	}
 

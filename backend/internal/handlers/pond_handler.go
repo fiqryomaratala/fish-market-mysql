@@ -9,6 +9,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
+	appvalidator "github.com/fiqryomaratala/backend/internal/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,10 +18,10 @@ type PondHandler struct {
 }
 
 type PondRequest struct {
-	Name        string  `json:"name"`
+	Name        string  `json:"name" validate:"required,min=3,max=100"`
 	Location    string  `json:"location"`
-	Capacity    int     `json:"capacity"`
-	Area        float64 `json:"area"`
+	Capacity    int     `json:"capacity" validate:"gte=0"`
+	Area        float64 `json:"area" validate:"gte=0"`
 	WaterType   string  `json:"water_type"`
 	Description string  `json:"description"`
 }
@@ -55,9 +56,9 @@ func NewPondHandler(pondService services.PondService) *PondHandler {
 // @Failure 500 {object} APIResponse
 // @Router /ponds [post]
 func (h *PondHandler) Create(c *gin.Context) {
-	input, err := parsePondRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parsePondRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 	input.Audit = auditContextFromGin(c)
@@ -172,9 +173,9 @@ func (h *PondHandler) Update(c *gin.Context) {
 		return
 	}
 
-	input, err := parsePondRequest(c)
-	if err != nil {
-		utils.Error(c, http.StatusBadRequest, err.Error())
+	input, validationErrors := parsePondRequest(c)
+	if validationErrors != nil {
+		utils.ValidationError(c, validationErrors)
 		return
 	}
 
@@ -226,30 +227,22 @@ func (h *PondHandler) Delete(c *gin.Context) {
 	utils.Success(c, "Pond deleted successfully", nil)
 }
 
-func parsePondRequest(c *gin.Context) (*services.SavePondInput, error) {
+func parsePondRequest(c *gin.Context) (*services.SavePondInput, interface{}) {
 	var req PondRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, errors.New("Validation failed")
+		return nil, appvalidator.FieldError("error", "invalid request body")
 	}
-
-	name := strings.TrimSpace(req.Name)
-	if name == "" {
-		return nil, errors.New("Name is required")
-	}
-	if req.Capacity < 0 {
-		return nil, errors.New("Capacity must be greater than or equal to 0")
-	}
-	if req.Area < 0 {
-		return nil, errors.New("Area must be greater than or equal to 0")
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		return nil, appvalidator.FormatValidationErrors(err)
 	}
 
 	return &services.SavePondInput{
-		Name:        name,
-		Location:    req.Location,
+		Name:        strings.TrimSpace(req.Name),
+		Location:    strings.TrimSpace(req.Location),
 		Capacity:    req.Capacity,
 		Area:        req.Area,
-		WaterType:   req.WaterType,
-		Description: req.Description,
+		WaterType:   strings.TrimSpace(req.WaterType),
+		Description: strings.TrimSpace(req.Description),
 	}, nil
 }
 
