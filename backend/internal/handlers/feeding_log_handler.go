@@ -53,6 +53,7 @@ func (h *FeedingLogHandler) Create(c *gin.Context) {
 		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	input.Audit = auditContextFromGin(c)
 
 	log, err := h.logService.Create(*input)
 	if err != nil {

@@ -33,6 +33,7 @@ type CreateProductInput struct {
 	Stock       int
 	Category    string
 	Image       *multipart.FileHeader
+	Audit       *AuditContext
 }
 
 type UpdateProductInput struct {
@@ -42,6 +43,7 @@ type UpdateProductInput struct {
 	Stock       int
 	Category    string
 	Image       *multipart.FileHeader
+	Audit       *AuditContext
 }
 
 type ProductService interface {
@@ -49,7 +51,7 @@ type ProductService interface {
 	GetAll(params ProductListParams) (*ProductListResult, error)
 	GetByID(id uint) (*models.Product, error)
 	Update(id uint, input UpdateProductInput) (*models.Product, error)
-	Delete(id uint) error
+	Delete(id uint, audit *AuditContext) error
 }
 
 type productService struct {
@@ -83,6 +85,10 @@ func (s *productService) Create(input CreateProductInput) (*models.Product, erro
 	if err := s.productRepo.Create(product); err != nil {
 		_ = helpers.DeleteUploadedFile(imageURL)
 		return nil, err
+	}
+
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "CREATE", "PRODUCT", "Membuat produk "+product.Name, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
 	return product, nil
@@ -155,10 +161,14 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 		_ = helpers.DeleteUploadedFile(oldImageURL)
 	}
 
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "UPDATE", "PRODUCT", "Memperbarui produk "+product.Name, input.Audit.IPAddress, input.Audit.UserAgent)
+	}
+
 	return product, nil
 }
 
-func (s *productService) Delete(id uint) error {
+func (s *productService) Delete(id uint, audit *AuditContext) error {
 	product, err := s.productRepo.FindByID(id)
 	if err != nil {
 		return err
@@ -173,6 +183,10 @@ func (s *productService) Delete(id uint) error {
 
 	if product.ImageURL != "" {
 		_ = helpers.DeleteUploadedFile(product.ImageURL)
+	}
+
+	if audit != nil {
+		helpers.LogActivity(audit.UserID, "DELETE", "PRODUCT", "Menghapus produk "+product.Name, audit.IPAddress, audit.UserAgent)
 	}
 
 	return nil

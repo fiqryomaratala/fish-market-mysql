@@ -46,6 +46,7 @@ func (h *HarvestHandler) Create(c *gin.Context) {
 		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	input.Audit = auditContextFromGin(c)
 
 	harvest, err := h.harvestService.Create(*input)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 )
@@ -33,6 +34,7 @@ type SaveHarvestInput struct {
 	FishCount     int
 	AverageWeight float64
 	Notes         string
+	Audit         *AuditContext
 }
 
 type HarvestSummaryResult struct {
@@ -83,6 +85,10 @@ func (s *harvestService) Create(input SaveHarvestInput) (*models.Harvest, error)
 
 	if err := s.markBatchAsHarvested(batch, input.FishCount); err != nil {
 		return nil, err
+	}
+
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "CREATE", "HARVEST", "Membuat harvest untuk batch "+batch.BatchCode, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
 	return s.harvestRepo.FindByID(harvest.ID)

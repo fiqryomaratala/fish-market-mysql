@@ -79,7 +79,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	result, err := h.authService.Login(req.Email, req.Password)
+	result, err := h.authService.Login(req.Email, req.Password, &services.AuditContext{
+		IPAddress: c.ClientIP(),
+		UserAgent: c.Request.UserAgent(),
+	})
 	if err != nil {
 		if errors.Is(err, services.ErrInvalidCredentials) {
 			ErrorResponse(c, http.StatusUnauthorized, "Invalid email or password")

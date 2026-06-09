@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/fiqryomaratala/backend/config"
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/routes"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ func main() {
 
 	db := config.ConnectDB()
 	config.Migrate()
+	helpers.InitActivityLogger(db)
 
 	if err := os.MkdirAll(filepath.Join("uploads", "products"), os.ModePerm); err != nil {
 		log.Fatal("Failed to create upload directory:", err)
@@ -41,6 +43,7 @@ func main() {
 	routes.RegisterTrackingRoutes(r, db)
 	routes.RegisterDashboardRoutes(r, db)
 	routes.RegisterReportRoutes(r, db)
+	routes.RegisterActivityLogRoutes(r, db)
 
 	r.Run(":" + os.Getenv("APP_PORT"))
 }

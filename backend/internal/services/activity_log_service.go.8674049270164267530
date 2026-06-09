@@ -1,0 +1,102 @@
+package services
+
+import (
+	"errors"
+	"strings"
+	"time"
+
+	"github.com/fiqryomaratala/backend/internal/dto"
+	"github.com/fiqryomaratala/backend/internal/models"
+	"github.com/fiqryomaratala/backend/internal/repositories"
+)
+
+var ErrActivityLogNotFound = errors.New("activity log not found")
+
+type AuditContext struct {
+	UserID    uint
+	IPAddress string
+	UserAgent string
+}
+
+type ActivityLogListParams struct {
+	Page   int
+	Limit  int
+	Module string
+	Action string
+	UserID uint
+}
+
+type ActivityLogListResult struct {
+	Items []dto.ActivityLogItem `json:"items"`
+	Meta  map[string]interface{} `json:"meta"`
+}
+
+type ActivityLogService interface {
+	GetAll(params ActivityLogListParams) (*ActivityLogListResult, error)
+	GetByID(id uint) (*dto.ActivityLogItem, error)
+}
+
+type activityLogService struct {
+	activityLogRepo repositories.ActivityLogRepository
+}
+
+func NewActivityLogService(activityLogRepo repositories.ActivityLogRepository) ActivityLogService {
+	return &activityLogService{activityLogRepo: activityLogRepo}
+}
+
+func (s *activityLogService) GetAll(params ActivityLogListParams) (*ActivityLogListResult, error) {
+	logs, total, err := s.activityLogRepo.FindAll(repositories.ActivityLogFilter{
+		Page:   params.Page,
+		Limit:  params.Limit,
+		Module: strings.TrimSpace(params.Module),
+		Action: strings.TrimSpace(params.Action),
+		UserID: params.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]dto.ActivityLogItem, 0, len(logs))
+	for _, log := range logs {
+		items = append(items, toActivityLogDTO(&log))
+	}
+
+	return &ActivityLogListResult{
+		Items: items,
+		Meta: map[string]interface{}{
+			"page":  params.Page,
+			"limit": params.Limit,
+			"total": total,
+		},
+	}, nil
+}
+
+func (s *activityLogService) GetByID(id uint) (*dto.ActivityLogItem, error) {
+	log, err := s.activityLogRepo.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if log == nil {
+		return nil, ErrActivityLogNotFound
+	}
+
+	item := toActivityLogDTO(log)
+	return &item, nil
+}
+
+func toActivityLogDTO(log *models.ActivityLog) dto.ActivityLogItem {
+	userName := ""
+	if strings.TrimSpace(log.User.Name) != "" {
+		userName = log.User.Name
+	}
+
+	return dto.ActivityLogItem{
+		ID:          log.ID,
+		User:        userName,
+		Action:      log.Action,
+		Module:      log.Module,
+		Description: log.Description,
+		IPAddress:   log.IPAddress,
+		CreatedAt:   log.CreatedAt.UTC().Format(time.RFC3339),
+	}
+}

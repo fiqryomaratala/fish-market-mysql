@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 )
@@ -32,6 +33,7 @@ type SaveFeedingLogInput struct {
 	FeedAmount  float64
 	FeedTime    time.Time
 	Notes       string
+	Audit       *AuditContext
 }
 
 type FeedingLogService interface {
@@ -55,7 +57,8 @@ func NewFeedingLogService(logRepo repositories.FeedingLogRepository, batchRepo r
 }
 
 func (s *feedingLogService) Create(input SaveFeedingLogInput) (*models.FeedingLog, error) {
-	if _, err := s.getFishBatch(input.FishBatchID); err != nil {
+	batch, err := s.getFishBatch(input.FishBatchID)
+	if err != nil {
 		return nil, err
 	}
 
@@ -69,6 +72,10 @@ func (s *feedingLogService) Create(input SaveFeedingLogInput) (*models.FeedingLo
 
 	if err := s.logRepo.Create(log); err != nil {
 		return nil, err
+	}
+
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "CREATE", "FEEDING_LOG", "Membuat feeding log untuk batch "+batch.BatchCode, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
 	return s.logRepo.FindByID(log.ID)

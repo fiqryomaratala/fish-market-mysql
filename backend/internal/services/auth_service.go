@@ -21,7 +21,7 @@ type LoginResult struct {
 
 type AuthService interface {
 	Register(name, email, password string) (*models.User, error)
-	Login(email, password string) (*LoginResult, error)
+	Login(email, password string, audit *AuditContext) (*LoginResult, error)
 	GetProfile(userID uint) (*models.User, error)
 }
 
@@ -64,7 +64,7 @@ func (s *authService) Register(name, email, password string) (*models.User, erro
 	return user, nil
 }
 
-func (s *authService) Login(email, password string) (*LoginResult, error) {
+func (s *authService) Login(email, password string, audit *AuditContext) (*LoginResult, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 
 	user, err := s.userRepo.FindByEmail(email)
@@ -82,6 +82,21 @@ func (s *authService) Login(email, password string) (*LoginResult, error) {
 	token, err := helpers.GenerateToken(user.ID, user.Email, user.Role)
 	if err != nil {
 		return nil, err
+	}
+
+	if audit != nil {
+		userID := audit.UserID
+		if userID == 0 {
+			userID = user.ID
+		}
+		helpers.LogActivity(
+			userID,
+			"LOGIN",
+			"AUTH",
+			"User login berhasil",
+			audit.IPAddress,
+			audit.UserAgent,
+		)
 	}
 
 	return &LoginResult{

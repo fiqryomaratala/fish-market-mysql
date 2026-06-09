@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 )
@@ -30,6 +31,7 @@ type SavePondInput struct {
 	Area        float64
 	WaterType   string
 	Description string
+	Audit       *AuditContext
 }
 
 type PondService interface {
@@ -61,6 +63,10 @@ func (s *pondService) Create(input SavePondInput) (*models.Pond, error) {
 
 	if err := s.pondRepo.Create(pond); err != nil {
 		return nil, err
+	}
+
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "CREATE", "POND", "Membuat kolam "+pond.Name, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
 	return pond, nil

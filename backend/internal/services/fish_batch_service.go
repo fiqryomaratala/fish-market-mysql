@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/repositories"
 )
@@ -35,6 +36,7 @@ type CreateFishBatchInput struct {
 	AverageWeight   float64
 	StartDate       time.Time
 	ExpectedHarvest time.Time
+	Audit           *AuditContext
 }
 
 type UpdateFishBatchInput struct {
@@ -99,6 +101,10 @@ func (s *fishBatchService) Create(input CreateFishBatchInput) (*models.FishBatch
 
 	if err := s.batchRepo.Create(batch); err != nil {
 		return nil, err
+	}
+
+	if input.Audit != nil {
+		helpers.LogActivity(input.Audit.UserID, "CREATE", "FISH_BATCH", "Membuat batch "+batch.BatchCode, input.Audit.IPAddress, input.Audit.UserAgent)
 	}
 
 	return s.batchRepo.FindByID(batch.ID)

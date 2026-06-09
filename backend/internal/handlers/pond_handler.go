@@ -45,6 +45,7 @@ func (h *PondHandler) Create(c *gin.Context) {
 		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	input.Audit = auditContextFromGin(c)
 
 	pond, err := h.pondService.Create(*input)
 	if err != nil {

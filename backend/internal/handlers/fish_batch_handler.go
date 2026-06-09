@@ -75,6 +75,7 @@ func (h *FishBatchHandler) Create(c *gin.Context) {
 		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	input.Audit = auditContextFromGin(c)
 
 	batch, err := h.batchService.Create(*input)
 	if err != nil {

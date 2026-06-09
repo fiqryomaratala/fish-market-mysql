@@ -50,6 +50,7 @@ func (h *ProductHandler) Create(c *gin.Context) {
 		Stock:       input.Stock,
 		Category:    input.Category,
 		Image:       image,
+		Audit:       auditContextFromGin(c),
 	})
 	if err != nil {
 		ErrorResponse(c, http.StatusInternalServerError, "Failed to create product")
@@ -136,6 +137,7 @@ func (h *ProductHandler) Update(c *gin.Context) {
 		Stock:       input.Stock,
 		Category:    input.Category,
 		Image:       image,
+		Audit:       auditContextFromGin(c),
 	})
 	if err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
@@ -157,7 +159,7 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := h.productService.Delete(uint(id)); err != nil {
+	if err := h.productService.Delete(uint(id), auditContextFromGin(c)); err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
 			ErrorResponse(c, http.StatusNotFound, "Product not found")
 			return
