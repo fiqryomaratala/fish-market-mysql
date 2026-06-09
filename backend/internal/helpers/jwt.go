@@ -2,9 +2,9 @@ package helpers
 
 import (
 	"errors"
-	"os"
 	"time"
 
+	"github.com/fiqryomaratala/backend/config"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -18,9 +18,15 @@ type JWTClaims struct {
 }
 
 func GenerateToken(userID uint, email, role string) (string, error) {
-	secret := os.Getenv("JWT_SECRET")
+	cfg := config.GetConfig()
+	secret := cfg.JWTSecret
 	if secret == "" {
 		return "", errors.New("jwt secret is not configured")
+	}
+
+	expiredDuration, err := time.ParseDuration(cfg.JWTExpired)
+	if err != nil {
+		expiredDuration = 24 * time.Hour
 	}
 
 	claims := JWTClaims{
@@ -28,7 +34,7 @@ func GenerateToken(userID uint, email, role string) (string, error) {
 		Email:  email,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiredDuration)),
 		},
 	}
 
@@ -38,7 +44,7 @@ func GenerateToken(userID uint, email, role string) (string, error) {
 }
 
 func ValidateToken(tokenString string) (*JWTClaims, error) {
-	secret := os.Getenv("JWT_SECRET")
+	secret := config.GetConfig().JWTSecret
 	if secret == "" {
 		return nil, errors.New("jwt secret is not configured")
 	}

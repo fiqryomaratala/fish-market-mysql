@@ -3,6 +3,7 @@ package routes
 import (
 	"path/filepath"
 
+	"github.com/fiqryomaratala/backend/config"
 	"gorm.io/gorm"
 
 	"github.com/fiqryomaratala/backend/internal/handlers"
@@ -14,7 +15,7 @@ import (
 
 func RegisterProductRoutes(r *gin.Engine, db *gorm.DB) {
 	productRepo := repositories.NewProductRepository(db)
-	productService := services.NewProductService(productRepo, filepath.Join("uploads", "products"))
+	productService := services.NewProductService(productRepo, filepath.Join(config.GetConfig().UploadPath, "products"))
 	productHandler := handlers.NewProductHandler(productService)
 
 	api := r.Group("/api")

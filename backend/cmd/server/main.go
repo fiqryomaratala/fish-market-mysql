@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 
@@ -14,7 +13,6 @@ import (
 	"github.com/fiqryomaratala/backend/routes"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -29,7 +27,8 @@ import (
 // @name Authorization
 
 func main() {
-	godotenv.Load()
+	config.LoadConfig()
+	cfg := config.GetConfig()
 	logger.InitLogger()
 	defer logger.Sync()
 
@@ -38,13 +37,14 @@ func main() {
 	helpers.InitActivityLogger(db)
 	helpers.InitNotificationCenter(db)
 
-	if err := os.MkdirAll(filepath.Join("uploads", "products"), os.ModePerm); err != nil {
-		log.Fatal("Failed to create upload directory:", err)
+	if err := os.MkdirAll(filepath.Join(cfg.UploadPath, "products"), os.ModePerm); err != nil {
+		logger.Error("failed to create upload directory", err)
+		os.Exit(1)
 	}
 
 	r := gin.New()
 	r.Use(middleware.LoggerMiddleware(), middleware.RecoveryMiddleware())
-	r.Static("/uploads", "./uploads")
+	r.Static("/uploads", filepath.Clean(cfg.UploadPath))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/", func(c *gin.Context) {
@@ -68,5 +68,8 @@ func main() {
 	routes.RegisterOrderRoutes(r, db)
 	routes.RegisterNotificationRoutes(r, db)
 
-	r.Run(":" + os.Getenv("APP_PORT"))
+	if err := r.Run(":" + cfg.AppPort); err != nil {
+		logger.Error("failed to run server", err)
+		os.Exit(1)
+	}
 }

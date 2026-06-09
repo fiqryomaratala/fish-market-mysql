@@ -3,8 +3,10 @@ package logger
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
+	"github.com/fiqryomaratala/backend/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -16,6 +18,7 @@ var (
 
 func InitLogger() {
 	once.Do(func() {
+		cfg := config.GetConfig()
 		logDir := "logs"
 		if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
 			appLogger = zap.NewNop()
@@ -37,7 +40,7 @@ func InitLogger() {
 		fileEncoder := zapcore.NewJSONEncoder(encoderConfig)
 		consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 
-		level := zap.NewAtomicLevelAt(zap.InfoLevel)
+		level := zap.NewAtomicLevelAt(parseLogLevel(cfg.LogLevel))
 		core := zapcore.NewTee(
 			zapcore.NewCore(fileEncoder, zapcore.AddSync(file), level),
 			zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), level),
@@ -76,4 +79,17 @@ func Error(message string, err error, fields ...zap.Field) {
 	}
 
 	GetLogger().Error(message, fields...)
+}
+
+func parseLogLevel(level string) zapcore.Level {
+	switch strings.ToLower(strings.TrimSpace(level)) {
+	case "debug":
+		return zap.DebugLevel
+	case "warn":
+		return zap.WarnLevel
+	case "error":
+		return zap.ErrorLevel
+	default:
+		return zap.InfoLevel
+	}
 }
