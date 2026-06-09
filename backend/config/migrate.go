@@ -13,5 +13,6 @@ func Migrate() {
 		&models.Harvest{},
 		&models.Inventory{},
 		&models.InventoryTransaction{},
+		&models.Cart{},
 	)
 }

@@ -24,6 +24,7 @@ type InventoryRepository interface {
 	FindAll(filter InventoryFilter) ([]models.Inventory, int64, error)
 	FindByID(id uint) (*models.Inventory, error)
 	FindByProductAndBatch(productID, batchID uint) (*models.Inventory, error)
+	GetTotalAvailableByProduct(productID uint) (float64, error)
 	Update(inventory *models.Inventory) error
 }
 
@@ -97,6 +98,15 @@ func (r *inventoryRepository) FindByProductAndBatch(productID, batchID uint) (*m
 		return nil, err
 	}
 	return &inventory, nil
+}
+
+func (r *inventoryRepository) GetTotalAvailableByProduct(productID uint) (float64, error) {
+	var total float64
+	err := r.db.Model(&models.Inventory{}).
+		Where("product_id = ?", productID).
+		Select("COALESCE(SUM(quantity), 0)").
+		Scan(&total).Error
+	return total, err
 }
 
 func (r *inventoryRepository) Update(inventory *models.Inventory) error {
