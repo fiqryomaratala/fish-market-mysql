@@ -154,6 +154,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Example protected endpoint accessible only by admin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Access"
+                ],
+                "summary": "Admin dashboard access",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/products": {
             "post": {
                 "security": [
@@ -1228,6 +1265,43 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get currently authenticated user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIResponse"
                         }
@@ -3835,6 +3909,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/staff/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Example protected endpoint accessible by admin and staff",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Access"
+                ],
+                "summary": "Staff dashboard access",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tracking/{batchCode}": {
             "get": {
                 "description": "Get public fish batch traceability data by batch code",
@@ -3893,6 +4004,9 @@ const docTemplate = `{
         },
         "handlers.AddToCartRequest": {
             "type": "object",
+            "required": [
+                "product_id"
+            ],
             "properties": {
                 "product_id": {
                     "type": "integer"
@@ -3906,15 +4020,23 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "shipping_address": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "handlers.CreateFishBatchRequest": {
             "type": "object",
+            "required": [
+                "expected_harvest",
+                "fish_type",
+                "pond_id",
+                "start_date"
+            ],
             "properties": {
                 "average_weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "expected_harvest": {
                     "type": "string"
@@ -3926,7 +4048,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "seed_count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "start_date": {
                     "type": "string"
@@ -3935,6 +4058,11 @@ const docTemplate = `{
         },
         "handlers.FeedingLogRequest": {
             "type": "object",
+            "required": [
+                "feed_time",
+                "feed_type",
+                "fish_batch_id"
+            ],
             "properties": {
                 "feed_amount": {
                     "type": "number"
@@ -3955,9 +4083,14 @@ const docTemplate = `{
         },
         "handlers.HarvestRequest": {
             "type": "object",
+            "required": [
+                "fish_batch_id",
+                "harvest_date"
+            ],
             "properties": {
                 "average_weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "fish_batch_id": {
                     "type": "integer"
@@ -3978,6 +4111,9 @@ const docTemplate = `{
         },
         "handlers.InventoryAdjustmentRequest": {
             "type": "object",
+            "required": [
+                "inventory_id"
+            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -4007,12 +4143,17 @@ const docTemplate = `{
         },
         "handlers.PondRequest": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "area": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "capacity": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "description": {
                     "type": "string"
@@ -4021,7 +4162,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
                 },
                 "water_type": {
                     "type": "string"
@@ -4040,7 +4183,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
                 },
                 "password": {
                     "type": "string",
@@ -4058,12 +4203,21 @@ const docTemplate = `{
         },
         "handlers.UpdateFishBatchRequest": {
             "type": "object",
+            "required": [
+                "expected_harvest",
+                "fish_type",
+                "pond_id",
+                "start_date",
+                "status"
+            ],
             "properties": {
                 "average_weight": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "current_count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "expected_harvest": {
                     "type": "string"
@@ -4075,7 +4229,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "seed_count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "start_date": {
                     "type": "string"
@@ -4087,17 +4242,34 @@ const docTemplate = `{
         },
         "handlers.UpdateOrderPaymentRequest": {
             "type": "object",
+            "required": [
+                "payment_status"
+            ],
             "properties": {
                 "payment_status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "unpaid",
+                        "paid"
+                    ]
                 }
             }
         },
         "handlers.UpdateOrderStatusRequest": {
             "type": "object",
+            "required": [
+                "status"
+            ],
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "processing",
+                        "shipping",
+                        "completed",
+                        "cancelled"
+                    ]
                 }
             }
         }
@@ -4121,6 +4293,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Backend API for fish marketplace and aquaculture management.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

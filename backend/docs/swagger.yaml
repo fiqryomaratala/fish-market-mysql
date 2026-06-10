@@ -15,15 +15,19 @@ definitions:
         type: integer
       quantity:
         type: integer
+    required:
+    - product_id
     type: object
   handlers.CheckoutRequest:
     properties:
       shipping_address:
+        maxLength: 255
         type: string
     type: object
   handlers.CreateFishBatchRequest:
     properties:
       average_weight:
+        minimum: 0
         type: number
       expected_harvest:
         type: string
@@ -32,9 +36,15 @@ definitions:
       pond_id:
         type: integer
       seed_count:
+        minimum: 0
         type: integer
       start_date:
         type: string
+    required:
+    - expected_harvest
+    - fish_type
+    - pond_id
+    - start_date
     type: object
   handlers.FeedingLogRequest:
     properties:
@@ -48,10 +58,15 @@ definitions:
         type: integer
       notes:
         type: string
+    required:
+    - feed_time
+    - feed_type
+    - fish_batch_id
     type: object
   handlers.HarvestRequest:
     properties:
       average_weight:
+        minimum: 0
         type: number
       fish_batch_id:
         type: integer
@@ -63,6 +78,9 @@ definitions:
         type: string
       total_weight:
         type: number
+    required:
+    - fish_batch_id
+    - harvest_date
     type: object
   handlers.InventoryAdjustmentRequest:
     properties:
@@ -72,6 +90,8 @@ definitions:
         type: integer
       quantity:
         type: number
+    required:
+    - inventory_id
     type: object
   handlers.LoginRequest:
     properties:
@@ -86,23 +106,31 @@ definitions:
   handlers.PondRequest:
     properties:
       area:
+        minimum: 0
         type: number
       capacity:
+        minimum: 0
         type: integer
       description:
         type: string
       location:
         type: string
       name:
+        maxLength: 100
+        minLength: 3
         type: string
       water_type:
         type: string
+    required:
+    - name
     type: object
   handlers.RegisterRequest:
     properties:
       email:
         type: string
       name:
+        maxLength: 100
+        minLength: 3
         type: string
       password:
         minLength: 8
@@ -120,8 +148,10 @@ definitions:
   handlers.UpdateFishBatchRequest:
     properties:
       average_weight:
+        minimum: 0
         type: number
       current_count:
+        minimum: 0
         type: integer
       expected_harvest:
         type: string
@@ -130,21 +160,41 @@ definitions:
       pond_id:
         type: integer
       seed_count:
+        minimum: 0
         type: integer
       start_date:
         type: string
       status:
         type: string
+    required:
+    - expected_harvest
+    - fish_type
+    - pond_id
+    - start_date
+    - status
     type: object
   handlers.UpdateOrderPaymentRequest:
     properties:
       payment_status:
+        enum:
+        - unpaid
+        - paid
         type: string
+    required:
+    - payment_status
     type: object
   handlers.UpdateOrderStatusRequest:
     properties:
       status:
+        enum:
+        - pending
+        - processing
+        - shipping
+        - completed
+        - cancelled
         type: string
+    required:
+    - status
     type: object
 info:
   contact: {}
@@ -241,6 +291,29 @@ paths:
       summary: Get activity log detail
       tags:
       - Activity Log
+  /admin/dashboard:
+    get:
+      description: Example protected endpoint accessible only by admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Admin dashboard access
+      tags:
+      - Access
   /admin/products:
     post:
       consumes:
@@ -941,6 +1014,29 @@ paths:
       summary: Checkout cart
       tags:
       - Checkout
+  /customer/profile:
+    get:
+      description: Get currently authenticated user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - Authentication
   /dashboard:
     get:
       description: Get overall dashboard summary statistics
@@ -2600,6 +2696,29 @@ paths:
       summary: Get production report
       tags:
       - Reports
+  /staff/dashboard:
+    get:
+      description: Example protected endpoint accessible by admin and staff
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Staff dashboard access
+      tags:
+      - Access
   /tracking/{batchCode}:
     get:
       description: Get public fish batch traceability data by batch code

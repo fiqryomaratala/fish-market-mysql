@@ -33,7 +33,12 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 }
 
 func (r *productRepository) Create(product *models.Product) error {
-	return r.db.Create(product).Error
+	query := r.db.Omit("FishBatch")
+	if product.FishBatchID == 0 {
+		query = query.Omit("FishBatchID")
+	}
+
+	return query.Create(product).Error
 }
 
 func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int64, error) {
@@ -95,7 +100,12 @@ func (r *productRepository) FindByFishType(fishType string) (*models.Product, er
 }
 
 func (r *productRepository) Update(product *models.Product) error {
-	return r.db.Save(product).Error
+	query := r.db.Omit("FishBatch")
+	if product.FishBatchID == 0 {
+		query = query.Omit("FishBatchID")
+	}
+
+	return query.Save(product).Error
 }
 
 func (r *productRepository) Delete(product *models.Product) error {

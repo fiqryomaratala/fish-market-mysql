@@ -144,6 +144,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 // @Failure 401 {object} APIResponse
 // @Failure 500 {object} APIResponse
 // @Router /auth/profile [get]
+// @Router /customer/profile [get]
 func (h *AuthHandler) Profile(c *gin.Context) {
 	userIDValue, exists := c.Get("user_id")
 	if !exists {

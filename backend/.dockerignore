@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+tmp
+logs
+uploads
+docs/swagger.json
+docs/swagger.yaml
+internal/tests
+internal/mocks
+**/*.backup
+**/*.tmp

@@ -32,8 +32,9 @@ func HandleError(c *gin.Context, err error) {
 		errors.Is(err, services.ErrActivityLogNotFound),
 		errors.Is(err, services.ErrUserNotFound):
 		utils.NotFound(c, err.Error())
-	case errors.Is(err, helpers.ErrInvalidToken),
-		errors.Is(err, services.ErrInvalidCredentials):
+	case errors.Is(err, services.ErrInvalidCredentials):
+		utils.Error(c, 401, "Invalid email or password")
+	case errors.Is(err, helpers.ErrInvalidToken):
 		utils.Unauthorized(c)
 	case errors.Is(err, services.ErrForbiddenOrderAccess),
 		errors.Is(err, services.ErrForbiddenNotificationAccess):
