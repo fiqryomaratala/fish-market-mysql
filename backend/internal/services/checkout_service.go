@@ -28,7 +28,10 @@ type CheckoutService interface {
 }
 
 type checkoutService struct {
-	db *gorm.DB
+	db               *gorm.DB
+	cartRepo         repositories.CartRepository
+	orderRepo        repositories.OrderRepository
+	inventoryService InventoryService
 }
 
 func NewCheckoutService(
@@ -39,80 +42,38 @@ func NewCheckoutService(
 	}
 }
 
+func NewCheckoutServiceWithDependencies(
+	cartRepo repositories.CartRepository,
+	orderRepo repositories.OrderRepository,
+	inventoryService InventoryService,
+) CheckoutService {
+	return &checkoutService{
+		cartRepo:         cartRepo,
+		orderRepo:        orderRepo,
+		inventoryService: inventoryService,
+	}
+}
+
 func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, error) {
 	invoiceNumber := ""
 	logger.Info("checkout started", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
-	err := s.db.Transaction(func(tx *gorm.DB) error {
-		cartRepo := repositories.NewCartRepository(tx)
-		orderRepo := repositories.NewOrderRepository(tx)
-		productRepo := repositories.NewProductRepository(tx)
-		inventoryRepo := repositories.NewInventoryRepository(tx)
-		transactionRepo := repositories.NewInventoryTransactionRepository(tx)
-		inventoryService := NewInventoryService(inventoryRepo, transactionRepo, productRepo)
+	var err error
+	if s.db != nil {
+		err = s.db.Transaction(func(tx *gorm.DB) error {
+			cartRepo := repositories.NewCartRepository(tx)
+			orderRepo := repositories.NewOrderRepository(tx)
+			productRepo := repositories.NewProductRepository(tx)
+			inventoryRepo := repositories.NewInventoryRepository(tx)
+			transactionRepo := repositories.NewInventoryTransactionRepository(tx)
+			inventoryService := NewInventoryService(inventoryRepo, transactionRepo, productRepo)
 
-		cartItems, err := cartRepo.FindByUserID(input.UserID)
-		if err != nil {
-			logger.Error("failed to load cart items during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
-			return err
-		}
-		if len(cartItems) == 0 {
-			return ErrCartEmpty
-		}
-
-		invoiceNumber, err = s.generateInvoiceNumber(orderRepo)
-		if err != nil {
-			logger.Error("failed to generate invoice during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
-			return err
-		}
-
-		totalPrice := 0.0
-		orderItems := make([]models.OrderItem, 0, len(cartItems))
-		for _, cartItem := range cartItems {
-			if err := inventoryService.DeductProductInventory(
-				cartItem.ProductID,
-				float64(cartItem.Quantity),
-				invoiceNumber,
-				"Checkout Order",
-				input.Audit,
-			); err != nil {
-				return err
-			}
-
-			subtotal := float64(cartItem.Quantity) * cartItem.Product.Price
-			totalPrice += subtotal
-
-			orderItems = append(orderItems, models.OrderItem{
-				ProductID: cartItem.ProductID,
-				Quantity:  cartItem.Quantity,
-				Price:     cartItem.Product.Price,
-				Subtotal:  subtotal,
-			})
-		}
-
-		order := &models.Order{
-			UserID:          input.UserID,
-			InvoiceNumber:   invoiceNumber,
-			TotalPrice:      totalPrice,
-			Status:          "pending",
-			PaymentStatus:   "unpaid",
-			ShippingAddress: strings.TrimSpace(input.ShippingAddress),
-		}
-
-		if err := orderRepo.Create(order); err != nil {
-			logger.Error("failed to create order during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
-			return err
-		}
-
-		for index := range orderItems {
-			orderItems[index].OrderID = order.ID
-		}
-		if err := orderRepo.CreateItems(orderItems); err != nil {
-			logger.Error("failed to create order items during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
-			return err
-		}
-
-		return cartRepo.DeleteByUserID(input.UserID)
-	})
+			var processErr error
+			invoiceNumber, processErr = s.processCheckout(input, cartRepo, orderRepo, inventoryService)
+			return processErr
+		})
+	} else {
+		invoiceNumber, err = s.processCheckout(input, s.cartRepo, s.orderRepo, s.inventoryService)
+	}
 	if err != nil {
 		logger.Error("checkout failed", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 		return nil, err
@@ -141,6 +102,80 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 	logger.Info("checkout successful", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID), zap.String("invoice", invoiceNumber))
 
 	return &dto.CheckoutResponse{Invoice: invoiceNumber}, nil
+}
+
+func (s *checkoutService) processCheckout(
+	input CheckoutInput,
+	cartRepo repositories.CartRepository,
+	orderRepo repositories.OrderRepository,
+	inventoryService InventoryService,
+) (string, error) {
+	cartItems, err := cartRepo.FindByUserID(input.UserID)
+	if err != nil {
+		logger.Error("failed to load cart items during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
+		return "", err
+	}
+	if len(cartItems) == 0 {
+		return "", ErrCartEmpty
+	}
+
+	invoiceNumber, err := s.generateInvoiceNumber(orderRepo)
+	if err != nil {
+		logger.Error("failed to generate invoice during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
+		return "", err
+	}
+
+	totalPrice := 0.0
+	orderItems := make([]models.OrderItem, 0, len(cartItems))
+	for _, cartItem := range cartItems {
+		if err := inventoryService.DeductProductInventory(
+			cartItem.ProductID,
+			float64(cartItem.Quantity),
+			invoiceNumber,
+			"Checkout Order",
+			input.Audit,
+		); err != nil {
+			return "", err
+		}
+
+		subtotal := float64(cartItem.Quantity) * cartItem.Product.Price
+		totalPrice += subtotal
+
+		orderItems = append(orderItems, models.OrderItem{
+			ProductID: cartItem.ProductID,
+			Quantity:  cartItem.Quantity,
+			Price:     cartItem.Product.Price,
+			Subtotal:  subtotal,
+		})
+	}
+
+	order := &models.Order{
+		UserID:          input.UserID,
+		InvoiceNumber:   invoiceNumber,
+		TotalPrice:      totalPrice,
+		Status:          "pending",
+		PaymentStatus:   "unpaid",
+		ShippingAddress: strings.TrimSpace(input.ShippingAddress),
+	}
+
+	if err := orderRepo.Create(order); err != nil {
+		logger.Error("failed to create order during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
+		return "", err
+	}
+
+	for index := range orderItems {
+		orderItems[index].OrderID = order.ID
+	}
+	if err := orderRepo.CreateItems(orderItems); err != nil {
+		logger.Error("failed to create order items during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
+		return "", err
+	}
+
+	if err := cartRepo.DeleteByUserID(input.UserID); err != nil {
+		return "", err
+	}
+
+	return invoiceNumber, nil
 }
 
 func (s *checkoutService) generateInvoiceNumber(orderRepo repositories.OrderRepository) (string, error) {

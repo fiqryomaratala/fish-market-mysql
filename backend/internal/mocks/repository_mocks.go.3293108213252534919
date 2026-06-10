@@ -1,0 +1,478 @@
+package mocks
+
+import (
+	"github.com/fiqryomaratala/backend/internal/dto"
+	"github.com/fiqryomaratala/backend/internal/models"
+	"github.com/fiqryomaratala/backend/internal/repositories"
+	"github.com/fiqryomaratala/backend/internal/services"
+)
+
+type MockUserRepository struct {
+	CreateFunc      func(user *models.User) error
+	FindByEmailFunc func(email string) (*models.User, error)
+	FindByIDFunc    func(id uint) (*models.User, error)
+}
+
+func (m *MockUserRepository) Create(user *models.User) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(user)
+	}
+	return nil
+}
+
+func (m *MockUserRepository) FindByEmail(email string) (*models.User, error) {
+	if m.FindByEmailFunc != nil {
+		return m.FindByEmailFunc(email)
+	}
+	return nil, nil
+}
+
+func (m *MockUserRepository) FindByID(id uint) (*models.User, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+type MockProductRepository struct {
+	CreateFunc         func(product *models.Product) error
+	FindAllFunc        func(filter repositories.ProductFilter) ([]models.Product, int64, error)
+	FindByIDFunc       func(id uint) (*models.Product, error)
+	FindByFishTypeFunc func(fishType string) (*models.Product, error)
+	UpdateFunc         func(product *models.Product) error
+	DeleteFunc         func(product *models.Product) error
+}
+
+func (m *MockProductRepository) Create(product *models.Product) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(product)
+	}
+	return nil
+}
+
+func (m *MockProductRepository) FindAll(filter repositories.ProductFilter) ([]models.Product, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockProductRepository) FindByID(id uint) (*models.Product, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockProductRepository) FindByFishType(fishType string) (*models.Product, error) {
+	if m.FindByFishTypeFunc != nil {
+		return m.FindByFishTypeFunc(fishType)
+	}
+	return nil, nil
+}
+
+func (m *MockProductRepository) Update(product *models.Product) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(product)
+	}
+	return nil
+}
+
+func (m *MockProductRepository) Delete(product *models.Product) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(product)
+	}
+	return nil
+}
+
+type MockInventoryRepository struct {
+	CreateFunc                  func(inventory *models.Inventory) error
+	FindAllFunc                 func(filter repositories.InventoryFilter) ([]models.Inventory, int64, error)
+	FindByIDFunc                func(id uint) (*models.Inventory, error)
+	FindByProductAndBatchFunc   func(productID, batchID uint) (*models.Inventory, error)
+	FindAvailableByProductFunc  func(productID uint) ([]models.Inventory, error)
+	GetTotalAvailableByProductFunc func(productID uint) (float64, error)
+	UpdateFunc                  func(inventory *models.Inventory) error
+}
+
+func (m *MockInventoryRepository) Create(inventory *models.Inventory) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(inventory)
+	}
+	return nil
+}
+
+func (m *MockInventoryRepository) FindAll(filter repositories.InventoryFilter) ([]models.Inventory, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockInventoryRepository) FindByID(id uint) (*models.Inventory, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryRepository) FindByProductAndBatch(productID, batchID uint) (*models.Inventory, error) {
+	if m.FindByProductAndBatchFunc != nil {
+		return m.FindByProductAndBatchFunc(productID, batchID)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryRepository) FindAvailableByProduct(productID uint) ([]models.Inventory, error) {
+	if m.FindAvailableByProductFunc != nil {
+		return m.FindAvailableByProductFunc(productID)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryRepository) GetTotalAvailableByProduct(productID uint) (float64, error) {
+	if m.GetTotalAvailableByProductFunc != nil {
+		return m.GetTotalAvailableByProductFunc(productID)
+	}
+	return 0, nil
+}
+
+func (m *MockInventoryRepository) Update(inventory *models.Inventory) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(inventory)
+	}
+	return nil
+}
+
+type MockInventoryTransactionRepository struct {
+	CreateFunc  func(transaction *models.InventoryTransaction) error
+	FindAllFunc func(filter repositories.InventoryTransactionFilter) ([]models.InventoryTransaction, error)
+}
+
+func (m *MockInventoryTransactionRepository) Create(transaction *models.InventoryTransaction) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(transaction)
+	}
+	return nil
+}
+
+func (m *MockInventoryTransactionRepository) FindAll(filter repositories.InventoryTransactionFilter) ([]models.InventoryTransaction, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, nil
+}
+
+type MockPondRepository struct {
+	CreateFunc  func(pond *models.Pond) error
+	FindAllFunc func(filter repositories.PondFilter) ([]models.Pond, int64, error)
+	FindByIDFunc func(id uint) (*models.Pond, error)
+	UpdateFunc  func(pond *models.Pond) error
+	DeleteFunc  func(pond *models.Pond) error
+}
+
+func (m *MockPondRepository) Create(pond *models.Pond) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(pond)
+	}
+	return nil
+}
+
+func (m *MockPondRepository) FindAll(filter repositories.PondFilter) ([]models.Pond, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockPondRepository) FindByID(id uint) (*models.Pond, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockPondRepository) Update(pond *models.Pond) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(pond)
+	}
+	return nil
+}
+
+func (m *MockPondRepository) Delete(pond *models.Pond) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(pond)
+	}
+	return nil
+}
+
+type MockFishBatchRepository struct {
+	CreateFunc         func(batch *models.FishBatch) error
+	FindAllFunc        func(filter repositories.FishBatchFilter) ([]models.FishBatch, int64, error)
+	FindByIDFunc       func(id uint) (*models.FishBatch, error)
+	FindByBatchCodeFunc func(batchCode string) (*models.FishBatch, error)
+	UpdateFunc         func(batch *models.FishBatch) error
+	DeleteFunc         func(batch *models.FishBatch) error
+	CountByYearFunc    func(year int) (int64, error)
+}
+
+func (m *MockFishBatchRepository) Create(batch *models.FishBatch) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(batch)
+	}
+	return nil
+}
+
+func (m *MockFishBatchRepository) FindAll(filter repositories.FishBatchFilter) ([]models.FishBatch, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockFishBatchRepository) FindByID(id uint) (*models.FishBatch, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockFishBatchRepository) FindByBatchCode(batchCode string) (*models.FishBatch, error) {
+	if m.FindByBatchCodeFunc != nil {
+		return m.FindByBatchCodeFunc(batchCode)
+	}
+	return nil, nil
+}
+
+func (m *MockFishBatchRepository) Update(batch *models.FishBatch) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(batch)
+	}
+	return nil
+}
+
+func (m *MockFishBatchRepository) Delete(batch *models.FishBatch) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(batch)
+	}
+	return nil
+}
+
+func (m *MockFishBatchRepository) CountByYear(year int) (int64, error) {
+	if m.CountByYearFunc != nil {
+		return m.CountByYearFunc(year)
+	}
+	return 0, nil
+}
+
+type MockHarvestRepository struct {
+	CreateFunc    func(harvest *models.Harvest) error
+	FindAllFunc   func(filter repositories.HarvestFilter) ([]models.Harvest, int64, error)
+	FindByIDFunc  func(id uint) (*models.Harvest, error)
+	UpdateFunc    func(harvest *models.Harvest) error
+	DeleteFunc    func(harvest *models.Harvest) error
+	GetSummaryFunc func() (*repositories.HarvestSummary, error)
+}
+
+func (m *MockHarvestRepository) Create(harvest *models.Harvest) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(harvest)
+	}
+	return nil
+}
+
+func (m *MockHarvestRepository) FindAll(filter repositories.HarvestFilter) ([]models.Harvest, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockHarvestRepository) FindByID(id uint) (*models.Harvest, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockHarvestRepository) Update(harvest *models.Harvest) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(harvest)
+	}
+	return nil
+}
+
+func (m *MockHarvestRepository) Delete(harvest *models.Harvest) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(harvest)
+	}
+	return nil
+}
+
+func (m *MockHarvestRepository) GetSummary() (*repositories.HarvestSummary, error) {
+	if m.GetSummaryFunc != nil {
+		return m.GetSummaryFunc()
+	}
+	return nil, nil
+}
+
+type MockOrderRepository struct {
+	CreateFunc      func(order *models.Order) error
+	CreateItemsFunc func(items []models.OrderItem) error
+	CountByYearFunc func(year int) (int64, error)
+	FindAllFunc     func(filter repositories.OrderFilter) ([]models.Order, int64, error)
+	FindByIDFunc    func(id uint) (*models.Order, error)
+	UpdateFunc      func(order *models.Order) error
+}
+
+func (m *MockOrderRepository) Create(order *models.Order) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(order)
+	}
+	return nil
+}
+
+func (m *MockOrderRepository) CreateItems(items []models.OrderItem) error {
+	if m.CreateItemsFunc != nil {
+		return m.CreateItemsFunc(items)
+	}
+	return nil
+}
+
+func (m *MockOrderRepository) CountByYear(year int) (int64, error) {
+	if m.CountByYearFunc != nil {
+		return m.CountByYearFunc(year)
+	}
+	return 0, nil
+}
+
+func (m *MockOrderRepository) FindAll(filter repositories.OrderFilter) ([]models.Order, int64, error) {
+	if m.FindAllFunc != nil {
+		return m.FindAllFunc(filter)
+	}
+	return nil, 0, nil
+}
+
+func (m *MockOrderRepository) FindByID(id uint) (*models.Order, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockOrderRepository) Update(order *models.Order) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(order)
+	}
+	return nil
+}
+
+type MockCartRepository struct {
+	CreateFunc            func(cart *models.Cart) error
+	FindByUserIDFunc      func(userID uint) ([]models.Cart, error)
+	FindByIDFunc          func(id uint) (*models.Cart, error)
+	FindByUserAndProductFunc func(userID, productID uint) (*models.Cart, error)
+	UpdateFunc            func(cart *models.Cart) error
+	DeleteFunc            func(cart *models.Cart) error
+	DeleteByUserIDFunc    func(userID uint) error
+}
+
+func (m *MockCartRepository) Create(cart *models.Cart) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(cart)
+	}
+	return nil
+}
+
+func (m *MockCartRepository) FindByUserID(userID uint) ([]models.Cart, error) {
+	if m.FindByUserIDFunc != nil {
+		return m.FindByUserIDFunc(userID)
+	}
+	return nil, nil
+}
+
+func (m *MockCartRepository) FindByID(id uint) (*models.Cart, error) {
+	if m.FindByIDFunc != nil {
+		return m.FindByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockCartRepository) FindByUserAndProduct(userID, productID uint) (*models.Cart, error) {
+	if m.FindByUserAndProductFunc != nil {
+		return m.FindByUserAndProductFunc(userID, productID)
+	}
+	return nil, nil
+}
+
+func (m *MockCartRepository) Update(cart *models.Cart) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(cart)
+	}
+	return nil
+}
+
+func (m *MockCartRepository) Delete(cart *models.Cart) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(cart)
+	}
+	return nil
+}
+
+func (m *MockCartRepository) DeleteByUserID(userID uint) error {
+	if m.DeleteByUserIDFunc != nil {
+		return m.DeleteByUserIDFunc(userID)
+	}
+	return nil
+}
+
+type MockInventoryService struct {
+	GetAllFunc                 func(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error)
+	GetByIDFunc                func(id uint) (*dto.InventoryItem, error)
+	GetTransactionsFunc        func(params services.InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
+	CreateHarvestInventoryFunc func(batch *models.FishBatch, totalWeight float64) error
+	AdjustFunc                 func(input services.InventoryAdjustmentInput) (*dto.InventoryItem, error)
+	DeductProductInventoryFunc func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error
+}
+
+func (m *MockInventoryService) GetAll(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error) {
+	if m.GetAllFunc != nil {
+		return m.GetAllFunc(params)
+	}
+	return nil, nil, nil
+}
+
+func (m *MockInventoryService) GetByID(id uint) (*dto.InventoryItem, error) {
+	if m.GetByIDFunc != nil {
+		return m.GetByIDFunc(id)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryService) GetTransactions(params services.InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error) {
+	if m.GetTransactionsFunc != nil {
+		return m.GetTransactionsFunc(params)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryService) CreateHarvestInventory(batch *models.FishBatch, totalWeight float64) error {
+	if m.CreateHarvestInventoryFunc != nil {
+		return m.CreateHarvestInventoryFunc(batch, totalWeight)
+	}
+	return nil
+}
+
+func (m *MockInventoryService) Adjust(input services.InventoryAdjustmentInput) (*dto.InventoryItem, error) {
+	if m.AdjustFunc != nil {
+		return m.AdjustFunc(input)
+	}
+	return nil, nil
+}
+
+func (m *MockInventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error {
+	if m.DeductProductInventoryFunc != nil {
+		return m.DeductProductInventoryFunc(productID, quantity, reference, description, audit)
+	}
+	return nil
+}
