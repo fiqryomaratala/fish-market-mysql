@@ -44,7 +44,7 @@ func LoadConfig() {
 			DBPort:     getEnv("DB_PORT", "3306"),
 			DBUser:     getEnv("DB_USER", "root"),
 			DBPassword: getEnv("DB_PASSWORD", "password"),
-			DBName:     getEnv("DB_NAME", "fish_market"),
+			DBName:     getEnv("DB_NAME", "fish_market_db"),
 			DBCharset:  getEnv("DB_CHARSET", "utf8mb4"),
 			JWTSecret:  getEnv("JWT_SECRET", "your-secret-key"),
 			JWTExpired: getEnv("JWT_EXPIRED", "24h"),

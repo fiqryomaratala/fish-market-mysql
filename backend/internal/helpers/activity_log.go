@@ -17,6 +17,10 @@ func InitActivityLogger(db *gorm.DB) {
 	logger.Info("activity logger initialized")
 }
 
+func SetActivityLogRepository(repo repositories.ActivityLogRepository) {
+	activityLogRepo = repo
+}
+
 func LogActivity(userID uint, action string, module string, description string, ip string, userAgent string) {
 	if activityLogRepo == nil || userID == 0 {
 		return

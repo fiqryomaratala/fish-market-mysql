@@ -1,0 +1,12 @@
+{
+  "name": "fish-market-regression",
+  "private": true,
+  "scripts": {
+    "test:integration": "go test ./internal/tests -run \"TestIntegration(AuthProductFlow|PondBatchHarvestInventoryFlow|CartCheckoutOrderFlow|FeedingNotificationActivityTrackingFlow|ReportsAndDashboardFlow|ManagementCRUDFlow)\" -v",
+    "test:postman": "newman run postman/FishMarket.postman_collection.json -e postman/FishMarket.local.postman_environment.json --reporters cli",
+    "test:regression": "npm run test:integration && npm run test:postman"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1"
+  }
+}

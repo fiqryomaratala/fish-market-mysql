@@ -108,7 +108,10 @@ func (r *fishBatchRepository) Delete(batch *models.FishBatch) error {
 
 func (r *fishBatchRepository) CountByYear(year int) (int64, error) {
 	var total int64
-	err := r.db.Model(&models.FishBatch{}).
+	// Use Unscoped so soft-deleted batches still count toward the sequence.
+	// This prevents reusing an old batch code that is still protected by the
+	// unique index in the database.
+	err := r.db.Unscoped().Model(&models.FishBatch{}).
 		Where("YEAR(created_at) = ?", year).
 		Count(&total).Error
 

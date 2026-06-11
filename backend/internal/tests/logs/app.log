@@ -88,3 +88,310 @@
 {"level":"info","time":"2026-06-10T13:59:55.704+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila"}
 {"level":"info","time":"2026-06-10T13:59:55.704+0700","caller":"logger/logger.go:66","msg":"product updated","module":"PRODUCT","product_id":0,"name":"Ikan Baru"}
 {"level":"info","time":"2026-06-10T13:59:55.704+0700","caller":"logger/logger.go:66","msg":"product deleted","module":"PRODUCT","product_id":0,"name":"Ikan Nila"}
+{"level":"info","time":"2026-06-11T13:35:28.268+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T13:35:28.317+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T13:35:28.317+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"warn","time":"2026-06-11T13:35:28.365+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-11T13:35:28.365+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T13:35:28.413+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-11T13:35:28.413+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T13:35:28.460+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T13:35:28.463+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
+{"level":"info","time":"2026-06-11T13:54:12.527+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T13:54:12.576+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T13:54:12.576+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T13:54:12.623+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T13:54:12.624+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T13:54:12.624+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T13:54:12.624+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T13:54:12.801+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T13:54:12.857+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T13:54:12.858+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"checkout started","module":"ORDER","user_id":3}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":2}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"order payment updated","module":"ORDER","order_id":1,"payment_status":"paid"}
+{"level":"info","time":"2026-06-11T13:54:12.905+0700","caller":"logger/logger.go:66","msg":"order status updated","module":"ORDER","order_id":1,"status":"completed"}
+{"level":"info","time":"2026-06-11T14:23:16.498+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:23:16.546+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:23:16.547+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T14:23:16.547+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:23:16.593+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:23:16.593+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T14:23:16.593+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:23:16.640+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":3,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:23:16.640+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T14:23:16.641+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:23:16.641+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:23:16.641+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T14:23:16.641+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"error","time":"2026-06-11T14:23:16.642+0700","caller":"logger/logger.go:81","msg":"failed to create harvest inventory","module":"HARVEST","batch_code":"BTCH-2026-0001","error_message":"product not found","stacktrace":"github.com/fiqryomaratala/backend/internal/logger.Error\n\tC:/fish-market-mysql/backend/internal/logger/logger.go:77\ngithub.com/fiqryomaratala/backend/internal/services.(*harvestService).Create\n\tC:/fish-market-mysql/backend/internal/services/harvest_service.go:98\ngithub.com/fiqryomaratala/backend/internal/handlers.(*HarvestHandler).Create\n\tC:/fish-market-mysql/backend/internal/handlers/harvest_handler.go:68\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RoleMiddleware.func21\n\tC:/fish-market-mysql/backend/internal/middleware/role_middleware.go:25\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.AuthMiddleware.func20\n\tC:/fish-market-mysql/backend/internal/middleware/auth_middleware.go:44\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RecoveryMiddleware.func1\n\tC:/fish-market-mysql/backend/internal/middleware/recovery.go:20\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/gin-gonic/gin.(*Engine).handleHTTPRequest\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:722\ngithub.com/gin-gonic/gin.(*Engine).ServeHTTP\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:672\ngithub.com/fiqryomaratala/backend/internal/tests.performJSONRequest\n\tC:/fish-market-mysql/backend/internal/tests/integration_auth_product_test.go:322\ngithub.com/fiqryomaratala/backend/internal/tests.TestIntegrationFeedingNotificationActivityTrackingFlow\n\tC:/fish-market-mysql/backend/internal/tests/integration_observability_test.go:513\ntesting.tRunner\n\tC:/Program Files/Go/src/testing/testing.go:1934","stacktrace":"github.com/fiqryomaratala/backend/internal/logger.Error\n\tC:/fish-market-mysql/backend/internal/logger/logger.go:81\ngithub.com/fiqryomaratala/backend/internal/services.(*harvestService).Create\n\tC:/fish-market-mysql/backend/internal/services/harvest_service.go:98\ngithub.com/fiqryomaratala/backend/internal/handlers.(*HarvestHandler).Create\n\tC:/fish-market-mysql/backend/internal/handlers/harvest_handler.go:68\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RoleMiddleware.func21\n\tC:/fish-market-mysql/backend/internal/middleware/role_middleware.go:25\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.AuthMiddleware.func20\n\tC:/fish-market-mysql/backend/internal/middleware/auth_middleware.go:44\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RecoveryMiddleware.func1\n\tC:/fish-market-mysql/backend/internal/middleware/recovery.go:20\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/gin-gonic/gin.(*Engine).handleHTTPRequest\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:722\ngithub.com/gin-gonic/gin.(*Engine).ServeHTTP\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:672\ngithub.com/fiqryomaratala/backend/internal/tests.performJSONRequest\n\tC:/fish-market-mysql/backend/internal/tests/integration_auth_product_test.go:322\ngithub.com/fiqryomaratala/backend/internal/tests.TestIntegrationFeedingNotificationActivityTrackingFlow\n\tC:/fish-market-mysql/backend/internal/tests/integration_observability_test.go:513\ntesting.tRunner\n\tC:/Program Files/Go/src/testing/testing.go:1934"}
+{"level":"info","time":"2026-06-11T14:23:16.791+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:23:16.841+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:23:16.841+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T14:23:16.841+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"error","time":"2026-06-11T14:23:16.888+0700","caller":"logger/logger.go:81","msg":"failed to create harvest inventory","module":"HARVEST","batch_code":"BTCH-2026-0001","error_message":"product not found","stacktrace":"github.com/fiqryomaratala/backend/internal/logger.Error\n\tC:/fish-market-mysql/backend/internal/logger/logger.go:77\ngithub.com/fiqryomaratala/backend/internal/services.(*harvestService).Create\n\tC:/fish-market-mysql/backend/internal/services/harvest_service.go:98\ngithub.com/fiqryomaratala/backend/internal/handlers.(*HarvestHandler).Create\n\tC:/fish-market-mysql/backend/internal/handlers/harvest_handler.go:68\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RoleMiddleware.func21\n\tC:/fish-market-mysql/backend/internal/middleware/role_middleware.go:25\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.AuthMiddleware.func20\n\tC:/fish-market-mysql/backend/internal/middleware/auth_middleware.go:44\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RecoveryMiddleware.func1\n\tC:/fish-market-mysql/backend/internal/middleware/recovery.go:20\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/gin-gonic/gin.(*Engine).handleHTTPRequest\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:722\ngithub.com/gin-gonic/gin.(*Engine).ServeHTTP\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:672\ngithub.com/fiqryomaratala/backend/internal/tests.performJSONRequest\n\tC:/fish-market-mysql/backend/internal/tests/integration_auth_product_test.go:322\ngithub.com/fiqryomaratala/backend/internal/tests.TestIntegrationReportsAndDashboardFlow\n\tC:/fish-market-mysql/backend/internal/tests/integration_observability_test.go:582\ntesting.tRunner\n\tC:/Program Files/Go/src/testing/testing.go:1934","stacktrace":"github.com/fiqryomaratala/backend/internal/logger.Error\n\tC:/fish-market-mysql/backend/internal/logger/logger.go:81\ngithub.com/fiqryomaratala/backend/internal/services.(*harvestService).Create\n\tC:/fish-market-mysql/backend/internal/services/harvest_service.go:98\ngithub.com/fiqryomaratala/backend/internal/handlers.(*HarvestHandler).Create\n\tC:/fish-market-mysql/backend/internal/handlers/harvest_handler.go:68\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RoleMiddleware.func21\n\tC:/fish-market-mysql/backend/internal/middleware/role_middleware.go:25\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.AuthMiddleware.func20\n\tC:/fish-market-mysql/backend/internal/middleware/auth_middleware.go:44\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/fiqryomaratala/backend/internal/tests.setupOperationsIntegrationRouter.RecoveryMiddleware.func1\n\tC:/fish-market-mysql/backend/internal/middleware/recovery.go:20\ngithub.com/gin-gonic/gin.(*Context).Next\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/context.go:192\ngithub.com/gin-gonic/gin.(*Engine).handleHTTPRequest\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:722\ngithub.com/gin-gonic/gin.(*Engine).ServeHTTP\n\tC:/Users/fiqry/go/pkg/mod/github.com/gin-gonic/gin@v1.12.0/gin.go:672\ngithub.com/fiqryomaratala/backend/internal/tests.performJSONRequest\n\tC:/fish-market-mysql/backend/internal/tests/integration_auth_product_test.go:322\ngithub.com/fiqryomaratala/backend/internal/tests.TestIntegrationReportsAndDashboardFlow\n\tC:/fish-market-mysql/backend/internal/tests/integration_observability_test.go:582\ntesting.tRunner\n\tC:/Program Files/Go/src/testing/testing.go:1934"}
+{"level":"info","time":"2026-06-11T14:24:17.685+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:24:17.736+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:24:17.736+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T14:24:17.737+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:24:17.784+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:24:17.784+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T14:24:17.784+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":3,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T14:24:17.839+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":3,"type":"INVENTORY"}
+{"level":"info","time":"2026-06-11T14:24:17.840+0700","caller":"logger/logger.go:66","msg":"notification marked as read","module":"NOTIFICATION","notification_id":2,"user_id":3}
+{"level":"info","time":"2026-06-11T14:24:17.987+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:24:18.033+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:24:18.033+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T14:24:18.033+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":900}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T14:24:18.081+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:17:47.962+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:17:48.127+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:17:48.127+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:17:48.127+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:17:48.238+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:17:48.238+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:17:48.239+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:17:48.239+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:17:48.239+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:17:48.240+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:03.671+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:21:03.766+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:21:03.766+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"warn","time":"2026-06-11T21:21:03.860+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-11T21:21:03.860+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:21:03.959+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:21:03.959+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:04.077+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:04.080+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
+{"level":"info","time":"2026-06-11T21:21:04.508+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:04.611+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:04.611+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:04.611+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:04.717+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:04.717+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:21:04.718+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:04.719+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:04.719+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:21:04.719+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.061+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:05.155+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:05.155+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:21:05.155+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:05.250+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:05.250+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:05.251+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:05.359+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":3,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:05.359+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":3,"type":"INVENTORY"}
+{"level":"info","time":"2026-06-11T21:21:05.360+0700","caller":"logger/logger.go:66","msg":"notification marked as read","module":"NOTIFICATION","notification_id":2,"user_id":3}
+{"level":"info","time":"2026-06-11T21:21:05.646+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:05.737+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:05.737+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:21:05.738+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:05.832+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:21:05.832+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:05.832+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":900}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T21:21:05.833+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:21:06.138+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:06.243+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:21:06.243+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:06.345+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:06.346+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:21:06.346+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T21:21:06.346+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:21:06.634+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:06.752+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:21:06.752+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:21:06.873+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:21:06.874+0700","caller":"logger/logger.go:66","msg":"checkout started","module":"ORDER","user_id":3}
+{"level":"info","time":"2026-06-11T21:21:06.874+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":2}
+{"level":"info","time":"2026-06-11T21:21:06.874+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
+{"level":"info","time":"2026-06-11T21:21:06.874+0700","caller":"logger/logger.go:66","msg":"order payment updated","module":"ORDER","order_id":1,"payment_status":"paid"}
+{"level":"info","time":"2026-06-11T21:21:06.874+0700","caller":"logger/logger.go:66","msg":"order status updated","module":"ORDER","order_id":1,"status":"completed"}
+{"level":"info","time":"2026-06-11T21:45:46.739+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:45:46.849+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:45:46.849+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"warn","time":"2026-06-11T21:45:46.916+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-11T21:45:46.916+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T21:45:46.999+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:45:46.999+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.076+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:47.078+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
+{"level":"info","time":"2026-06-11T21:45:47.388+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.460+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:47.460+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:47.460+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.536+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:47.536+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:45:47.536+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.537+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.537+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:45:47.537+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.752+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.830+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:47.830+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:45:47.830+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.899+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:47.900+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:47.900+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:47.972+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":3,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:47.972+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:45:47.972+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":3,"type":"INVENTORY"}
+{"level":"info","time":"2026-06-11T21:45:47.973+0700","caller":"logger/logger.go:66","msg":"notification marked as read","module":"NOTIFICATION","notification_id":2,"user_id":3}
+{"level":"info","time":"2026-06-11T21:45:48.187+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:48.259+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:48.259+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:45:48.259+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:48.333+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:45:48.333+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":900}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T21:45:48.334+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:45:48.555+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:48.628+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:45:48.629+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:48.703+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:48.703+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:45:48.703+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T21:45:48.703+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T21:45:48.919+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:48.990+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T21:45:48.991+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:45:49.063+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:45:49.064+0700","caller":"logger/logger.go:66","msg":"checkout started","module":"ORDER","user_id":3}
+{"level":"info","time":"2026-06-11T21:45:49.064+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":2}
+{"level":"info","time":"2026-06-11T21:45:49.064+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
+{"level":"info","time":"2026-06-11T21:45:49.064+0700","caller":"logger/logger.go:66","msg":"order payment updated","module":"ORDER","order_id":1,"payment_status":"paid"}
+{"level":"info","time":"2026-06-11T21:45:49.064+0700","caller":"logger/logger.go:66","msg":"order status updated","module":"ORDER","order_id":1,"status":"completed"}
+{"level":"info","time":"2026-06-11T21:49:34.823+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:49:34.899+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:49:34.899+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T21:49:34.900+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T21:49:34.971+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T21:49:34.972+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T21:49:34.972+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:49:34.972+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T21:49:34.972+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T21:49:34.972+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:37.162+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T22:06:37.242+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T22:06:37.242+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"warn","time":"2026-06-11T22:06:37.315+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-11T22:06:37.315+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-11T22:06:37.386+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-11T22:06:37.387+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:37.474+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:37.477+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
+{"level":"info","time":"2026-06-11T22:06:37.777+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:37.856+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:37.856+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:37.856+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:37.980+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:37.980+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T22:06:37.981+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:37.981+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:37.981+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T22:06:37.982+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:38.245+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:38.377+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:38.377+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T22:06:38.377+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:38.511+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:38.511+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:38.512+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:38.636+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":3,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:38.636+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":3,"type":"INVENTORY"}
+{"level":"info","time":"2026-06-11T22:06:38.637+0700","caller":"logger/logger.go:66","msg":"notification marked as read","module":"NOTIFICATION","notification_id":2,"user_id":3}
+{"level":"info","time":"2026-06-11T22:06:38.859+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:38.930+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:38.930+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T22:06:38.931+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:39.000+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":1,"action":"LOGIN"}
+{"level":"info","time":"2026-06-11T22:06:39.000+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:39.001+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:39.001+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:39.001+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T22:06:39.002+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:39.002+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":900}
+{"level":"info","time":"2026-06-11T22:06:39.002+0700","caller":"logger/logger.go:66","msg":"activity log created","module":"ACTIVITY_LOG","user_id":2,"action":"CREATE"}
+{"level":"info","time":"2026-06-11T22:06:39.002+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":2,"type":"HARVEST"}
+{"level":"info","time":"2026-06-11T22:06:39.002+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T22:06:39.224+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:39.292+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-11T22:06:39.292+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:39.363+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:39.363+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-11T22:06:39.363+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":850}
+{"level":"info","time":"2026-06-11T22:06:39.363+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-11T22:06:39.584+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:39.661+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-11T22:06:39.661+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"checkout started","module":"ORDER","user_id":3}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":2}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"order payment updated","module":"ORDER","order_id":1,"payment_status":"paid"}
+{"level":"info","time":"2026-06-11T22:06:39.738+0700","caller":"logger/logger.go:66","msg":"order status updated","module":"ORDER","order_id":1,"status":"completed"}

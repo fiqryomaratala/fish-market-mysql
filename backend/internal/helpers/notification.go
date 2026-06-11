@@ -17,6 +17,10 @@ func InitNotificationCenter(db *gorm.DB) {
 	logger.Info("notification center initialized")
 }
 
+func SetNotificationRepository(repo repositories.NotificationRepository) {
+	notificationRepo = repo
+}
+
 func CreateNotification(
 	userID uint,
 	title string,

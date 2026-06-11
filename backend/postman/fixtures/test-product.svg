@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">
+  <rect width="320" height="180" fill="#dff3ff"/>
+  <ellipse cx="120" cy="92" rx="58" ry="34" fill="#3d8bfd"/>
+  <circle cx="170" cy="88" r="8" fill="#ffffff"/>
+  <circle cx="172" cy="88" r="3" fill="#16324f"/>
+  <polygon points="68,92 34,70 34,114" fill="#2b6cb0"/>
+  <text x="160" y="32" font-size="18" text-anchor="middle" fill="#16324f" font-family="Arial, sans-serif">
+    Fish Market QA Upload
+  </text>
+</svg>

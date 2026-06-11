@@ -69,3 +69,29 @@ Setelah container berjalan:
 
 - API root: `http://localhost/`
 - Swagger: `http://localhost/swagger/index.html`
+
+## Regression Test
+
+Project ini sekarang punya dua jalur regression test:
+
+- Go integration test untuk alur domain inti di `internal/tests`
+- Postman collection + Newman untuk smoke test HTTP end-to-end
+
+Menjalankan Go integration test:
+
+```bash
+go test ./internal/tests -run "TestIntegration(AuthProductFlow|PondBatchHarvestInventoryFlow|CartCheckoutOrderFlow|FeedingNotificationActivityTrackingFlow|ReportsAndDashboardFlow|ManagementCRUDFlow)" -v
+```
+
+Menjalankan regression gabungan:
+
+```bash
+npm install
+npm run test:regression
+```
+
+File yang dipakai:
+
+- `postman/FishMarket.postman_collection.json`
+- `postman/FishMarket.local.postman_environment.json`
+- `postman/fixtures/test-product.svg`

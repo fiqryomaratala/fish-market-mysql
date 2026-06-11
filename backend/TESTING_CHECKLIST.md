@@ -2,6 +2,86 @@
 
 Checklist ini dipakai untuk QA manual backend Marketplace Ikan dan Sistem Manajemen Budidaya.
 
+## Automated Integration Tests
+
+Checklist ini sekarang punya dua lapisan automation:
+
+- Go integration test untuk regression logic dan alur multi-endpoint tanpa bergantung ke database sungguhan.
+- Postman collection + Newman untuk smoke/regression HTTP terhadap aplikasi yang sedang running di `http://localhost`.
+
+Sebagian checklist berikut sudah diotomatisasi dalam integration test Go:
+
+- [x] `POST /api/auth/register`
+- [x] `POST /api/auth/login`
+- [x] `GET /api/auth/profile`
+- [x] `GET /api/admin/dashboard`
+- [x] `GET /api/customer/profile`
+- [x] `POST /api/admin/products` + upload image
+- [x] `GET /api/products`
+- [x] `GET /api/products/:id`
+- [x] akses file `/uploads/...`
+- [x] `POST /api/ponds`
+- [x] `POST /api/batches`
+- [x] `POST /api/harvests`
+- [x] `GET /api/inventory`
+- [x] `GET /api/inventory/transactions?type=IN`
+- [x] `GET /api/harvests/summary`
+- [x] `POST /api/cart`
+- [x] `GET /api/cart`
+- [x] `POST /api/checkout`
+- [x] `GET /api/orders`
+- [x] `GET /api/orders/:id`
+- [x] `PUT /api/orders/:id/payment`
+- [x] `PUT /api/orders/:id/status`
+- [x] `GET /api/orders/:id/invoice`
+- [x] `GET /api/inventory/transactions?type=OUT`
+- [x] `POST /api/feeding-logs`
+- [x] `GET /api/feeding-logs`
+- [x] `GET /api/notifications`
+- [x] `GET /api/notifications/unread`
+- [x] `PUT /api/notifications/:id/read`
+- [x] `PUT /api/notifications/read-all`
+- [x] `DELETE /api/notifications/:id`
+- [x] `GET /api/activity-logs`
+- [x] `GET /api/activity-logs/:id`
+- [x] `GET /api/tracking/:batchCode`
+- [x] `GET /api/dashboard`
+- [x] `GET /api/dashboard/production`
+- [x] `GET /api/dashboard/harvest`
+- [x] `GET /api/dashboard/feed`
+- [x] `GET /api/dashboard/batch-status`
+- [x] `GET /api/dashboard/recent-harvest`
+- [x] `GET /api/reports/harvest`
+- [x] `GET /api/reports/production`
+- [x] `GET /api/reports/feeding`
+- [x] `GET /api/reports/export/excel?type=harvest`
+- [x] `GET /api/reports/export/pdf?type=harvest`
+
+File test:
+
+- `internal/tests/integration_auth_product_test.go`
+- `internal/tests/integration_operations_test.go`
+- `internal/tests/integration_observability_test.go`
+- `internal/tests/integration_management_crud_test.go`
+
+Jalankan dengan:
+
+```bash
+go test ./internal/tests -run "TestIntegration(AuthProductFlow|PondBatchHarvestInventoryFlow|CartCheckoutOrderFlow|FeedingNotificationActivityTrackingFlow|ReportsAndDashboardFlow|ManagementCRUDFlow)" -v
+```
+
+Regression gabungan Go + Newman:
+
+```bash
+npm install
+npm run test:regression
+```
+
+File Newman:
+
+- `postman/FishMarket.postman_collection.json`
+- `postman/FishMarket.local.postman_environment.json`
+
 ## Persiapan
 
 - [ ] Siapkan token `admin`
