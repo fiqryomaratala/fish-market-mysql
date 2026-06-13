@@ -245,8 +245,8 @@ Sudah ada bukti automation untuk list, detail, transaction `IN`/`OUT`/`ADJUSTMEN
 Masih perlu QA manual untuk semua filter spesifik, not found, serta penolakan role `customer`.
 
 - [x] `GET /api/inventory` dengan `admin` berhasil
-- [ ] `GET /api/inventory` dengan `staff` berhasil
-- [ ] `GET /api/inventory` dengan `customer` ditolak
+- [x] `GET /api/inventory` dengan `staff` berhasil
+- [x] `GET /api/inventory` dengan `customer` ditolak
 - [ ] `GET /api/inventory?page=1&limit=10` pagination normal
 - [ ] `GET /api/inventory?product_id=1` filter berhasil
 - [ ] `GET /api/inventory?batch_id=1` filter berhasil
@@ -330,11 +330,11 @@ Masih perlu QA manual untuk seluruh filter query, RBAC negatif, dan verifikasi s
 - [x] create feeding log menghasilkan activity log
 - [x] create harvest menghasilkan activity log
 - [x] `GET /api/activity-logs` dengan `admin` berhasil
-- [ ] `GET /api/activity-logs` dengan role selain admin ditolak `403`
-- [ ] `GET /api/activity-logs?page=1&limit=10` pagination normal
-- [ ] `GET /api/activity-logs?module=PRODUCT` filter berhasil
-- [ ] `GET /api/activity-logs?action=CREATE` filter berhasil
-- [ ] `GET /api/activity-logs?user_id=1` filter berhasil
+- [x] `GET /api/activity-logs` dengan role selain admin ditolak `403`
+- [x] `GET /api/activity-logs?page=1&limit=10` pagination normal
+- [x] `GET /api/activity-logs?module=PRODUCT` filter berhasil
+- [x] `GET /api/activity-logs?action=CREATE` filter berhasil
+- [x] `GET /api/activity-logs?user_id=1` filter berhasil
 - [x] `GET /api/activity-logs/:id` dengan admin berhasil
 
 ## Notification Center

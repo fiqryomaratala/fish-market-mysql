@@ -1,6 +1,18 @@
 # Fish Market Backend
 
+[![Backend CI](https://github.com/fiqryomaratala/fish-market-mysql/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/fiqryomaratala/fish-market-mysql/actions/workflows/backend-ci.yml)
+
 Backend aplikasi Marketplace Ikan dan Sistem Manajemen Budidaya menggunakan Golang, Gin, GORM, MySQL, JWT, dan Clean Architecture.
+
+## Continuous Integration
+
+Project ini menggunakan GitHub Actions workflow `backend-ci.yml` untuk menjalankan:
+
+- `go mod download`
+- `go fmt ./...`
+- `go vet ./...`
+- `go test ./...`
+- `go build ./...`
 
 ## Seeder Accounts
 
