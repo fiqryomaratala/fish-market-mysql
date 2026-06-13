@@ -1,0 +1,224 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { AlertCircle, SlidersHorizontal } from 'lucide-react'
+import { FilterSidebar, type MarketplaceFilters } from '@/components/marketplace/FilterSidebar'
+import { LoadingSkeleton } from '@/components/marketplace/LoadingSkeleton'
+import { Pagination } from '@/components/marketplace/Pagination'
+import { ProductGrid } from '@/components/marketplace/ProductGrid'
+import { SearchBar } from '@/components/marketplace/SearchBar'
+import { SortDropdown } from '@/components/marketplace/SortDropdown'
+import { productService } from '@/services'
+import type { Product } from '@/types/product'
+
+const categoryOptions = ['All', 'Freshwater', 'Saltwater'] as const
+const sortOptions = ['Newest', 'Lowest Price', 'Highest Price', 'Best Selling'] as const
+const initialFilters: MarketplaceFilters = {
+  minPrice: '',
+  maxPrice: '',
+  availability: 'All',
+  harvestStatus: 'All',
+}
+
+function MarketplacePage() {
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [selectedCategory, setSelectedCategory] =
+    useState<(typeof categoryOptions)[number]>('All')
+  const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('Newest')
+  const [filters, setFilters] = useState<MarketplaceFilters>(initialFilters)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setDebouncedSearch(searchInput.trim())
+      setCurrentPage(1)
+    }, 400)
+
+    return () => window.clearTimeout(timeout)
+  }, [searchInput])
+
+  const query = useQuery({
+    queryKey: ['marketplace-products', debouncedSearch, selectedCategory, selectedSort],
+    queryFn: async () =>
+      productService.getMarketplaceProducts({
+        page: 1,
+        limit: 50,
+        search: debouncedSearch,
+        category: selectedCategory,
+        sort: selectedSort,
+      }),
+  })
+
+  const filteredProducts = useMemo(() => {
+    const items = query.data?.data ?? []
+
+    return items
+      .filter((product) => {
+        const matchesAvailability =
+          filters.availability === 'All' || product.availability === filters.availability
+        const matchesHarvestStatus =
+          filters.harvestStatus === 'All' || product.harvest_status === filters.harvestStatus
+        const minPrice = filters.minPrice ? Number(filters.minPrice) : 0
+        const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : Number.POSITIVE_INFINITY
+        const matchesPrice = product.price >= minPrice && product.price <= maxPrice
+
+        return matchesAvailability && matchesHarvestStatus && matchesPrice
+      })
+      .sort((left, right) => {
+        if (selectedSort === 'Lowest Price') {
+          return left.price - right.price
+        }
+
+        if (selectedSort === 'Highest Price') {
+          return right.price - left.price
+        }
+
+        if (selectedSort === 'Best Selling') {
+          return right.sold_count - left.sold_count
+        }
+
+        return (
+          new Date(right.harvest_date).getTime() - new Date(left.harvest_date).getTime()
+        )
+      })
+  }, [filters, query.data?.data, selectedSort])
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / 8))
+  const paginatedProducts = useMemo(() => {
+    const safePage = Math.min(currentPage, totalPages)
+    const startIndex = (safePage - 1) * 8
+
+    return filteredProducts.slice(startIndex, startIndex + 8)
+  }, [currentPage, filteredProducts, totalPages])
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, totalPages])
+
+  const handleResetFilters = () => {
+    setFilters(initialFilters)
+    setSelectedCategory('All')
+    setSelectedSort('Newest')
+    setSearchInput('')
+    setDebouncedSearch('')
+    setCurrentPage(1)
+  }
+
+  return (
+    <div className="space-y-8">
+      <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_30%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(8,47,73,0.86))] p-6 shadow-2xl shadow-cyan-950/20 md:p-8">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-200/80">
+            Marketplace
+          </p>
+          <h1 className="mt-4 text-3xl font-semibold text-white md:text-5xl">
+            Hasil budidaya ikan segar langsung dari farm terbaik.
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+            Jelajahi stok panen air tawar dan laut dengan pengalaman marketplace yang cepat,
+            bersih, dan nyaman dipakai di semua perangkat.
+          </p>
+        </div>
+      </section>
+
+      <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <FilterSidebar
+          filters={filters}
+          isMobileOpen={isMobileFilterOpen}
+          onChange={(nextFilters) => {
+            setFilters(nextFilters)
+            setCurrentPage(1)
+          }}
+          onReset={handleResetFilters}
+          onCloseMobile={() => setIsMobileFilterOpen(false)}
+        />
+
+        <section className="space-y-6">
+          <div className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-xl shadow-slate-950/30 backdrop-blur md:p-6">
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_repeat(2,minmax(0,0.7fr))]">
+              <SearchBar value={searchInput} onChange={setSearchInput} />
+
+              <SortDropdown
+                label="Category"
+                value={selectedCategory}
+                options={[...categoryOptions]}
+                onChange={(value) => {
+                  setSelectedCategory(value as (typeof categoryOptions)[number])
+                  setCurrentPage(1)
+                }}
+              />
+
+              <SortDropdown
+                value={selectedSort}
+                options={[...sortOptions]}
+                onChange={(value) => {
+                  setSelectedSort(value as (typeof sortOptions)[number])
+                  setCurrentPage(1)
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:border-cyan-300/40 hover:bg-cyan-400/10 xl:hidden"
+              >
+                <SlidersHorizontal className="size-4" />
+                Filter
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
+              <p>
+                Showing <span className="font-semibold text-white">{filteredProducts.length}</span>{' '}
+                products
+              </p>
+              <p>
+                Real-time search active for{' '}
+                <span className="font-semibold text-cyan-100">
+                  {debouncedSearch || 'all fish'}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          {query.isLoading ? <LoadingSkeleton /> : null}
+
+          {query.isError ? (
+            <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-red-400/20 bg-red-500/5 px-6 py-12 text-center">
+              <div className="mb-5 rounded-full bg-red-500/10 p-4 text-red-200">
+                <AlertCircle className="size-8" />
+              </div>
+              <h2 className="text-2xl font-semibold text-white">Failed to load products</h2>
+              <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
+                Ada masalah saat mengambil data marketplace dari server. Silakan coba lagi.
+              </p>
+              <button
+                type="button"
+                onClick={() => query.refetch()}
+                className="mt-6 rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+              >
+                Retry
+              </button>
+            </div>
+          ) : null}
+
+          {!query.isLoading && !query.isError ? (
+            <>
+              <ProductGrid products={paginatedProducts as Product[]} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.min(totalPages, 3)}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </>
+          ) : null}
+        </section>
+      </div>
+    </div>
+  )
+}
+
+export default MarketplacePage

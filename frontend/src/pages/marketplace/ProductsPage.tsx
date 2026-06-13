@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import MarketplacePage from '@/pages/marketplace/MarketplacePage'
 
 function ProductsPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Marketplace"
-      title="Products"
-      description="Katalog produk publik untuk menampilkan ikan segar, hasil panen, atau kebutuhan aquaculture yang tersedia."
-    />
-  )
+  return <MarketplacePage />
 }
 
 export default ProductsPage
