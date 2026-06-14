@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { createPortal } from 'react-dom'
 
 type DropdownWidth = 'full' | 'sm' | 'md' | 'lg'
 type DropdownAlign = 'left' | 'right'
@@ -39,13 +40,23 @@ export function SortDropdown({
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const [menuStyle, setMenuStyle] = useState<{
+    top: number
+    left: number
+    width: number
+  }>({
+    top: 0,
+    left: 0,
+    width: 0,
+  })
   const normalizedOptions = options.map((option) =>
     typeof option === 'string' ? { label: option, value: option } : option,
   )
   const selectedOption = normalizedOptions.find((option) => option.value === value)
   const displayValue = selectedOption?.label ?? placeholder
   const widthClass = widthClasses[width]
-  const menuAlignClass = align === 'right' ? 'right-0' : 'left-0'
 
   useEffect(() => {
     if (isOpen) {
@@ -68,7 +79,11 @@ export function SortDropdown({
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node
+      const clickedTrigger = containerRef.current?.contains(target)
+      const clickedMenu = menuRef.current?.contains(target)
+
+      if (!clickedTrigger && !clickedMenu) {
         setIsOpen(false)
       }
     }
@@ -78,15 +93,46 @@ export function SortDropdown({
     return () => document.removeEventListener('mousedown', handlePointerDown)
   }, [])
 
+  useLayoutEffect(() => {
+    if (!isVisible || !triggerRef.current) {
+      return
+    }
+
+    const updatePosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect()
+
+      if (!rect) {
+        return
+      }
+
+      const width = rect.width
+      const top = rect.bottom + 8
+      const left = align === 'right' ? rect.right - width : rect.left
+
+      setMenuStyle({ top, left, width })
+    }
+
+    updatePosition()
+
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [align, isVisible])
+
   return (
     <div
       ref={containerRef}
-      className={`relative flex flex-col gap-2 text-sm text-slate-600 ${widthClass}`}
+      className={`relative z-20 flex flex-col gap-2 text-sm text-slate-600 ${widthClass}`}
     >
       <span className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
         {label}
       </span>
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
@@ -101,7 +147,7 @@ export function SortDropdown({
             ? 'border-blue-200 ring-4 ring-blue-100'
             : 'border-slate-200 hover:border-blue-200'
         }`}
-      >
+        >
         <span className={`truncate ${value ? 'text-slate-800' : 'text-slate-400'}`}>
           {displayValue}
         </span>
@@ -112,35 +158,46 @@ export function SortDropdown({
         />
       </button>
 
-      {isVisible ? (
-        <div
-          className={`absolute top-full z-30 mt-2 ${menuAlignClass} w-full origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isOpen
-              ? 'scale-100 opacity-100'
-              : 'pointer-events-none scale-95 opacity-0'
-          }`}
-        >
-          <div role="listbox" aria-label={label} className="grid gap-1">
-            {normalizedOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  onChange(option.value)
-                  setIsOpen(false)
-                }}
-                className={`rounded-xl px-4 py-3 text-left text-sm transition duration-150 ${
-                  option.value === value
-                    ? 'bg-blue-50 font-semibold text-blue-600'
-                    : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      {isVisible
+        ? createPortal(
+            <div
+              ref={menuRef}
+              style={{
+                position: 'fixed',
+                top: menuStyle.top,
+                left: menuStyle.left,
+                width: menuStyle.width,
+                zIndex: 1000,
+              }}
+              className={`origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                isOpen
+                  ? 'scale-100 opacity-100'
+                  : 'pointer-events-none scale-95 opacity-0'
+              }`}
+            >
+              <div role="listbox" aria-label={label} className="grid gap-1">
+                {normalizedOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => {
+                      onChange(option.value)
+                      setIsOpen(false)
+                    }}
+                    className={`rounded-xl px-4 py-3 text-left text-sm transition duration-150 ${
+                      option.value === value
+                        ? 'bg-blue-50 font-semibold text-blue-600'
+                        : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }

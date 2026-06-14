@@ -4,6 +4,25 @@
 
 Backend aplikasi Marketplace Ikan dan Sistem Manajemen Budidaya menggunakan Golang, Gin, GORM, MySQL, JWT, dan Clean Architecture.
 
+## Menjalankan Backend
+
+Menjalankan backend secara lokal:
+
+```bash
+go run cmd/server/main.go
+```
+
+Menjalankan backend dengan Docker:
+
+```bash
+docker compose up -d --build
+```
+
+Setelah backend berjalan:
+
+- API root: `http://localhost/`
+- Swagger: `http://localhost/swagger/index.html`
+
 ## Continuous Integration
 
 Project ini menggunakan GitHub Actions workflow `backend-ci.yml` untuk menjalankan:
@@ -70,17 +89,6 @@ go run cmd/seeder/main.go
 ```
 
 Seeder hanya akan mengisi data jika tabel terkait masih kosong.
-
-## Menjalankan Docker
-
-```bash
-docker compose up -d --build
-```
-
-Setelah container berjalan:
-
-- API root: `http://localhost/`
-- Swagger: `http://localhost/swagger/index.html`
 
 ## Regression Test
 

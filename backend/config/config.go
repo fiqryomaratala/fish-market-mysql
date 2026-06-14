@@ -9,20 +9,22 @@ import (
 )
 
 type Config struct {
-	AppName    string
-	AppEnv     string
-	AppPort    string
-	BaseURL    string
-	LogLevel   string
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBCharset  string
-	JWTSecret  string
-	JWTExpired string
-	UploadPath string
+	AppName            string
+	AppEnv             string
+	AppPort            string
+	AppFallbackPorts   string
+	BaseURL            string
+	CORSAllowedOrigins string
+	LogLevel           string
+	DBHost             string
+	DBPort             string
+	DBUser             string
+	DBPassword         string
+	DBName             string
+	DBCharset          string
+	JWTSecret          string
+	JWTExpired         string
+	UploadPath         string
 }
 
 var (
@@ -35,20 +37,22 @@ func LoadConfig() {
 		_ = godotenv.Load()
 
 		appConfig = &Config{
-			AppName:    getEnv("APP_NAME", "Fish Marketplace Backend"),
-			AppEnv:     getEnv("APP_ENV", "development"),
-			AppPort:    getEnv("APP_PORT", "8080"),
-			BaseURL:    getEnv("BASE_URL", "http://localhost:8080"),
-			LogLevel:   getEnv("LOG_LEVEL", "debug"),
-			DBHost:     getEnv("DB_HOST", "localhost"),
-			DBPort:     getEnv("DB_PORT", "3306"),
-			DBUser:     getEnv("DB_USER", "root"),
-			DBPassword: getEnv("DB_PASSWORD", "password"),
-			DBName:     getEnv("DB_NAME", "fish_market_db"),
-			DBCharset:  getEnv("DB_CHARSET", "utf8mb4"),
-			JWTSecret:  getEnv("JWT_SECRET", "your-secret-key"),
-			JWTExpired: getEnv("JWT_EXPIRED", "24h"),
-			UploadPath: getEnv("UPLOAD_PATH", "uploads/"),
+			AppName:            getEnv("APP_NAME", "Fish Marketplace Backend"),
+			AppEnv:             getEnv("APP_ENV", "development"),
+			AppPort:            getEnv("APP_PORT", "8080"),
+			AppFallbackPorts:   getEnv("APP_FALLBACK_PORTS", "8081,8082,8083,8090"),
+			BaseURL:            getEnv("BASE_URL", "http://localhost:8080"),
+			CORSAllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"),
+			LogLevel:           getEnv("LOG_LEVEL", "debug"),
+			DBHost:             getEnv("DB_HOST", "localhost"),
+			DBPort:             getEnv("DB_PORT", "3306"),
+			DBUser:             getEnv("DB_USER", "root"),
+			DBPassword:         getEnv("DB_PASSWORD", "password"),
+			DBName:             getEnv("DB_NAME", "fish_market_db"),
+			DBCharset:          getEnv("DB_CHARSET", "utf8mb4"),
+			JWTSecret:          getEnv("JWT_SECRET", "your-secret-key"),
+			JWTExpired:         getEnv("JWT_EXPIRED", "24h"),
+			UploadPath:         getEnv("UPLOAD_PATH", "uploads/"),
 		}
 
 		validateConfig(appConfig)
