@@ -34,18 +34,18 @@ export function FilterSidebar({
   onCloseMobile,
 }: FilterSidebarProps) {
   const sidebarContent = (
-    <div className="h-full rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 shadow-2xl shadow-cyan-950/10 backdrop-blur">
+    <div className="h-full rounded-[2rem] border border-slate-200 bg-white/90 p-6 shadow-xl shadow-slate-200/80 backdrop-blur">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-200/80">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
             Filter
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-white">Find the best harvest</h2>
+          <h2 className="mt-2 text-xl font-semibold text-slate-900">Find the best harvest</h2>
         </div>
         <button
           type="button"
           onClick={onCloseMobile}
-          className="inline-flex rounded-full border border-white/10 p-2 text-slate-300 transition hover:border-cyan-300/50 hover:text-white lg:hidden"
+          className="inline-flex rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-blue-200 hover:text-blue-600 lg:hidden"
           aria-label="Close filters"
         >
           <X className="size-4" />
@@ -54,8 +54,8 @@ export function FilterSidebar({
 
       <div className="space-y-6">
         <section className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-white">
-            <SlidersHorizontal className="size-4 text-cyan-300" />
+          <div className="flex items-center gap-2 text-sm font-medium text-slate-900">
+            <SlidersHorizontal className="size-4 text-blue-600" />
             Price Range
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -67,7 +67,7 @@ export function FilterSidebar({
                 onChange({ ...filters, minPrice: event.target.value })
               }
               placeholder="Minimum"
-              className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-white"
             />
             <input
               type="number"
@@ -77,18 +77,18 @@ export function FilterSidebar({
                 onChange({ ...filters, maxPrice: event.target.value })
               }
               placeholder="Maximum"
-              className="rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-white"
             />
           </div>
         </section>
 
         <section className="space-y-3">
-          <div className="text-sm font-medium text-white">Availability</div>
+          <div className="text-sm font-medium text-slate-900">Availability</div>
           <div className="space-y-2">
             {availabilityOptions.map((option) => (
               <label
                 key={option}
-                className="flex cursor-pointer items-center justify-between rounded-2xl border border-white/8 bg-white/3 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-300/40"
+                className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60"
               >
                 <span>{option}</span>
                 <input
@@ -96,7 +96,7 @@ export function FilterSidebar({
                   name="availability"
                   checked={filters.availability === option}
                   onChange={() => onChange({ ...filters, availability: option })}
-                  className="size-4 accent-cyan-400"
+                  className="size-4 accent-blue-600"
                 />
               </label>
             ))}
@@ -104,12 +104,12 @@ export function FilterSidebar({
         </section>
 
         <section className="space-y-3">
-          <div className="text-sm font-medium text-white">Harvest Status</div>
+          <div className="text-sm font-medium text-slate-900">Harvest Status</div>
           <div className="space-y-2">
             {harvestStatusOptions.map((option) => (
               <label
                 key={option}
-                className="flex cursor-pointer items-center justify-between rounded-2xl border border-white/8 bg-white/3 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-300/40"
+                className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60"
               >
                 <span>{option}</span>
                 <input
@@ -117,7 +117,7 @@ export function FilterSidebar({
                   name="harvestStatus"
                   checked={filters.harvestStatus === option}
                   onChange={() => onChange({ ...filters, harvestStatus: option })}
-                  className="size-4 accent-cyan-400"
+                  className="size-4 accent-blue-600"
                 />
               </label>
             ))}
@@ -127,7 +127,7 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
         >
           <RotateCcw className="size-4" />
           Reset Filter
@@ -141,7 +141,7 @@ export function FilterSidebar({
       <aside className="hidden lg:block lg:w-80">{sidebarContent}</aside>
 
       {isMobileOpen ? (
-        <div className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm lg:hidden">
           <div className="ml-auto h-full w-full max-w-sm p-4">{sidebarContent}</div>
         </div>
       ) : null}

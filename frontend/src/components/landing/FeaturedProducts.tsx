@@ -8,7 +8,7 @@ type Product = {
   image: string
 }
 
-const products: Product[] = [
+const products = [
   {
     id: 1,
     name: 'Nila',
@@ -41,7 +41,7 @@ const products: Product[] = [
     image:
       "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 420'><defs><linearGradient id='g4' x1='0' x2='1' y1='0' y2='1'><stop stop-color='%2316A34A'/><stop offset='1' stop-color='%236B7280'/></linearGradient></defs><rect width='600' height='420' rx='36' fill='url(%23g4)'/><circle cx='474' cy='302' r='86' fill='rgba(255,255,255,0.08)'/><text x='70' y='84' fill='white' font-size='28' font-family='Arial'>Gourami Select</text><path d='M167 232c31-54 115-91 203-72 45 10 83 35 112 67-19 1-37 7-53 18-5 47-58 83-127 86-82 4-152-37-168-92-17-6-32-17-44-33 26-2 51 7 77 26z' fill='white' fill-opacity='0.91'/><circle cx='346' cy='216' r='8' fill='%23111827'/></svg>",
   },
-]
+] satisfies Product[]
 
 export function FeaturedProducts() {
   return (

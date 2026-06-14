@@ -15,7 +15,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-white transition hover:border-cyan-300/40 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronLeft className="size-4" />
         Previous
@@ -26,10 +26,10 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           key={page}
           type="button"
           onClick={() => onPageChange(page)}
-          className={`inline-flex size-11 items-center justify-center rounded-2xl border text-sm font-semibold transition ${
+          className={`inline-flex size-11 items-center justify-center rounded-full border text-sm font-semibold transition ${
             page === currentPage
-              ? 'border-cyan-300/40 bg-cyan-400 text-slate-950'
-              : 'border-white/10 bg-slate-950/70 text-white hover:border-cyan-300/40 hover:bg-cyan-400/10'
+              ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600'
           }`}
         >
           {page}
@@ -40,7 +40,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         type="button"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-white transition hover:border-cyan-300/40 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Next
         <ChevronRight className="size-4" />

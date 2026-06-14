@@ -109,15 +109,15 @@ function MarketplacePage() {
 
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_30%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(8,47,73,0.86))] p-6 shadow-2xl shadow-cyan-950/20 md:p-8">
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(22,163,74,0.10),_transparent_28%),linear-gradient(135deg,_#ffffff_0%,_#f8fafc_55%,_#eff6ff_100%)] p-6 shadow-2xl shadow-slate-200/70 md:p-8">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-200/80">
+          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">
             Marketplace
           </p>
-          <h1 className="mt-4 text-3xl font-semibold text-white md:text-5xl">
+          <h1 className="mt-4 text-3xl font-semibold text-slate-900 md:text-5xl">
             Hasil budidaya ikan segar langsung dari farm terbaik.
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500 md:text-base">
             Jelajahi stok panen air tawar dan laut dengan pengalaman marketplace yang cepat,
             bersih, dan nyaman dipakai di semua perangkat.
           </p>
@@ -137,7 +137,7 @@ function MarketplacePage() {
         />
 
         <section className="space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-xl shadow-slate-950/30 backdrop-blur md:p-6">
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 backdrop-blur md:p-6">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_repeat(2,minmax(0,0.7fr))]">
               <SearchBar value={searchInput} onChange={setSearchInput} />
 
@@ -163,21 +163,21 @@ function MarketplacePage() {
               <button
                 type="button"
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:border-cyan-300/40 hover:bg-cyan-400/10 xl:hidden"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 xl:hidden"
               >
                 <SlidersHorizontal className="size-4" />
                 Filter
               </button>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
               <p>
-                Showing <span className="font-semibold text-white">{filteredProducts.length}</span>{' '}
+                Showing <span className="font-semibold text-slate-900">{filteredProducts.length}</span>{' '}
                 products
               </p>
               <p>
                 Real-time search active for{' '}
-                <span className="font-semibold text-cyan-100">
+                <span className="font-semibold text-blue-600">
                   {debouncedSearch || 'all fish'}
                 </span>
               </p>
@@ -187,18 +187,18 @@ function MarketplacePage() {
           {query.isLoading ? <LoadingSkeleton /> : null}
 
           {query.isError ? (
-            <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-red-400/20 bg-red-500/5 px-6 py-12 text-center">
-              <div className="mb-5 rounded-full bg-red-500/10 p-4 text-red-200">
+            <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-red-200 bg-white px-6 py-12 text-center shadow-lg shadow-slate-200/70">
+              <div className="mb-5 rounded-full bg-red-50 p-4 text-red-500">
                 <AlertCircle className="size-8" />
               </div>
-              <h2 className="text-2xl font-semibold text-white">Failed to load products</h2>
-              <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
+              <h2 className="text-2xl font-semibold text-slate-900">Failed to load products</h2>
+              <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
                 Ada masalah saat mengambil data marketplace dari server. Silakan coba lagi.
               </p>
               <button
                 type="button"
                 onClick={() => query.refetch()}
-                className="mt-6 rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+                className="mt-6 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
               >
                 Retry
               </button>
