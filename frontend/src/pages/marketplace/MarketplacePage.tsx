@@ -10,8 +10,17 @@ import { SortDropdown } from '@/components/marketplace/SortDropdown'
 import { productService } from '@/services'
 import type { Product } from '@/types/product'
 
-const categoryOptions = ['All', 'Freshwater', 'Saltwater'] as const
-const sortOptions = ['Newest', 'Lowest Price', 'Highest Price', 'Best Selling'] as const
+const categoryOptions = [
+  { label: 'Semua', value: 'All' },
+  { label: 'Air Tawar', value: 'Freshwater' },
+  { label: 'Air Laut', value: 'Saltwater' },
+] as const
+const sortOptions = [
+  { label: 'Terbaru', value: 'Newest' },
+  { label: 'Harga Terendah', value: 'Lowest Price' },
+  { label: 'Harga Tertinggi', value: 'Highest Price' },
+  { label: 'Paling Laris', value: 'Best Selling' },
+] as const
 const initialFilters: MarketplaceFilters = {
   minPrice: '',
   maxPrice: '',
@@ -23,8 +32,8 @@ function MarketplacePage() {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedCategory, setSelectedCategory] =
-    useState<(typeof categoryOptions)[number]>('All')
-  const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('Newest')
+    useState<(typeof categoryOptions)[number]['value']>('All')
+  const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]['value']>('Newest')
   const [filters, setFilters] = useState<MarketplaceFilters>(initialFilters)
   const [currentPage, setCurrentPage] = useState(1)
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
@@ -112,7 +121,7 @@ function MarketplacePage() {
       <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(22,163,74,0.10),_transparent_28%),linear-gradient(135deg,_#ffffff_0%,_#f8fafc_55%,_#eff6ff_100%)] p-6 shadow-2xl shadow-slate-200/70 md:p-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">
-            Marketplace
+            Pasar Ikan
           </p>
           <h1 className="mt-4 text-3xl font-semibold text-slate-900 md:text-5xl">
             Hasil budidaya ikan segar langsung dari farm terbaik.
@@ -142,27 +151,27 @@ function MarketplacePage() {
               <SearchBar value={searchInput} onChange={setSearchInput} />
 
               <SortDropdown
-                label="Category"
+                label="Kategori"
                 value={selectedCategory}
                 options={[...categoryOptions]}
-                placeholder="All"
+                placeholder="Semua"
                 width="full"
                 align="left"
                 onChange={(value) => {
-                  setSelectedCategory(value as (typeof categoryOptions)[number])
+                  setSelectedCategory(value as (typeof categoryOptions)[number]['value'])
                   setCurrentPage(1)
                 }}
               />
 
               <SortDropdown
-                label="Sort By"
+                label="Urutkan"
                 value={selectedSort}
                 options={[...sortOptions]}
-                placeholder="Newest"
+                placeholder="Terbaru"
                 width="full"
                 align="left"
                 onChange={(value) => {
-                  setSelectedSort(value as (typeof sortOptions)[number])
+                  setSelectedSort(value as (typeof sortOptions)[number]['value'])
                   setCurrentPage(1)
                 }}
               />
@@ -179,13 +188,14 @@ function MarketplacePage() {
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
               <p>
-                Showing <span className="font-semibold text-slate-900">{filteredProducts.length}</span>{' '}
-                products
+                Menampilkan{' '}
+                <span className="font-semibold text-slate-900">{filteredProducts.length}</span>{' '}
+                produk
               </p>
               <p>
-                Real-time search active for{' '}
+                Pencarian real-time aktif untuk{' '}
                 <span className="font-semibold text-blue-600">
-                  {debouncedSearch || 'all fish'}
+                  {debouncedSearch || 'semua ikan'}
                 </span>
               </p>
             </div>
@@ -198,7 +208,7 @@ function MarketplacePage() {
               <div className="mb-5 rounded-full bg-red-50 p-4 text-red-500">
                 <AlertCircle className="size-8" />
               </div>
-              <h2 className="text-2xl font-semibold text-slate-900">Failed to load products</h2>
+              <h2 className="text-2xl font-semibold text-slate-900">Gagal memuat produk</h2>
               <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
                 Ada masalah saat mengambil data marketplace dari server. Silakan coba lagi.
               </p>
@@ -207,7 +217,7 @@ function MarketplacePage() {
                 onClick={() => query.refetch()}
                 className="mt-6 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
               >
-                Retry
+                Coba Lagi
               </button>
             </div>
           ) : null}

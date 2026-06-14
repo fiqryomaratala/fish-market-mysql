@@ -18,6 +18,11 @@ const dateFormatter = new Intl.DateTimeFormat('id-ID', {
   year: 'numeric',
 })
 
+const categoryLabels = {
+  Freshwater: 'Air Tawar',
+  Saltwater: 'Air Laut',
+} as const
+
 export function ProductCard({ product }: ProductCardProps) {
   return (
     <article className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-2 hover:border-blue-200">
@@ -29,10 +34,10 @@ export function ProductCard({ product }: ProductCardProps) {
         />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
           <span className="rounded-full border border-blue-200 bg-white/95 px-3 py-1 text-xs font-semibold text-blue-600 shadow-lg shadow-slate-200 backdrop-blur">
-            {product.category}
+            {categoryLabels[product.category]}
           </span>
           <span className="rounded-full border border-emerald-200 bg-emerald-50/95 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-lg shadow-slate-200">
-            Batch {product.batch_code}
+            Kode {product.batch_code}
           </span>
         </div>
       </div>
@@ -52,14 +57,14 @@ export function ProductCard({ product }: ProductCardProps) {
                 {product.rating.toFixed(1)}
               </span>
             </div>
-            <p className="mt-1 text-xs text-slate-500">{product.sold_count} sold</p>
+            <p className="mt-1 text-xs text-slate-500">{product.sold_count} terjual</p>
           </div>
         </div>
 
         <div className="grid gap-2 text-sm text-slate-500">
           <div className="flex items-center gap-2">
             <Package2 className="size-4 text-blue-600" />
-            <span>Stock {product.stock}</span>
+            <span>Stok {product.stock}</span>
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="size-4 text-blue-600" />
@@ -67,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <CalendarDays className="size-4 text-blue-600" />
-            <span>Harvest {dateFormatter.format(new Date(product.harvest_date))}</span>
+            <span>Panen {dateFormatter.format(new Date(product.harvest_date))}</span>
           </div>
         </div>
 
@@ -76,14 +81,14 @@ export function ProductCard({ product }: ProductCardProps) {
             to={`/products/${product.id}`}
             className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
           >
-            View Detail
+            Lihat Detail
           </Link>
           <button
             type="button"
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
           >
             <ShoppingCart className="size-4" />
-            Add To Cart
+            Tambah ke Keranjang
           </button>
         </div>
       </div>

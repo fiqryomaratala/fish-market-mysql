@@ -30,7 +30,7 @@ export function AppHeader() {
                 isMarketplaceTheme ? 'text-slate-500' : 'text-slate-400'
               }`}
             >
-              Aquaculture Management
+              Manajemen Budidaya
             </p>
           </div>
         </NavLink>

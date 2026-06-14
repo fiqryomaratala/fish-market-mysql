@@ -1,4 +1,5 @@
-import { RotateCcw, X } from 'lucide-react'
+import { X } from 'lucide-react'
+import { FilterOptions } from '@/components/marketplace/FilterOptions'
 import { PriceRangeFilter } from '@/components/marketplace/PriceRangeFilter'
 
 type AvailabilityFilter = 'All' | 'In Stock' | 'Out of Stock'
@@ -19,14 +20,6 @@ type FilterSidebarProps = {
   onCloseMobile: () => void
 }
 
-const availabilityOptions: AvailabilityFilter[] = ['All', 'In Stock', 'Out of Stock']
-const harvestStatusOptions: HarvestStatusFilter[] = [
-  'All',
-  'Fresh Harvest',
-  'Ready Stock',
-  'Upcoming Harvest',
-]
-
 export function FilterSidebar({
   filters,
   isMobileOpen,
@@ -41,13 +34,13 @@ export function FilterSidebar({
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
             Filter
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-slate-900">Find the best harvest</h2>
+          <h2 className="mt-2 text-xl font-semibold text-slate-900">Temukan hasil panen terbaik</h2>
         </div>
         <button
           type="button"
           onClick={onCloseMobile}
           className="inline-flex rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-blue-200 hover:text-blue-600 lg:hidden"
-          aria-label="Close filters"
+          aria-label="Tutup filter"
         >
           <X className="size-4" />
         </button>
@@ -62,56 +55,15 @@ export function FilterSidebar({
           }
         />
 
-        <section className="space-y-3">
-          <div className="text-sm font-medium text-slate-900">Availability</div>
-          <div className="space-y-2">
-            {availabilityOptions.map((option) => (
-              <label
-                key={option}
-                className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60"
-              >
-                <span>{option}</span>
-                <input
-                  type="radio"
-                  name="availability"
-                  checked={filters.availability === option}
-                  onChange={() => onChange({ ...filters, availability: option })}
-                  className="size-4 accent-blue-600"
-                />
-              </label>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-3">
-          <div className="text-sm font-medium text-slate-900">Harvest Status</div>
-          <div className="space-y-2">
-            {harvestStatusOptions.map((option) => (
-              <label
-                key={option}
-                className="flex cursor-pointer items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/60"
-              >
-                <span>{option}</span>
-                <input
-                  type="radio"
-                  name="harvestStatus"
-                  checked={filters.harvestStatus === option}
-                  onChange={() => onChange({ ...filters, harvestStatus: option })}
-                  className="size-4 accent-blue-600"
-                />
-              </label>
-            ))}
-          </div>
-        </section>
-
-        <button
-          type="button"
-          onClick={onReset}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-        >
-          <RotateCcw className="size-4" />
-          Reset Filter
-        </button>
+        <FilterOptions
+          availability={filters.availability}
+          harvestStatus={filters.harvestStatus}
+          onAvailabilityChange={(availability) => onChange({ ...filters, availability })}
+          onHarvestStatusChange={(harvestStatus) =>
+            onChange({ ...filters, harvestStatus })
+          }
+          onReset={onReset}
+        />
       </div>
     </div>
   )

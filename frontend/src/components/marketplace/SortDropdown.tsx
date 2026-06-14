@@ -3,10 +3,14 @@ import { ChevronDown } from 'lucide-react'
 
 type DropdownWidth = 'full' | 'sm' | 'md' | 'lg'
 type DropdownAlign = 'left' | 'right'
+type DropdownOption = {
+  label: string
+  value: string
+}
 
 type SortDropdownProps = {
   value?: string
-  options: string[]
+  options: Array<string | DropdownOption>
   onChange: (value: string) => void
   label?: string
   placeholder?: string
@@ -26,8 +30,8 @@ export function SortDropdown({
   value,
   options,
   onChange,
-  label = 'Sort By',
-  placeholder = 'Select option',
+  label = 'Urutkan',
+  placeholder = 'Pilih opsi',
   width = 'full',
   align = 'left',
   disabled = false,
@@ -35,7 +39,11 @@ export function SortDropdown({
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const displayValue = value?.trim() ? value : placeholder
+  const normalizedOptions = options.map((option) =>
+    typeof option === 'string' ? { label: option, value: option } : option,
+  )
+  const selectedOption = normalizedOptions.find((option) => option.value === value)
+  const displayValue = selectedOption?.label ?? placeholder
   const widthClass = widthClasses[width]
   const menuAlignClass = align === 'right' ? 'right-0' : 'left-0'
 
@@ -113,21 +121,21 @@ export function SortDropdown({
           }`}
         >
           <div role="listbox" aria-label={label} className="grid gap-1">
-            {options.map((option) => (
+            {normalizedOptions.map((option) => (
               <button
-                key={option}
+                key={option.value}
                 type="button"
                 onClick={() => {
-                  onChange(option)
+                  onChange(option.value)
                   setIsOpen(false)
                 }}
                 className={`rounded-xl px-4 py-3 text-left text-sm transition duration-150 ${
-                  option === value
+                  option.value === value
                     ? 'bg-blue-50 font-semibold text-blue-600'
                     : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'
                 }`}
               >
-                {option}
+                {option.label}
               </button>
             ))}
           </div>

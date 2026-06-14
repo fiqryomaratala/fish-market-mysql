@@ -9,7 +9,7 @@ type SearchBarProps = {
 export function SearchBar({
   value,
   onChange,
-  label = 'Search',
+  label = 'Cari',
 }: SearchBarProps) {
   return (
     <label className="flex flex-col gap-2 text-sm text-slate-600">
@@ -22,7 +22,7 @@ export function SearchBar({
           type="search"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          placeholder="Search fish..."
+          placeholder="Cari ikan..."
           className="w-full rounded-full border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:ring-4 focus:ring-blue-100"
         />
       </span>

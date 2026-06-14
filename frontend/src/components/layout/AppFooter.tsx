@@ -17,7 +17,7 @@ export function AppFooter() {
           isMarketplaceTheme ? 'text-slate-500' : 'text-slate-400'
         }`}
       >
-        <p>Fish Marketplace & Aquaculture Management System</p>
+        <p>Marketplace Ikan & Sistem Manajemen Budidaya</p>
         <p>React + Vite + Tailwind + TypeScript</p>
       </div>
     </footer>

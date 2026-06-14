@@ -52,21 +52,21 @@ export function PriceRangeFilter({
     <section className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium text-slate-900">
         <SlidersHorizontal className="size-4 text-blue-600" />
-        Price Range
+        Rentang Harga
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <PriceInput
           id="marketplace-min-price"
-          label="Minimum"
+          label="Minimal"
           placeholder="Min"
           value={minPrice}
           onValueChange={(value) => onChange({ minPrice: value, maxPrice })}
         />
         <PriceInput
           id="marketplace-max-price"
-          label="Maximum"
-          placeholder="Max"
+          label="Maksimal"
+          placeholder="Maks"
           value={maxPrice}
           onValueChange={(value) => onChange({ minPrice, maxPrice: value })}
         />

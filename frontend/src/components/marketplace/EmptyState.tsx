@@ -6,9 +6,9 @@ export function EmptyState() {
       <div className="mb-6 flex size-24 items-center justify-center rounded-full bg-blue-50 text-blue-600">
         <FishOff className="size-12" />
       </div>
-      <h3 className="text-2xl font-semibold text-slate-900">No Product Found</h3>
+      <h3 className="text-2xl font-semibold text-slate-900">Produk Tidak Ditemukan</h3>
       <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
-        Coba ubah kata kunci pencarian atau reset filter untuk melihat hasil panen yang tersedia.
+        Coba ubah kata kunci pencarian atau atur ulang filter untuk melihat hasil panen yang tersedia.
       </p>
     </div>
   )
