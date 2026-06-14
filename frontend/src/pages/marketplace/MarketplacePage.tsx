@@ -9,6 +9,13 @@ import { SortDropdown } from '@/components/marketplace/SortDropdown'
 import { useProducts } from '@/hooks/useProducts'
 import type { Product } from '@/types/product'
 
+type MarketplaceCategory = 'All' | 'freshwater' | 'saltwater'
+
+const categoryOptions = [
+  { label: 'Semua', value: 'All' },
+  { label: 'Ikan Air Tawar', value: 'freshwater' },
+  { label: 'Ikan Air Asin', value: 'saltwater' },
+] as const
 const sortOptions = [
   { label: 'Terbaru', value: 'Newest' },
   { label: 'Harga Terendah', value: 'Lowest Price' },
@@ -22,10 +29,30 @@ const initialFilters: MarketplaceFilters = {
   harvestStatus: 'All',
 }
 
+function resolveMarketplaceCategory(product: Product): Exclude<MarketplaceCategory, 'All'> | null {
+  const rawCategory = product.category.trim().toLowerCase()
+
+  if (
+    ['freshwater', 'air_tawar', 'ikan air tawar', 'air tawar'].includes(rawCategory)
+  ) {
+    return 'freshwater'
+  }
+
+  if (
+    ['saltwater', 'air_asin', 'ikan air asin', 'air asin', 'air_laut', 'air laut'].includes(
+      rawCategory,
+    )
+  ) {
+    return 'saltwater'
+  }
+
+  return null
+}
+
 function MarketplacePage() {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [selectedCategory, setSelectedCategory] = useState<MarketplaceCategory>('All')
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]['value']>('Newest')
   const [filters, setFilters] = useState<MarketplaceFilters>(initialFilters)
   const [currentPage, setCurrentPage] = useState(1)
@@ -41,17 +68,6 @@ function MarketplacePage() {
   }, [searchInput])
 
   const { data, isLoading, error, refetch } = useProducts()
-
-  const categoryOptions = useMemo(() => {
-    const categories = Array.from(
-      new Set((data ?? []).map((product) => product.category).filter(Boolean)),
-    )
-
-    return [
-      { label: 'Semua', value: 'All' },
-      ...categories.map((category) => ({ label: category, value: category })),
-    ]
-  }, [data])
 
   const filteredProducts = useMemo(() => {
     const items = data ?? []
@@ -81,8 +97,9 @@ function MarketplacePage() {
         const minPrice = filters.minPrice ? Number(filters.minPrice) : 0
         const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : Number.POSITIVE_INFINITY
         const matchesPrice = product.price >= minPrice && product.price <= maxPrice
+        const normalizedCategory = resolveMarketplaceCategory(product)
         const matchesCategory =
-          selectedCategory === 'All' || product.category === selectedCategory
+          selectedCategory === 'All' || normalizedCategory === selectedCategory
 
         return (
           matchesSearch &&
@@ -166,7 +183,7 @@ function MarketplacePage() {
                 width="full"
                 align="left"
                 onChange={(value) => {
-                  setSelectedCategory(value)
+                  setSelectedCategory(value as MarketplaceCategory)
                   setCurrentPage(1)
                 }}
               />

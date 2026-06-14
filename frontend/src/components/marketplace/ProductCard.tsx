@@ -1,4 +1,4 @@
-import { CalendarDays, MapPin, Package2 } from 'lucide-react'
+import { Package2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { FALLBACK_PLACEHOLDER_IMAGE } from '@/services/product.service'
 import type { Product } from '@/types/product'
@@ -13,22 +13,6 @@ const currencyFormatter = new Intl.NumberFormat('id-ID', {
   maximumFractionDigits: 0,
 })
 
-const dateFormatter = new Intl.DateTimeFormat('id-ID', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
-
-function formatHarvestDate(value: string) {
-  const parsed = new Date(value)
-
-  if (Number.isNaN(parsed.getTime())) {
-    return '-'
-  }
-
-  return dateFormatter.format(parsed)
-}
-
 export function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate()
 
@@ -40,14 +24,6 @@ export function ProductCard({ product }: ProductCardProps) {
           alt={product.name}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-          <span className="rounded-full border border-emerald-200 bg-emerald-50/95 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-lg shadow-slate-200">
-            {product.category || 'Tanpa Kategori'}
-          </span>
-          <span className="rounded-full border border-blue-200 bg-white/95 px-3 py-1 text-xs font-semibold text-blue-600 shadow-lg shadow-slate-200 backdrop-blur">
-            {product.batch_code || '-'}
-          </span>
-        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-5">
@@ -66,14 +42,6 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center gap-2">
             <Package2 className="size-4 text-blue-600" />
             <span>Stok {product.stock}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="size-4 text-blue-600" />
-            <span>{product.farm_name || '-'}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CalendarDays className="size-4 text-blue-600" />
-            <span>Panen {formatHarvestDate(product.harvest_date)}</span>
           </div>
         </div>
 
