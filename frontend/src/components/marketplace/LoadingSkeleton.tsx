@@ -17,10 +17,7 @@ export function LoadingSkeleton() {
               <div className="h-4 w-5/6 animate-pulse rounded-full bg-slate-200" />
               <div className="h-4 w-4/6 animate-pulse rounded-full bg-slate-200" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="h-11 animate-pulse rounded-full bg-slate-200" />
-              <div className="h-11 animate-pulse rounded-full bg-blue-100" />
-            </div>
+            <div className="h-11 animate-pulse rounded-full bg-slate-200" />
           </div>
         </div>
       ))}

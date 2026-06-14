@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, SlidersHorizontal } from 'lucide-react'
 import { FilterSidebar, type MarketplaceFilters } from '@/components/marketplace/FilterSidebar'
 import { LoadingSkeleton } from '@/components/marketplace/LoadingSkeleton'
@@ -7,14 +6,9 @@ import { Pagination } from '@/components/marketplace/Pagination'
 import { ProductGrid } from '@/components/marketplace/ProductGrid'
 import { SearchBar } from '@/components/marketplace/SearchBar'
 import { SortDropdown } from '@/components/marketplace/SortDropdown'
-import { productService } from '@/services'
+import { useProducts } from '@/hooks/useProducts'
 import type { Product } from '@/types/product'
 
-const categoryOptions = [
-  { label: 'Semua', value: 'All' },
-  { label: 'Air Tawar', value: 'Freshwater' },
-  { label: 'Air Laut', value: 'Saltwater' },
-] as const
 const sortOptions = [
   { label: 'Terbaru', value: 'Newest' },
   { label: 'Harga Terendah', value: 'Lowest Price' },
@@ -31,8 +25,7 @@ const initialFilters: MarketplaceFilters = {
 function MarketplacePage() {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [selectedCategory, setSelectedCategory] =
-    useState<(typeof categoryOptions)[number]['value']>('All')
+  const [selectedCategory, setSelectedCategory] = useState('All')
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]['value']>('Newest')
   const [filters, setFilters] = useState<MarketplaceFilters>(initialFilters)
   const [currentPage, setCurrentPage] = useState(1)
@@ -47,32 +40,57 @@ function MarketplacePage() {
     return () => window.clearTimeout(timeout)
   }, [searchInput])
 
-  const query = useQuery({
-    queryKey: ['marketplace-products', debouncedSearch, selectedCategory, selectedSort],
-    queryFn: async () =>
-      productService.getMarketplaceProducts({
-        page: 1,
-        limit: 50,
-        search: debouncedSearch,
-        category: selectedCategory,
-        sort: selectedSort,
-      }),
-  })
+  const { data, isLoading, error, refetch } = useProducts()
+
+  const categoryOptions = useMemo(() => {
+    const categories = Array.from(
+      new Set((data ?? []).map((product) => product.category).filter(Boolean)),
+    )
+
+    return [
+      { label: 'Semua', value: 'All' },
+      ...categories.map((category) => ({ label: category, value: category })),
+    ]
+  }, [data])
 
   const filteredProducts = useMemo(() => {
-    const items = query.data?.data ?? []
+    const items = data ?? []
 
     return items
       .filter((product) => {
-        const matchesAvailability =
-          filters.availability === 'All' || product.availability === filters.availability
+        const matchesSearch =
+          debouncedSearch.length === 0 ||
+          product.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          product.description.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          product.batch_code.toLowerCase().includes(debouncedSearch.toLowerCase())
+        const matchesAvailability = filters.availability === 'All'
+          ? true
+          : filters.availability === 'In Stock'
+            ? product.stock > 0
+            : product.stock <= 0
+        const harvestStatus =
+          product.status === 'Fresh Harvest' ||
+          product.status === 'Ready Stock' ||
+          product.status === 'Upcoming Harvest'
+            ? product.status
+            : product.stock > 0
+              ? 'Ready Stock'
+              : 'Upcoming Harvest'
         const matchesHarvestStatus =
-          filters.harvestStatus === 'All' || product.harvest_status === filters.harvestStatus
+          filters.harvestStatus === 'All' || harvestStatus === filters.harvestStatus
         const minPrice = filters.minPrice ? Number(filters.minPrice) : 0
         const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : Number.POSITIVE_INFINITY
         const matchesPrice = product.price >= minPrice && product.price <= maxPrice
+        const matchesCategory =
+          selectedCategory === 'All' || product.category === selectedCategory
 
-        return matchesAvailability && matchesHarvestStatus && matchesPrice
+        return (
+          matchesSearch &&
+          matchesAvailability &&
+          matchesHarvestStatus &&
+          matchesPrice &&
+          matchesCategory
+        )
       })
       .sort((left, right) => {
         if (selectedSort === 'Lowest Price') {
@@ -83,29 +101,19 @@ function MarketplacePage() {
           return right.price - left.price
         }
 
-        if (selectedSort === 'Best Selling') {
-          return right.sold_count - left.sold_count
-        }
-
         return (
           new Date(right.harvest_date).getTime() - new Date(left.harvest_date).getTime()
         )
       })
-  }, [filters, query.data?.data, selectedSort])
+  }, [data, debouncedSearch, filters, selectedCategory, selectedSort])
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / 8))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedProducts = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const startIndex = (safePage - 1) * 8
+    const startIndex = (safeCurrentPage - 1) * 8
 
     return filteredProducts.slice(startIndex, startIndex + 8)
-  }, [currentPage, filteredProducts, totalPages])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
+  }, [filteredProducts, safeCurrentPage])
 
   const handleResetFilters = () => {
     setFilters(initialFilters)
@@ -158,7 +166,7 @@ function MarketplacePage() {
                 width="full"
                 align="left"
                 onChange={(value) => {
-                  setSelectedCategory(value as (typeof categoryOptions)[number]['value'])
+                  setSelectedCategory(value)
                   setCurrentPage(1)
                 }}
               />
@@ -201,20 +209,22 @@ function MarketplacePage() {
             </div>
           </div>
 
-          {query.isLoading ? <LoadingSkeleton /> : null}
+          {isLoading ? <LoadingSkeleton /> : null}
 
-          {query.isError ? (
+          {error ? (
             <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-red-200 bg-white px-6 py-12 text-center shadow-lg shadow-slate-200/70">
               <div className="mb-5 rounded-full bg-red-50 p-4 text-red-500">
                 <AlertCircle className="size-8" />
               </div>
               <h2 className="text-2xl font-semibold text-slate-900">Gagal memuat produk</h2>
               <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
-                Ada masalah saat mengambil data marketplace dari server. Silakan coba lagi.
+                {error instanceof Error
+                  ? error.message
+                  : 'Ada masalah saat mengambil data marketplace dari server. Silakan coba lagi.'}
               </p>
               <button
                 type="button"
-                onClick={() => query.refetch()}
+                onClick={() => refetch()}
                 className="mt-6 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
               >
                 Coba Lagi
@@ -222,11 +232,11 @@ function MarketplacePage() {
             </div>
           ) : null}
 
-          {!query.isLoading && !query.isError ? (
+          {!isLoading && !error ? (
             <>
               <ProductGrid products={paginatedProducts as Product[]} />
               <Pagination
-                currentPage={currentPage}
+                currentPage={safeCurrentPage}
                 totalPages={Math.min(totalPages, 3)}
                 onPageChange={(page) => setCurrentPage(page)}
               />

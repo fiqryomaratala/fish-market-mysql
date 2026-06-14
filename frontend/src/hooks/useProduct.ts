@@ -5,11 +5,13 @@ export function useProduct(productId?: string) {
   return useQuery({
     queryKey: ['product', productId],
     queryFn: async () => {
-      if (!productId) {
+      const numericId = Number(productId)
+
+      if (!productId || Number.isNaN(numericId)) {
         throw new Error('Product ID is required')
       }
 
-      return productService.getById(productId)
+      return productService.getProductById(numericId)
     },
     enabled: Boolean(productId),
   })
