@@ -1,69 +1,64 @@
-import api, { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/api/axios'
+import api from '@/api/axios'
 import type {
   ApiResponse,
   AuthResponse,
-  LoginPayload,
-  RegisterPayload,
-  UserProfile,
-} from '@/types/api'
+  LoginRequest,
+  RegisterRequest,
+  User,
+} from '@/types/auth'
+import { ACCESS_TOKEN_KEY } from '@/types/auth'
+
+type RegisterApiResponse = {
+  id: number
+  name: string
+  email: string
+  role: string
+  created_at?: string
+  updated_at?: string
+}
+
+function normalizeUser(user: Partial<User> & Pick<User, 'id' | 'name' | 'email' | 'role'>): User {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    created_at: user.created_at ?? '',
+    updated_at: user.updated_at ?? '',
+  }
+}
 
 class AuthService {
-  async login(payload: LoginPayload) {
-    const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/login', payload)
-
-    if (data.data.token) {
-      localStorage.setItem(AUTH_TOKEN_KEY, data.data.token)
+  async login(payload: LoginRequest): Promise<AuthResponse> {
+    const response = await api.post<ApiResponse<AuthResponse>>('/auth/login', payload)
+    const auth = {
+      token: response.data.data.token,
+      user: normalizeUser(response.data.data.user),
     }
 
-    if (data.data.refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.data.refreshToken)
-    }
+    localStorage.setItem(ACCESS_TOKEN_KEY, auth.token)
 
-    return data
+    return auth
   }
 
-  async register(payload: RegisterPayload) {
-    const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/register', payload)
-
-    if (data.data.token) {
-      localStorage.setItem(AUTH_TOKEN_KEY, data.data.token)
-    }
-
-    if (data.data.refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.data.refreshToken)
-    }
-
-    return data
-  }
-
-  async getProfile() {
-    const { data } = await api.get<ApiResponse<UserProfile>>('/auth/profile')
-    return data
-  }
-
-  async refreshToken(refreshToken: string) {
-    const { data } = await api.post<ApiResponse<AuthResponse>>('/auth/refresh', {
-      refreshToken,
+  async register(payload: RegisterRequest): Promise<AuthResponse> {
+    await api.post<ApiResponse<RegisterApiResponse>>('/auth/register', payload)
+    return this.login({
+      email: payload.email,
+      password: payload.password,
     })
-
-    if (data.data.token) {
-      localStorage.setItem(AUTH_TOKEN_KEY, data.data.token)
-    }
-
-    if (data.data.refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.data.refreshToken)
-    }
-
-    return data
   }
 
-  async logout() {
-    try {
-      await api.post('/auth/logout')
-    } finally {
-      localStorage.removeItem(AUTH_TOKEN_KEY)
-      localStorage.removeItem(REFRESH_TOKEN_KEY)
-    }
+  async logout(): Promise<void> {
+    localStorage.removeItem(ACCESS_TOKEN_KEY)
+  }
+
+  async getProfile(): Promise<User> {
+    const response = await api.get<ApiResponse<Partial<User> & Pick<User, 'id' | 'name' | 'email' | 'role'>>>(
+      '/auth/profile',
+    )
+
+    return normalizeUser(response.data.data)
   }
 }
 

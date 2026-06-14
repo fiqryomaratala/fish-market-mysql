@@ -1,10 +1,19 @@
 import axios from 'axios'
+import { apiConfig } from '@/config/api'
+import { ACCESS_TOKEN_KEY } from '@/types/auth'
 
-export const AUTH_TOKEN_KEY = 'token'
-export const REFRESH_TOKEN_KEY = 'refreshToken'
+let unauthorizedHandler: (() => void) | null = null
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler
+}
+
+export function clearAuthStorage() {
+  localStorage.removeItem(ACCESS_TOKEN_KEY)
+}
+
+const api = axios.create({
+  baseURL: apiConfig.baseUrl,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -14,7 +23,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY)
+    const token = localStorage.getItem(ACCESS_TOKEN_KEY)
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -29,11 +38,11 @@ api.interceptors.response.use(
   async (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem(AUTH_TOKEN_KEY)
-      localStorage.removeItem(REFRESH_TOKEN_KEY)
+      clearAuthStorage()
+      unauthorizedHandler?.()
 
       if (window.location.pathname !== '/login') {
-        window.location.href = '/login'
+        window.location.replace('/login')
       }
     }
 

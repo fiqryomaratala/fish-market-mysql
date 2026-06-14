@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { LoadingScreen } from '@/components/common/LoadingScreen'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 
-function getRedirectPath(role: string | null) {
+function getRedirectPath(role?: string) {
   if (role === 'admin') {
     return '/admin'
   }
@@ -15,14 +15,14 @@ function getRedirectPath(role: string | null) {
 }
 
 export function GuestRoute() {
-  const { isAuthenticated, isLoading, role } = useAuth()
+  const { isAuthenticated, loading, user } = useAuth()
 
-  if (isLoading) {
+  if (loading) {
     return <LoadingScreen message="Preparing authentication flow..." />
   }
 
   if (isAuthenticated) {
-    return <Navigate to={getRedirectPath(role)} replace />
+    return <Navigate to={getRedirectPath(user?.role)} replace />
   }
 
   return <Outlet />

@@ -1,145 +1,125 @@
 import type { ReactNode } from 'react'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/api/axios'
-import { authService } from '@/services'
-import type { LoginPayload, RegisterPayload, UserProfile, UserRole } from '@/types/api'
-import { getRoleFromToken, getUserFromToken, isTokenExpired } from '@/utils/jwt'
+import { createContext, useEffect, useMemo, useState } from 'react'
+import { clearAuthStorage, setUnauthorizedHandler } from '@/api/axios'
+import { authService } from '@/services/auth.service'
+import { queryClient } from '@/lib/query-client'
+import type { AuthResponse, LoginRequest, RegisterRequest, User } from '@/types/auth'
+import { ACCESS_TOKEN_KEY } from '@/types/auth'
 
-type AuthContextValue = {
-  isAuthenticated: boolean
-  isLoading: boolean
+interface AuthContextValue {
+  user: User | null
   token: string | null
-  user: UserProfile | null
-  role: UserRole | null
-  login: (payload: LoginPayload) => Promise<UserProfile | null>
+  isAuthenticated: boolean
+  loading: boolean
+  login: (payload: LoginRequest) => Promise<User>
+  register: (payload: RegisterRequest) => Promise<User>
   logout: () => Promise<void>
-  register: (payload: RegisterPayload) => Promise<UserProfile | null>
-  refreshUser: () => Promise<UserProfile | null>
+  refreshUser: () => Promise<User | null>
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
-type AuthProviderProps = {
+interface AuthProviderProps {
   children: ReactNode
 }
 
+function applyAuthState(
+  auth: AuthResponse | null,
+  setToken: (value: string | null) => void,
+  setUser: (value: User | null) => void,
+) {
+  setToken(auth?.token ?? null)
+  setUser(auth?.user ?? null)
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
-  const [user, setUser] = useState<UserProfile | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
-  const clearAuth = useCallback(() => {
-    localStorage.removeItem(AUTH_TOKEN_KEY)
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
-    setToken(null)
-    setUser(null)
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearAuthStorage()
+      applyAuthState(null, setToken, setUser)
+      queryClient.clear()
+    }
+
+    setUnauthorizedHandler(handleUnauthorized)
+
+    return () => {
+      setUnauthorizedHandler(null)
+    }
   }, [])
-
-  const applyToken = useCallback((nextToken: string | null) => {
-    if (!nextToken || isTokenExpired(nextToken)) {
-      return null
-    }
-
-    const decodedUser = getUserFromToken(nextToken)
-
-    if (!decodedUser) {
-      clearAuth()
-      return null
-    }
-
-    localStorage.setItem(AUTH_TOKEN_KEY, nextToken)
-    setToken(nextToken)
-    setUser(decodedUser)
-
-    return decodedUser
-  }, [])
-
-  const refreshUser = useCallback(async () => {
-    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
-
-    if (!storedToken || isTokenExpired(storedToken)) {
-      clearAuth()
-      return null
-    }
-
-    const decodedUser = applyToken(storedToken)
-
-    try {
-      const response = await authService.getProfile()
-      setUser({
-        ...response.data,
-        role: getRoleFromToken(storedToken) ?? response.data.role,
-      })
-      return response.data
-    } catch {
-      setUser(decodedUser)
-      return decodedUser
-    }
-  }, [applyToken, clearAuth])
-
-  const login = useCallback(async (payload: LoginPayload) => {
-    const response = await authService.login(payload)
-    const authenticatedUser = applyToken(response.data.token)
-    setUser(response.data.user ?? authenticatedUser)
-    return response.data.user ?? authenticatedUser
-  }, [applyToken])
-
-  const register = useCallback(async (payload: RegisterPayload) => {
-    const response = await authService.register(payload)
-    const authenticatedUser = applyToken(response.data.token)
-    setUser(response.data.user ?? authenticatedUser)
-    return response.data.user ?? authenticatedUser
-  }, [applyToken])
-
-  const logout = useCallback(async () => {
-    await authService.logout()
-    clearAuth()
-  }, [clearAuth])
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
+      const storedToken = localStorage.getItem(ACCESS_TOKEN_KEY)
 
-      if (!storedToken || isTokenExpired(storedToken)) {
-        clearAuth()
-        setIsLoading(false)
+      if (!storedToken) {
+        setLoading(false)
         return
       }
 
-      applyToken(storedToken)
-      await refreshUser()
-      setIsLoading(false)
+      setToken(storedToken)
+
+      try {
+        const profile = await authService.getProfile()
+        setUser(profile)
+      } catch {
+        clearAuthStorage()
+        applyAuthState(null, setToken, setUser)
+      } finally {
+        setLoading(false)
+      }
     }
 
     void initializeAuth()
-  }, [applyToken, clearAuth, refreshUser])
+  }, [])
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      isAuthenticated: Boolean(token && user),
-      isLoading,
-      token,
       user,
-      role: token ? getRoleFromToken(token) : null,
-      login,
-      logout,
-      register,
-      refreshUser,
+      token,
+      isAuthenticated: Boolean(user && token),
+      loading,
+      login: async (payload) => {
+        const auth = await authService.login(payload)
+        applyAuthState(auth, setToken, setUser)
+        return auth.user
+      },
+      register: async (payload) => {
+        const auth = await authService.register(payload)
+        applyAuthState(auth, setToken, setUser)
+        return auth.user
+      },
+      logout: async () => {
+        await authService.logout()
+        applyAuthState(null, setToken, setUser)
+        queryClient.clear()
+      },
+      refreshUser: async () => {
+        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+
+        if (!currentToken) {
+          applyAuthState(null, setToken, setUser)
+          return null
+        }
+
+        setToken(currentToken)
+
+        try {
+          const profile = await authService.getProfile()
+          setUser(profile)
+          return profile
+        } catch {
+          clearAuthStorage()
+          applyAuthState(null, setToken, setUser)
+          return null
+        }
+      },
     }),
-    [isLoading, login, logout, refreshUser, register, token, user],
+    [loading, token, user],
   )
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  )
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-
-  return context
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
