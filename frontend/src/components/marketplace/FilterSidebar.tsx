@@ -1,4 +1,5 @@
-import { RotateCcw, SlidersHorizontal, X } from 'lucide-react'
+import { RotateCcw, X } from 'lucide-react'
+import { PriceRangeFilter } from '@/components/marketplace/PriceRangeFilter'
 
 type AvailabilityFilter = 'All' | 'In Stock' | 'Out of Stock'
 type HarvestStatusFilter = 'All' | 'Fresh Harvest' | 'Ready Stock' | 'Upcoming Harvest'
@@ -53,34 +54,13 @@ export function FilterSidebar({
       </div>
 
       <div className="space-y-6">
-        <section className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-900">
-            <SlidersHorizontal className="size-4 text-blue-600" />
-            Price Range
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <input
-              type="number"
-              min="0"
-              value={filters.minPrice}
-              onChange={(event) =>
-                onChange({ ...filters, minPrice: event.target.value })
-              }
-              placeholder="Minimum"
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-white"
-            />
-            <input
-              type="number"
-              min="0"
-              value={filters.maxPrice}
-              onChange={(event) =>
-                onChange({ ...filters, maxPrice: event.target.value })
-              }
-              placeholder="Maximum"
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-white"
-            />
-          </div>
-        </section>
+        <PriceRangeFilter
+          minPrice={filters.minPrice}
+          maxPrice={filters.maxPrice}
+          onChange={({ minPrice, maxPrice }) =>
+            onChange({ ...filters, minPrice, maxPrice })
+          }
+        />
 
         <section className="space-y-3">
           <div className="text-sm font-medium text-slate-900">Availability</div>

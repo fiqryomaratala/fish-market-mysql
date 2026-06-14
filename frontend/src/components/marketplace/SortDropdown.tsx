@@ -1,11 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
+type DropdownWidth = 'full' | 'sm' | 'md' | 'lg'
+type DropdownAlign = 'left' | 'right'
+
 type SortDropdownProps = {
-  value: string
+  value?: string
   options: string[]
   onChange: (value: string) => void
   label?: string
+  placeholder?: string
+  width?: DropdownWidth
+  align?: DropdownAlign
+  disabled?: boolean
+}
+
+const widthClasses: Record<DropdownWidth, string> = {
+  full: 'w-full',
+  sm: 'w-full sm:w-48',
+  md: 'w-full sm:w-56',
+  lg: 'w-full sm:w-64',
 }
 
 export function SortDropdown({
@@ -13,10 +27,17 @@ export function SortDropdown({
   options,
   onChange,
   label = 'Sort By',
+  placeholder = 'Select option',
+  width = 'full',
+  align = 'left',
+  disabled = false,
 }: SortDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const displayValue = value?.trim() ? value : placeholder
+  const widthClass = widthClasses[width]
+  const menuAlignClass = align === 'right' ? 'right-0' : 'left-0'
 
   useEffect(() => {
     if (isOpen) {
@@ -32,6 +53,12 @@ export function SortDropdown({
   }, [isOpen])
 
   useEffect(() => {
+    if (disabled) {
+      setIsOpen(false)
+    }
+  }, [disabled])
+
+  useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) {
         setIsOpen(false)
@@ -44,22 +71,32 @@ export function SortDropdown({
   }, [])
 
   return (
-    <div ref={containerRef} className="relative flex flex-col gap-2 text-sm text-slate-600">
+    <div
+      ref={containerRef}
+      className={`relative flex flex-col gap-2 text-sm text-slate-600 ${widthClass}`}
+    >
       <span className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
         {label}
       </span>
       <button
         type="button"
+        disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`inline-flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-5 py-3.5 text-left text-sm text-slate-800 shadow-sm transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none ${
+        className={`inline-flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-5 py-3.5 text-left text-sm shadow-sm transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none ${
+          disabled
+            ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
+            : 'text-slate-800'
+        } ${
           isOpen
             ? 'border-blue-200 ring-4 ring-blue-100'
             : 'border-slate-200 hover:border-blue-200'
         }`}
       >
-        <span className="truncate">{value}</span>
+        <span className={`truncate ${value ? 'text-slate-800' : 'text-slate-400'}`}>
+          {displayValue}
+        </span>
         <ChevronDown
           className={`size-4 shrink-0 text-slate-500 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isOpen ? 'rotate-180' : ''
@@ -69,7 +106,7 @@ export function SortDropdown({
 
       {isVisible ? (
         <div
-          className={`absolute top-full z-30 mt-2 w-full origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute top-full z-30 mt-2 ${menuAlignClass} w-full origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isOpen
               ? 'scale-100 opacity-100'
               : 'pointer-events-none scale-95 opacity-0'

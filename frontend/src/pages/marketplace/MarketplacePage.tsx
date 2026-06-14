@@ -145,6 +145,9 @@ function MarketplacePage() {
                 label="Category"
                 value={selectedCategory}
                 options={[...categoryOptions]}
+                placeholder="All"
+                width="full"
+                align="left"
                 onChange={(value) => {
                   setSelectedCategory(value as (typeof categoryOptions)[number])
                   setCurrentPage(1)
@@ -152,8 +155,12 @@ function MarketplacePage() {
               />
 
               <SortDropdown
+                label="Sort By"
                 value={selectedSort}
                 options={[...sortOptions]}
+                placeholder="Newest"
+                width="full"
+                align="left"
                 onChange={(value) => {
                   setSelectedSort(value as (typeof sortOptions)[number])
                   setCurrentPage(1)

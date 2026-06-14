@@ -40,6 +40,16 @@ select {
   min-height: 100vh;
 }
 
+.price-range-input {
+  appearance: textfield;
+}
+
+.price-range-input::-webkit-outer-spin-button,
+.price-range-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .panel {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(15, 23, 42, 0.7);
