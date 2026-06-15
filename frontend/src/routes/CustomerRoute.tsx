@@ -2,9 +2,9 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 
 export function CustomerRoute() {
-  const { user } = useAuth()
+  const { role } = useAuth()
 
-  if (user?.role !== 'customer') {
+  if (role !== 'customer') {
     return <Navigate to="/" replace />
   }
 

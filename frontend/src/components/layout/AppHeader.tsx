@@ -52,7 +52,7 @@ export function AppHeader() {
                 }`
               }
             >
-              {item.label}
+              {item.title}
             </NavLink>
           ))}
         </nav>

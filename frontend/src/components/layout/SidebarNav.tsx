@@ -28,10 +28,7 @@ export function SidebarNav({ items, title }: SidebarNavProps) {
               }`
             }
           >
-            <p className="font-medium">{item.label}</p>
-            {item.description ? (
-              <p className="mt-1 text-sm text-slate-400">{item.description}</p>
-            ) : null}
+            <p className="font-medium">{item.title}</p>
           </NavLink>
         ))}
       </nav>

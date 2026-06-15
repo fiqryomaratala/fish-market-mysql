@@ -1,5 +1,5 @@
 import { RoleBasedLayout } from '@/layouts/RoleBasedLayout'
 
-export function AdminLayout() {
+export function StaffLayout() {
   return <RoleBasedLayout />
 }

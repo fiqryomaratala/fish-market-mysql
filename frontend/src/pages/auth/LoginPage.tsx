@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthFormShell } from '@/components/forms/AuthFormShell'
+import { getDefaultPathByRole } from '@/config/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
 const REMEMBER_EMAIL_KEY = 'remembered_email'
@@ -17,18 +18,6 @@ const loginSchema = z.object({
 })
 
 type LoginFormValues = z.infer<typeof loginSchema>
-
-function getRedirectPath(role?: string) {
-  if (role === 'admin') {
-    return '/admin'
-  }
-
-  if (role === 'customer') {
-    return '/customer'
-  }
-
-  return '/'
-}
 
 function getErrorMessage(error: unknown) {
   if (
@@ -92,7 +81,7 @@ function LoginPage() {
       }
 
       toast.success(`Selamat datang kembali, ${user.name}.`)
-      navigate(redirectTo ?? getRedirectPath(user.role), { replace: true })
+      navigate(redirectTo ?? getDefaultPathByRole(user.role), { replace: true })
     } catch (error) {
       toast.error(getErrorMessage(error))
     }

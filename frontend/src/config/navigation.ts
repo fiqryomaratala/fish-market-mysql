@@ -1,33 +1,121 @@
+import {
+  Activity,
+  BarChart3,
+  Bell,
+  Fish,
+  LayoutDashboard,
+  Package,
+  Settings,
+  ShoppingCart,
+  Store,
+  Users,
+  Waves,
+  Warehouse,
+  ClipboardList,
+  CircleUserRound,
+  ChartColumnIncreasing,
+  ReceiptText,
+} from 'lucide-react'
 import type { NavItem } from '@/types/navigation'
+import type { UserRole } from '@/types/auth'
 
-export const publicNavigation: NavItem[] = [
-  { label: 'Home', path: '/' },
-  { label: 'About', path: '/about' },
-  { label: 'Products', path: '/products' },
-  { label: 'Cart', path: '/cart' },
-  { label: 'Checkout', path: '/checkout' },
-  { label: 'Login', path: '/login' },
+export interface PublicNavItem {
+  title: string
+  path: string
+}
+
+export const publicNavigation: PublicNavItem[] = [
+  { title: 'Home', path: '/' },
+  { title: 'About', path: '/about' },
+  { title: 'Products', path: '/products' },
+  { title: 'Cart', path: '/cart' },
+  { title: 'Checkout', path: '/checkout' },
+  { title: 'Login', path: '/login' },
 ]
 
-export const customerNavigation: NavItem[] = [
-  {
-    label: 'Customer Dashboard',
-    path: '/customer',
-    description: 'Orders, account info, and purchase status.',
-  },
+export const navigationItems: NavItem[] = [
+  { title: 'Marketplace', path: '/customer/marketplace', icon: Store, roles: 'customer' },
+  { title: 'Cart', path: '/customer/cart', icon: ShoppingCart, roles: 'customer' },
+  { title: 'Orders', path: '/customer/orders', icon: ReceiptText, roles: 'customer' },
+  { title: 'Profile', path: '/customer/profile', icon: CircleUserRound, roles: 'customer' },
+  { title: 'Dashboard', path: '/staff', icon: LayoutDashboard, roles: 'staff' },
+  { title: 'Pond', path: '/staff/ponds', icon: Waves, roles: 'staff' },
+  { title: 'Fish Batch', path: '/staff/fish-batches', icon: Fish, roles: 'staff' },
+  { title: 'Feeding', path: '/staff/feeding', icon: ClipboardList, roles: 'staff' },
+  { title: 'Harvest', path: '/staff/harvest', icon: Package, roles: 'staff' },
+  { title: 'Inventory', path: '/staff/inventory', icon: Warehouse, roles: 'staff' },
+  { title: 'Dashboard', path: '/admin', icon: LayoutDashboard, roles: 'admin' },
+  { title: 'Users', path: '/admin/users', icon: Users, roles: 'admin' },
+  { title: 'Products', path: '/admin/products', icon: Store, roles: 'admin' },
+  { title: 'Inventory', path: '/admin/inventory', icon: Warehouse, roles: 'admin' },
+  { title: 'Ponds', path: '/admin/ponds', icon: Waves, roles: 'admin' },
+  { title: 'Fish Batch', path: '/admin/fish-batches', icon: Fish, roles: 'admin' },
+  { title: 'Feeding', path: '/admin/feeding', icon: ClipboardList, roles: 'admin' },
+  { title: 'Harvest', path: '/admin/harvest', icon: Package, roles: 'admin' },
+  { title: 'Orders', path: '/admin/orders', icon: ReceiptText, roles: 'admin' },
+  { title: 'Reports', path: '/admin/reports', icon: BarChart3, roles: 'admin' },
+  { title: 'Analytics', path: '/admin/analytics', icon: ChartColumnIncreasing, roles: 'admin' },
+  { title: 'Notifications', path: '/admin/notifications', icon: Bell, roles: 'admin' },
+  { title: 'Activity Logs', path: '/admin/activity-logs', icon: Activity, roles: 'admin' },
+  { title: 'Settings', path: '/admin/settings', icon: Settings, roles: 'admin' },
 ]
 
-export const adminNavigation: NavItem[] = [
-  { label: 'Admin Dashboard', path: '/admin', description: 'Overview of platform activity.' },
-  { label: 'Products', path: '/admin/products', description: 'Manage catalog and pricing.' },
-  { label: 'Inventory', path: '/admin/inventory', description: 'Track stock availability.' },
-  { label: 'Ponds', path: '/admin/ponds', description: 'Monitor pond operations.' },
-  { label: 'Fish Batches', path: '/admin/fish-batches', description: 'Batch lifecycle control.' },
-  { label: 'Feeding', path: '/admin/feeding', description: 'Schedule and log feeding.' },
-  { label: 'Harvest', path: '/admin/harvest', description: 'Record harvest planning.' },
-  { label: 'Orders', path: '/admin/orders', description: 'Process customer orders.' },
-  { label: 'Reports', path: '/admin/reports', description: 'Operational reporting.' },
-  { label: 'Analytics', path: '/admin/analytics', description: 'Business and farm insights.' },
-  { label: 'Notifications', path: '/admin/notifications', description: 'Alerts and announcements.' },
-  { label: 'Activity Logs', path: '/admin/activity-logs', description: 'Audit recent activity.' },
-]
+export function getNavigationByRole(role: string | null | undefined) {
+  return navigationItems.filter((item) => item.roles === role)
+}
+
+export function getDefaultPathByRole(role: string | null | undefined) {
+  if (role === 'admin') {
+    return '/admin'
+  }
+
+  if (role === 'staff') {
+    return '/staff'
+  }
+
+  if (role === 'customer') {
+    return '/customer/marketplace'
+  }
+
+  return '/'
+}
+
+export function getProfilePathByRole(role: string | null | undefined) {
+  if (role === 'admin') {
+    return '/admin/profile'
+  }
+
+  if (role === 'staff') {
+    return '/staff/profile'
+  }
+
+  return '/customer/profile'
+}
+
+export function getSettingsPathByRole(role: string | null | undefined) {
+  if (role === 'admin') {
+    return '/admin/settings'
+  }
+
+  if (role === 'staff') {
+    return '/staff/settings'
+  }
+
+  return '/customer/settings'
+}
+
+export function getRoleLabel(role: UserRole | null) {
+  if (role === 'admin') {
+    return 'Administrator'
+  }
+
+  if (role === 'staff') {
+    return 'Staff'
+  }
+
+  if (role === 'customer') {
+    return 'Customer'
+  }
+
+  return 'Guest'
+}

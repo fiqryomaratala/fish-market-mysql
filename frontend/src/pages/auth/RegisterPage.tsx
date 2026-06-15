@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AuthFormShell } from '@/components/forms/AuthFormShell'
+import { getDefaultPathByRole } from '@/config/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
 const registerSchema = z
@@ -27,18 +28,6 @@ const registerSchema = z
   })
 
 type RegisterFormValues = z.infer<typeof registerSchema>
-
-function getRedirectPath(role?: string) {
-  if (role === 'admin') {
-    return '/admin'
-  }
-
-  if (role === 'customer') {
-    return '/customer'
-  }
-
-  return '/'
-}
 
 function getErrorMessage(error: unknown) {
   if (
@@ -85,7 +74,7 @@ function RegisterPage() {
       })
 
       toast.success('Registrasi berhasil. Akun Anda langsung aktif.')
-      navigate(getRedirectPath(user.role), { replace: true })
+      navigate(getDefaultPathByRole(user.role), { replace: true })
     } catch (error) {
       toast.error(getErrorMessage(error))
     }

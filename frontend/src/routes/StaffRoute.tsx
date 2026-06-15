@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 
-export function AdminRoute() {
+export function StaffRoute() {
   const { role } = useAuth()
 
-  if (role !== 'admin') {
+  if (role !== 'staff') {
     return <Navigate to="/" replace />
   }
 

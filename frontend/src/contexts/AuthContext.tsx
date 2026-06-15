@@ -3,18 +3,24 @@ import { createContext, useEffect, useMemo, useState } from 'react'
 import { clearAuthStorage, setUnauthorizedHandler } from '@/api/axios'
 import { authService } from '@/services/auth.service'
 import { queryClient } from '@/lib/query-client'
-import type { AuthResponse, LoginRequest, RegisterRequest, User } from '@/types/auth'
+import type { AuthResponse, LoginRequest, RegisterRequest, User, UserRole } from '@/types/auth'
 import { ACCESS_TOKEN_KEY } from '@/types/auth'
 
 interface AuthContextValue {
   user: User | null
   token: string | null
+  role: UserRole | null
   isAuthenticated: boolean
   loading: boolean
   login: (payload: LoginRequest) => Promise<User>
   register: (payload: RegisterRequest) => Promise<User>
   logout: () => Promise<void>
   refreshUser: () => Promise<User | null>
+  hasRole: (role: string) => boolean
+  hasAnyRole: (...roles: string[]) => boolean
+  isAdmin: () => boolean
+  isStaff: () => boolean
+  isCustomer: () => boolean
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -36,6 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const role = user?.role ?? null
 
   useEffect(() => {
     const handleUnauthorized = () => {
@@ -80,6 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       user,
       token,
+      role,
       isAuthenticated: Boolean(user && token),
       loading,
       login: async (payload) => {
@@ -94,8 +102,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       },
       logout: async () => {
         await authService.logout()
+        clearAuthStorage()
         applyAuthState(null, setToken, setUser)
         queryClient.clear()
+        window.location.replace('/')
       },
       refreshUser: async () => {
         const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY)
@@ -117,8 +127,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return null
         }
       },
+      hasRole: (nextRole) => role === nextRole,
+      hasAnyRole: (...roles) => roles.includes(role ?? ''),
+      isAdmin: () => role === 'admin',
+      isStaff: () => role === 'staff',
+      isCustomer: () => role === 'customer',
     }),
-    [loading, token, user],
+    [loading, role, token, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

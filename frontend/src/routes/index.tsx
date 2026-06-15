@@ -1,14 +1,17 @@
 import { lazy, Suspense, type ReactNode } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LoadingScreen } from '@/components/common/LoadingScreen'
+import { PagePlaceholder } from '@/components/common/PagePlaceholder'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { CustomerLayout } from '@/layouts/CustomerLayout'
 import { MainLayout } from '@/layouts/MainLayout'
+import { StaffLayout } from '@/layouts/StaffLayout'
 import { AdminRoute } from '@/routes/AdminRoute'
 import { CustomerRoute } from '@/routes/CustomerRoute'
 import { GuestRoute } from '@/routes/GuestRoute'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
+import { StaffRoute } from '@/routes/StaffRoute'
 
 const HomePage = lazy(() => import('@/pages/landing/HomePage'))
 const AboutPage = lazy(() => import('@/pages/landing/AboutPage'))
@@ -18,9 +21,6 @@ const CartPage = lazy(() => import('@/pages/marketplace/CartPage'))
 const CheckoutPage = lazy(() => import('@/pages/marketplace/CheckoutPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
-const CustomerDashboardPage = lazy(
-  () => import('@/pages/customer/CustomerDashboardPage'),
-)
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const AdminProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
 const InventoryPage = lazy(() => import('@/pages/admin/InventoryPage'))
@@ -38,6 +38,10 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<LoadingScreen />}>{element}</Suspense>
+}
+
+function placeholderPage(eyebrow: string, title: string, description: string) {
+  return <PagePlaceholder eyebrow={eyebrow} title={title} description={description} />
 }
 
 export const router = createBrowserRouter([
@@ -78,7 +82,79 @@ export const router = createBrowserRouter([
           {
             element: <CustomerLayout />,
             children: [
-              { index: true, element: withSuspense(<CustomerDashboardPage />) },
+              { index: true, element: <Navigate to="marketplace" replace /> },
+              { path: 'marketplace', element: withSuspense(<ProductsPage />) },
+              { path: 'cart', element: withSuspense(<CartPage />) },
+              {
+                path: 'orders',
+                element: placeholderPage(
+                  'Customer',
+                  'Orders',
+                  'Daftar pesanan pelanggan, status pembayaran, dan histori transaksi akan tampil di halaman ini.',
+                ),
+              },
+              {
+                path: 'profile',
+                element: placeholderPage(
+                  'Customer',
+                  'Profile',
+                  'Halaman profil pelanggan untuk mengelola data akun, alamat, dan preferensi belanja.',
+                ),
+              },
+              {
+                path: 'settings',
+                element: placeholderPage(
+                  'Customer',
+                  'Settings',
+                  'Pengaturan pelanggan untuk notifikasi, keamanan akun, dan preferensi tampilan.',
+                ),
+              },
+              { path: '*', element: withSuspense(<NotFoundPage />) },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/staff',
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <StaffRoute />,
+        children: [
+          {
+            element: <StaffLayout />,
+            children: [
+              {
+                index: true,
+                element: placeholderPage(
+                  'Staff',
+                  'Dashboard',
+                  'Ringkasan operasional harian staff untuk pond, feeding, harvest, dan inventory.',
+                ),
+              },
+              { path: 'ponds', element: withSuspense(<PondsPage />) },
+              { path: 'fish-batches', element: withSuspense(<FishBatchesPage />) },
+              { path: 'feeding', element: withSuspense(<FeedingPage />) },
+              { path: 'harvest', element: withSuspense(<HarvestPage />) },
+              { path: 'inventory', element: withSuspense(<InventoryPage />) },
+              {
+                path: 'profile',
+                element: placeholderPage(
+                  'Staff',
+                  'Profile',
+                  'Profil staff untuk melihat identitas akun dan detail akses operasional.',
+                ),
+              },
+              {
+                path: 'settings',
+                element: placeholderPage(
+                  'Staff',
+                  'Settings',
+                  'Pengaturan staff untuk notifikasi kerja, keamanan akun, dan preferensi aplikasi.',
+                ),
+              },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],
           },
@@ -97,6 +173,14 @@ export const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { index: true, element: withSuspense(<AdminDashboardPage />) },
+              {
+                path: 'users',
+                element: placeholderPage(
+                  'Admin',
+                  'Users',
+                  'Kelola akun admin, staff, dan customer lengkap dengan pengaturan role dan status akses.',
+                ),
+              },
               { path: 'products', element: withSuspense(<AdminProductsPage />) },
               { path: 'inventory', element: withSuspense(<InventoryPage />) },
               { path: 'ponds', element: withSuspense(<PondsPage />) },
@@ -108,6 +192,22 @@ export const router = createBrowserRouter([
               { path: 'analytics', element: withSuspense(<AnalyticsPage />) },
               { path: 'notifications', element: withSuspense(<NotificationsPage />) },
               { path: 'activity-logs', element: withSuspense(<ActivityLogsPage />) },
+              {
+                path: 'profile',
+                element: placeholderPage(
+                  'Admin',
+                  'Profile',
+                  'Profil administrator untuk identitas akun, kontak, dan kendali akses pribadi.',
+                ),
+              },
+              {
+                path: 'settings',
+                element: placeholderPage(
+                  'Admin',
+                  'Settings',
+                  'Pusat pengaturan sistem untuk preferensi aplikasi, keamanan, dan konfigurasi operasional.',
+                ),
+              },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],
           },
