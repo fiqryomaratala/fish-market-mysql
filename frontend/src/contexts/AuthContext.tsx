@@ -3,13 +3,21 @@ import { createContext, useEffect, useMemo, useState } from 'react'
 import { clearAuthStorage, setUnauthorizedHandler } from '@/api/axios'
 import { authService } from '@/services/auth.service'
 import { queryClient } from '@/lib/query-client'
-import type { AuthResponse, LoginRequest, RegisterRequest, User, UserRole } from '@/types/auth'
+import type {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  User,
+  UserPermission,
+  UserRole,
+} from '@/types/auth'
 import { ACCESS_TOKEN_KEY } from '@/types/auth'
 
 interface AuthContextValue {
   user: User | null
   token: string | null
   role: UserRole | null
+  permissions: UserPermission[]
   isAuthenticated: boolean
   loading: boolean
   login: (payload: LoginRequest) => Promise<User>
@@ -18,6 +26,8 @@ interface AuthContextValue {
   refreshUser: () => Promise<User | null>
   hasRole: (role: string) => boolean
   hasAnyRole: (...roles: string[]) => boolean
+  hasPermission: (permission: string) => boolean
+  hasAnyPermission: (...permissions: string[]) => boolean
   isAdmin: () => boolean
   isStaff: () => boolean
   isCustomer: () => boolean
@@ -43,6 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const role = user?.role ?? null
+  const permissions = user?.permissions ?? []
 
   useEffect(() => {
     const handleUnauthorized = () => {
@@ -88,6 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user,
       token,
       role,
+      permissions,
       isAuthenticated: Boolean(user && token),
       loading,
       login: async (payload) => {
@@ -129,11 +141,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       },
       hasRole: (nextRole) => role === nextRole,
       hasAnyRole: (...roles) => roles.includes(role ?? ''),
+      hasPermission: (permission) => permissions.includes(permission),
+      hasAnyPermission: (...nextPermissions) =>
+        nextPermissions.some((permission) => permissions.includes(permission)),
       isAdmin: () => role === 'admin',
       isStaff: () => role === 'staff',
       isCustomer: () => role === 'customer',
     }),
-    [loading, role, token, user],
+    [loading, permissions, role, token, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

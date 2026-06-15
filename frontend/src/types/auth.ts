@@ -1,10 +1,12 @@
 export type UserRole = 'admin' | 'staff' | 'customer'
+export type UserPermission = string
 
 export interface User {
   id: number
   name: string
   email: string
   role: UserRole
+  permissions: UserPermission[]
   created_at: string
   updated_at: string
 }
