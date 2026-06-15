@@ -35,18 +35,30 @@ export function PaymentMethod() {
           return (
             <label
               key={option.value}
-              className={`flex cursor-pointer items-start gap-4 rounded-xl border px-4 py-4 shadow-sm transition ${
+              className={`flex cursor-pointer items-start gap-4 rounded-xl border px-4 py-4 shadow-sm transition-all duration-200 ease-in-out hover:shadow-[0_8px_20px_rgba(15,23,42,0.05)] ${
                 isSelected
-                  ? 'border-blue-200 bg-blue-50/70 shadow-blue-100'
-                  : 'border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50'
+                  ? 'border-blue-200 bg-blue-50/70 shadow-[0_10px_24px_rgba(59,130,246,0.10)]'
+                  : 'border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50'
               }`}
             >
               <input
                 type="radio"
                 value={option.value}
-                className="mt-1 h-4 w-4 border-slate-300 text-blue-600 focus:ring-blue-500"
+                className="sr-only"
                 {...register('payment_method')}
               />
+              <span
+                aria-hidden="true"
+                className={`mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border bg-white transition-all duration-200 ease-in-out ${
+                  isSelected ? 'border-blue-500' : 'border-slate-300'
+                }`}
+              >
+                <span
+                  className={`size-2.5 rounded-full bg-blue-500 transition-all duration-200 ease-in-out ${
+                    isSelected ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                  }`}
+                />
+              </span>
               <div className="rounded-xl bg-white p-3 text-blue-600 shadow-sm">
                 <Icon className="size-5" />
               </div>

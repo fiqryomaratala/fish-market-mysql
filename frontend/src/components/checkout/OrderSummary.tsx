@@ -32,7 +32,7 @@ export function OrderSummary({
   const grandTotal = subtotal + shippingFee
 
   return (
-    <aside className="space-y-6 xl:sticky xl:top-28 xl:self-start">
+    <aside className="space-y-6 xl:sticky xl:top-6 xl:h-fit xl:self-start 2xl:top-8">
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70">
         <div className="flex items-start justify-between gap-3">
           <div>

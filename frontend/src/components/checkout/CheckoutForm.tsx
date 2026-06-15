@@ -27,7 +27,10 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid gap-6 xl:items-start xl:grid-cols-[minmax(0,1fr)_380px]"
+      >
         <div className="space-y-6">
           <ShippingForm />
           <PaymentMethod />
