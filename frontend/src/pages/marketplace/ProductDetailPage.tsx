@@ -11,6 +11,7 @@ import { ProductTabs } from '@/components/product-detail/ProductTabs'
 import { QuantitySelector } from '@/components/product-detail/QuantitySelector'
 import { RelatedProducts } from '@/components/product-detail/RelatedProducts'
 import { TrackingCard } from '@/components/product-detail/TrackingCard'
+import { useAuth } from '@/hooks/useAuth'
 import { useAddCart } from '@/hooks/useCart'
 import { useProduct } from '@/hooks/useProduct'
 import { useProducts } from '@/hooks/useProducts'
@@ -62,6 +63,7 @@ function buildGalleryImages(imageUrl: string) {
 function ProductDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const { isAuthenticated } = useAuth()
   const [quantity, setQuantity] = useState(1)
   const addCartMutation = useAddCart()
   const { data, isLoading, error, refetch } = useProduct(id)
@@ -181,8 +183,11 @@ function ProductDetailPage() {
                     product_id: product.id,
                     quantity: currentQuantity,
                   })
-                  toast.success('Product added to cart')
-                  navigate('/cart')
+                  toast.success(
+                    isAuthenticated
+                      ? 'Produk ditambahkan ke keranjang'
+                      : 'Produk ditambahkan ke keranjang sementara',
+                  )
                 } catch (mutationError) {
                   toast.error(
                     mutationError instanceof Error

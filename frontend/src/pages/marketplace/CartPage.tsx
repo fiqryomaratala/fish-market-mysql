@@ -1,6 +1,7 @@
 import { Minus, Plus, RefreshCcw, ShoppingBag, Trash2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/useAuth'
 import { useCart, useClearCart, useDeleteCart, useUpdateCart } from '@/hooks/useCart'
 import type { CartItem } from '@/types/cart'
 
@@ -115,6 +116,7 @@ function CartErrorState({
 
 function CartPage() {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const { data, isLoading, error, refetch, isFetching } = useCart()
   const updateCartMutation = useUpdateCart()
   const deleteCartMutation = useDeleteCart()
@@ -131,9 +133,11 @@ function CartPage() {
       return
     }
 
+    const targetId = isAuthenticated ? item.id : item.product_id
+
     try {
       await updateCartMutation.mutateAsync({
-        id: item.id,
+        id: targetId,
         payload: { quantity: nextQuantity },
       })
       toast.success('Cart updated successfully')
@@ -158,6 +162,22 @@ function CartPage() {
     } catch (mutationError) {
       toast.error(mutationError instanceof Error ? mutationError.message : 'Failed to clear cart')
     }
+  }
+
+  const handleCheckout = () => {
+    if (!isAuthenticated) {
+      toast.info('Login diperlukan sebelum melanjutkan ke checkout')
+      navigate('/login', {
+        state: {
+          from: {
+            pathname: '/cart',
+          },
+        },
+      })
+      return
+    }
+
+    navigate('/checkout')
   }
 
   if (isLoading) {
@@ -251,7 +271,9 @@ function CartPage() {
                       <td className="px-6 py-5 text-right">
                         <button
                           type="button"
-                          onClick={() => handleDeleteItem(item.id)}
+                          onClick={() =>
+                            handleDeleteItem(isAuthenticated ? item.id : item.product_id)
+                          }
                           disabled={isMutating}
                           className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                         >
@@ -300,7 +322,7 @@ function CartPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleDeleteItem(item.id)}
+                    onClick={() => handleDeleteItem(isAuthenticated ? item.id : item.product_id)}
                     disabled={isMutating}
                     className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -348,13 +370,19 @@ function CartPage() {
               </div>
             </div>
 
+            {!isAuthenticated ? (
+              <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                Keranjang guest aktif. Login saat checkout untuk melanjutkan pesanan Anda.
+              </div>
+            ) : null}
+
             <button
               type="button"
-              onClick={() => navigate('/checkout')}
+              onClick={handleCheckout}
               disabled={items.length === 0 || isMutating}
               className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Checkout Button
+              {isAuthenticated ? 'Checkout' : 'Login untuk Checkout'}
             </button>
 
             <Link

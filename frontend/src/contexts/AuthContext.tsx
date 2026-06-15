@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { clearAuthStorage, setUnauthorizedHandler } from '@/api/axios'
 import { authService } from '@/services/auth.service'
+import { cartService } from '@/services/cart.service'
 import { queryClient } from '@/lib/query-client'
 import type {
   AuthResponse,
@@ -105,11 +106,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       login: async (payload) => {
         const auth = await authService.login(payload)
         applyAuthState(auth, setToken, setUser)
+        if (auth.user.role === 'customer') {
+          await cartService.syncGuestCartToServer()
+          await queryClient.invalidateQueries({ queryKey: ['cart'] })
+        }
         return auth.user
       },
       register: async (payload) => {
         const auth = await authService.register(payload)
         applyAuthState(auth, setToken, setUser)
+        if (auth.user.role === 'customer') {
+          await cartService.syncGuestCartToServer()
+          await queryClient.invalidateQueries({ queryKey: ['cart'] })
+        }
         return auth.user
       },
       logout: async () => {
