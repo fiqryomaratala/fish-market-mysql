@@ -1,6 +1,7 @@
 export * from '@/services/activity.service'
 export * from '@/services/auth.service'
 export * from '@/services/cart.service'
+export * from '@/services/checkout.service'
 export * from '@/services/dashboard.service'
 export * from '@/services/feeding.service'
 export * from '@/services/fishbatch.service'

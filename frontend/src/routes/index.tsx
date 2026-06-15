@@ -18,7 +18,8 @@ const AboutPage = lazy(() => import('@/pages/landing/AboutPage'))
 const ProductsPage = lazy(() => import('@/pages/marketplace/ProductsPage'))
 const ProductDetailPage = lazy(() => import('@/pages/marketplace/ProductDetailPage'))
 const CartPage = lazy(() => import('@/pages/marketplace/CartPage'))
-const CheckoutPage = lazy(() => import('@/pages/marketplace/CheckoutPage'))
+const CheckoutPage = lazy(() => import('@/pages/checkout/CheckoutPage'))
+const OrderSuccessPage = lazy(() => import('@/pages/checkout/OrderSuccessPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
@@ -55,6 +56,7 @@ export const router = createBrowserRouter([
       { path: 'products/:id', element: withSuspense(<ProductDetailPage />) },
       { path: 'cart', element: withSuspense(<CartPage />) },
       { path: 'checkout', element: withSuspense(<CheckoutPage />) },
+      { path: 'orders/success/:id', element: withSuspense(<OrderSuccessPage />) },
       { path: 'unauthorized', element: withSuspense(<UnauthorizedPage />) },
       { path: '*', element: withSuspense(<NotFoundPage />) },
     ],

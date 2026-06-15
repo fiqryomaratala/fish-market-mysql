@@ -5,7 +5,8 @@ export function AppFooter() {
   const isMarketplaceTheme =
     location.pathname.startsWith('/products') ||
     location.pathname.startsWith('/cart') ||
-    location.pathname.startsWith('/checkout')
+    location.pathname.startsWith('/checkout') ||
+    location.pathname.startsWith('/orders')
 
   return (
     <footer

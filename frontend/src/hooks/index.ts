@@ -1,5 +1,6 @@
 export * from '@/hooks/useDashboard'
 export * from '@/hooks/useCart'
+export * from '@/hooks/useCheckout'
 export * from '@/hooks/useFishBatches'
 export * from '@/hooks/useHarvest'
 export * from '@/hooks/useInventory'

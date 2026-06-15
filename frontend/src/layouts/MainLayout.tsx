@@ -15,7 +15,8 @@ export function MainLayout() {
   const isMarketplacePage =
     location.pathname.startsWith('/products') ||
     location.pathname.startsWith('/cart') ||
-    location.pathname.startsWith('/checkout')
+    location.pathname.startsWith('/checkout') ||
+    location.pathname.startsWith('/orders')
   const shouldUseAuthenticatedMarketplaceShell =
     isMarketplacePage && !loading && isAuthenticated
 

@@ -28,7 +28,8 @@ export function AppHeader() {
   const isMarketplaceTheme =
     location.pathname.startsWith('/products') ||
     location.pathname.startsWith('/cart') ||
-    location.pathname.startsWith('/checkout')
+    location.pathname.startsWith('/checkout') ||
+    location.pathname.startsWith('/orders')
   const navigationItems = isAuthenticated
     ? publicNavigation.filter((item) => item.path !== '/login')
     : publicNavigation
