@@ -87,83 +87,95 @@ function RegisterPage() {
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="name"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Name
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <UserIcon className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <UserIcon className="h-4 w-4 text-blue-500/70" />
             <input
               id="name"
               type="text"
               placeholder="Nama lengkap"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('name')}
             />
           </div>
           {errors.name ? (
-            <p className="text-sm text-rose-300">{errors.name.message}</p>
+            <p className="text-sm text-rose-500">{errors.name.message}</p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="email"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Email
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <Mail className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <Mail className="h-4 w-4 text-blue-500/70" />
             <input
               id="email"
               type="email"
               placeholder="you@example.com"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('email')}
             />
           </div>
           {errors.email ? (
-            <p className="text-sm text-rose-300">{errors.email.message}</p>
+            <p className="text-sm text-rose-500">{errors.email.message}</p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="password"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Password
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <LockKeyhole className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <LockKeyhole className="h-4 w-4 text-blue-500/70" />
             <input
               id="password"
               type="password"
               placeholder="Minimal 8 karakter"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('password')}
             />
           </div>
           {errors.password ? (
-            <p className="text-sm text-rose-300">{errors.password.message}</p>
+            <p className="text-sm text-rose-500">{errors.password.message}</p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="confirmPassword" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="confirmPassword"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Confirm Password
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <ShieldCheck className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <ShieldCheck className="h-4 w-4 text-blue-500/70" />
             <input
               id="confirmPassword"
               type="password"
               placeholder="Ulangi password"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('confirmPassword')}
             />
           </div>
           {errors.confirmPassword ? (
-            <p className="text-sm text-rose-300">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-rose-500">{errors.confirmPassword.message}</p>
           ) : null}
         </div>
 
         {Object.keys(errors).length > 0 ? (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-400/25 bg-rose-400/10 px-4 py-3 text-sm text-rose-100 shadow-lg">
+          <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm shadow-rose-100/80">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>Masih ada validasi yang perlu diperbaiki pada form registrasi.</span>
           </div>
@@ -172,7 +184,7 @@ function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-900/30 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? (
             <>
@@ -184,9 +196,9 @@ function RegisterPage() {
           )}
         </button>
 
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-slate-500">
           Sudah punya akun?{' '}
-          <Link to="/login" className="font-semibold text-cyan-300 hover:text-cyan-200">
+          <Link to="/login" className="font-semibold text-blue-600 transition hover:text-blue-700">
             Login
           </Link>
         </p>

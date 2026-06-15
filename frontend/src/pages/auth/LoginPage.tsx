@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertCircle, LoaderCircle, LogIn, Mail, LockKeyhole } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, LoaderCircle, LogIn, Mail, LockKeyhole } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -42,6 +42,7 @@ function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const rememberedEmail = useMemo(() => localStorage.getItem(REMEMBER_EMAIL_KEY) ?? '', [])
   const redirectTo =
     typeof location.state === 'object' &&
@@ -94,54 +95,69 @@ function LoginPage() {
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="email"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Email
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <Mail className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <Mail className="h-4 w-4 text-blue-500/70" />
             <input
               id="email"
               type="email"
               placeholder="you@example.com"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('email')}
             />
           </div>
           {errors.email ? (
-            <p className="text-sm text-rose-300">{errors.email.message}</p>
+            <p className="text-sm text-rose-500">{errors.email.message}</p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium text-slate-200">
+          <label
+            htmlFor="password"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"
+          >
             Password
           </label>
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-lg shadow-slate-950/20 transition focus-within:border-cyan-300">
-            <LockKeyhole className="h-4 w-4 text-cyan-300" />
+          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+            <LockKeyhole className="h-4 w-4 text-blue-500/70" />
             <input
               id="password"
-              type="password"
+              type={isPasswordVisible ? 'text' : 'password'}
               placeholder="Masukkan password Anda"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('password')}
             />
+            <button
+              type="button"
+              onClick={() => setIsPasswordVisible((current) => !current)}
+              className="inline-flex items-center justify-center text-slate-400 transition hover:text-blue-600"
+              aria-label={isPasswordVisible ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={isPasswordVisible}
+            >
+              {isPasswordVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
           {errors.password ? (
-            <p className="text-sm text-rose-300">{errors.password.message}</p>
+            <p className="text-sm text-rose-500">{errors.password.message}</p>
           ) : null}
         </div>
 
-        <label className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
-          <span>Remember Me</span>
+        <label className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-600 shadow-sm shadow-slate-200/60 transition hover:border-blue-200">
+          <span className="font-medium text-slate-700">Remember Me</span>
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-white/20 bg-slate-900 text-cyan-300"
+            className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600"
             {...register('rememberMe')}
           />
         </label>
 
         {Object.keys(errors).length > 0 ? (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-400/25 bg-rose-400/10 px-4 py-3 text-sm text-rose-100 shadow-lg">
+          <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm shadow-rose-100/80">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>Periksa kembali form login Anda sebelum melanjutkan.</span>
           </div>
@@ -150,7 +166,7 @@ function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-900/30 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? (
             <>
@@ -165,9 +181,9 @@ function LoginPage() {
           )}
         </button>
 
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-slate-500">
           Belum punya akun?{' '}
-          <Link to="/register" className="font-semibold text-cyan-300 hover:text-cyan-200">
+          <Link to="/register" className="font-semibold text-blue-600 transition hover:text-blue-700">
             Register
           </Link>
         </p>

@@ -85,7 +85,10 @@ function SidebarContent({
             role === 'customer' &&
             item.path === '/customer/cart' &&
             location.pathname.startsWith('/cart')
-          const isActiveItem = isMarketplaceAliasActive || isCartAliasActive
+          const isOrdersAliasActive =
+            role === 'customer' && item.path === '/orders' && location.pathname.startsWith('/orders')
+          const isActiveItem =
+            isMarketplaceAliasActive || isCartAliasActive || isOrdersAliasActive
 
           return (
             <NavLink

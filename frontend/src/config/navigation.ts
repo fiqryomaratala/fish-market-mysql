@@ -35,7 +35,7 @@ export const publicNavigation: PublicNavItem[] = [
 export const navigationItems: NavItem[] = [
   { title: 'Marketplace', path: '/customer/marketplace', icon: Store, roles: 'customer' },
   { title: 'Cart', path: '/customer/cart', icon: ShoppingCart, roles: 'customer' },
-  { title: 'Orders', path: '/customer/orders', icon: ReceiptText, roles: 'customer' },
+  { title: 'Orders', path: '/orders', icon: ReceiptText, roles: 'customer' },
   { title: 'Dashboard', path: '/staff', icon: LayoutDashboard, roles: 'staff' },
   { title: 'Pond', path: '/staff/ponds', icon: Waves, roles: 'staff' },
   { title: 'Fish Batch', path: '/staff/fish-batches', icon: Fish, roles: 'staff' },

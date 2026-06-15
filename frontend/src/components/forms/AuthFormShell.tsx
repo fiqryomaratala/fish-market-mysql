@@ -12,12 +12,15 @@ export function AuthFormShell({
   children,
 }: AuthFormShellProps) {
   return (
-    <div className="panel w-full max-w-md space-y-5">
+    <div className="w-full rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 md:p-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-white">{title}</h1>
-        <p className="text-sm leading-6 text-slate-300">{description}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
+          Akun
+        </p>
+        <h1 className="text-2xl font-semibold text-slate-900 md:text-3xl">{title}</h1>
+        <p className="text-sm leading-7 text-slate-500">{description}</p>
       </div>
-      <div className="space-y-3">{children}</div>
+      <div className="mt-6 space-y-3">{children}</div>
     </div>
   )
 }

@@ -20,6 +20,8 @@ const ProductDetailPage = lazy(() => import('@/pages/marketplace/ProductDetailPa
 const CartPage = lazy(() => import('@/pages/marketplace/CartPage'))
 const CheckoutPage = lazy(() => import('@/pages/checkout/CheckoutPage'))
 const OrderSuccessPage = lazy(() => import('@/pages/checkout/OrderSuccessPage'))
+const OrderHistoryPage = lazy(() => import('@/pages/orders/OrderHistoryPage'))
+const OrderDetailPage = lazy(() => import('@/pages/orders/OrderDetailPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
@@ -57,6 +59,14 @@ export const router = createBrowserRouter([
       { path: 'cart', element: withSuspense(<CartPage />) },
       { path: 'checkout', element: withSuspense(<CheckoutPage />) },
       { path: 'orders/success/:id', element: withSuspense(<OrderSuccessPage />) },
+      {
+        path: 'orders',
+        element: <ProtectedRoute />,
+        children: [
+          { index: true, element: withSuspense(<OrderHistoryPage />) },
+          { path: ':id', element: withSuspense(<OrderDetailPage />) },
+        ],
+      },
       { path: 'unauthorized', element: withSuspense(<UnauthorizedPage />) },
       { path: '*', element: withSuspense(<NotFoundPage />) },
     ],
@@ -87,14 +97,7 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to="marketplace" replace /> },
               { path: 'marketplace', element: withSuspense(<ProductsPage />) },
               { path: 'cart', element: withSuspense(<CartPage />) },
-              {
-                path: 'orders',
-                element: placeholderPage(
-                  'Customer',
-                  'Orders',
-                  'Daftar pesanan pelanggan, status pembayaran, dan histori transaksi akan tampil di halaman ini.',
-                ),
-              },
+              { path: 'orders', element: <Navigate to="/orders" replace /> },
               {
                 path: 'profile',
                 element: placeholderPage(
