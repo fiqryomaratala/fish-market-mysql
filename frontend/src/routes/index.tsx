@@ -24,6 +24,7 @@ const OrderHistoryPage = lazy(() => import('@/pages/orders/OrderHistoryPage'))
 const OrderDetailPage = lazy(() => import('@/pages/orders/OrderDetailPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
+const CustomerDashboardPage = lazy(() => import('@/pages/customer/CustomerDashboardPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const AdminProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
 const InventoryPage = lazy(() => import('@/pages/admin/InventoryPage'))
@@ -94,10 +95,18 @@ export const router = createBrowserRouter([
           {
             element: <CustomerLayout />,
             children: [
-              { index: true, element: <Navigate to="marketplace" replace /> },
+              { index: true, element: withSuspense(<CustomerDashboardPage />) },
               { path: 'marketplace', element: withSuspense(<ProductsPage />) },
               { path: 'cart', element: withSuspense(<CartPage />) },
               { path: 'orders', element: <Navigate to="/orders" replace /> },
+              {
+                path: 'notifications',
+                element: placeholderPage(
+                  'Customer',
+                  'Notifications',
+                  'Halaman notifikasi pelanggan untuk melihat seluruh update order, pembayaran, dan aktivitas akun.',
+                ),
+              },
               {
                 path: 'profile',
                 element: placeholderPage(
