@@ -2,7 +2,10 @@ import { useLocation } from 'react-router-dom'
 
 export function AppFooter() {
   const location = useLocation()
-  const isMarketplaceTheme = location.pathname.startsWith('/products')
+  const isMarketplaceTheme =
+    location.pathname.startsWith('/products') ||
+    location.pathname.startsWith('/cart') ||
+    location.pathname.startsWith('/checkout')
 
   return (
     <footer

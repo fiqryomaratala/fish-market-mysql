@@ -16,38 +16,42 @@ export function PagePlaceholder({
   return (
     <section className="space-y-6">
       <div className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
           {eyebrow}
         </p>
         <div className="space-y-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             {title}
           </h1>
-          <p className="max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+          <p className="max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
             {description}
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="panel">
-          <p className="panel-label">Status</p>
-          <p className="panel-value">Ready to build</p>
-          <p className="panel-copy">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">Status</p>
+          <p className="mt-3 text-xl font-semibold text-slate-900">Ready to build</p>
+          <p className="mt-2 text-sm leading-7 text-slate-500">
             Routing, layout, and page boundary are already connected.
           </p>
         </div>
-        <div className="panel">
-          <p className="panel-label">Suggested next step</p>
-          <p className="panel-value">Connect REST API</p>
-          <p className="panel-copy">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
+            Suggested next step
+          </p>
+          <p className="mt-3 text-xl font-semibold text-slate-900">Connect REST API</p>
+          <p className="mt-2 text-sm leading-7 text-slate-500">
             Use `src/api`, `src/services`, and `src/store` for feature logic.
           </p>
         </div>
-        <div className="panel">
-          <p className="panel-label">Architecture</p>
-          <p className="panel-value">Scalable by domain</p>
-          <p className="panel-copy">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-600">
+            Architecture
+          </p>
+          <p className="mt-3 text-xl font-semibold text-slate-900">Scalable by domain</p>
+          <p className="mt-2 text-sm leading-7 text-slate-500">
             Pages are lazy loaded and grouped by public, customer, and admin flow.
           </p>
         </div>

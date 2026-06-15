@@ -5,7 +5,10 @@ import { AppHeader } from '@/components/layout/AppHeader'
 export function MainLayout() {
   const location = useLocation()
   const isLandingPage = location.pathname === '/'
-  const isMarketplacePage = location.pathname.startsWith('/products')
+  const isMarketplacePage =
+    location.pathname.startsWith('/products') ||
+    location.pathname.startsWith('/cart') ||
+    location.pathname.startsWith('/checkout')
 
   if (isLandingPage) {
     return <Outlet />

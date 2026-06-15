@@ -25,16 +25,16 @@ function SidebarContent({
   const { items, role } = useNavigation()
 
   return (
-    <div className="flex h-full flex-col rounded-[1.5rem] border border-white/10 bg-slate-950/85 p-4 shadow-2xl shadow-slate-950/50 backdrop-blur-xl">
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+    <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white/90 p-4 shadow-2xl shadow-slate-200/70 backdrop-blur-xl">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3 overflow-hidden">
           <Logo />
           {!collapsed ? (
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">
+              <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
                 Fish Market
               </p>
-              <p className="truncate text-xs text-slate-400">Navigation for {role ?? 'guest'}</p>
+              <p className="truncate text-xs text-slate-500">Navigation for {role ?? 'guest'}</p>
             </div>
           ) : null}
         </div>
@@ -42,7 +42,7 @@ function SidebarContent({
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="hidden rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:border-cyan-300/40 hover:text-white lg:block"
+          className="hidden rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 lg:block"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
@@ -51,7 +51,7 @@ function SidebarContent({
         <button
           type="button"
           onClick={onCloseMobile}
-          className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:border-cyan-300/40 hover:text-white lg:hidden"
+          className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 lg:hidden"
           aria-label="Close navigation drawer"
         >
           <X className="size-4" />
@@ -72,12 +72,12 @@ function SidebarContent({
               className={({ isActive }) =>
                 `group flex items-center gap-3 rounded-xl px-3 py-3 transition ${
                   isActive
-                    ? 'bg-cyan-400/15 text-white shadow-lg shadow-cyan-950/30 ring-1 ring-cyan-300/30'
-                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                    ? 'bg-blue-50 text-blue-600 shadow-lg shadow-blue-100 ring-1 ring-blue-200'
+                    : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600'
                 }`
               }
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-cyan-300 transition group-hover:border-cyan-300/30">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-blue-600 transition group-hover:border-blue-200 group-hover:bg-white">
                 <Icon className="size-4" />
               </span>
 
@@ -97,9 +97,9 @@ function SidebarContent({
       </nav>
 
       {!collapsed ? (
-        <div className="rounded-xl border border-emerald-300/15 bg-emerald-400/10 p-4 text-sm text-emerald-100">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
           <p className="font-semibold">Workspace online</p>
-          <p className="mt-1 text-xs leading-6 text-emerald-50/80">
+          <p className="mt-1 text-xs leading-6 text-emerald-600">
             Menu otomatis mengikuti role user yang sedang login.
           </p>
         </div>
@@ -129,7 +129,7 @@ export function RoleBasedSidebar({
       </aside>
 
       {mobileOpen ? (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-0 z-50 bg-slate-900/35 backdrop-blur-sm lg:hidden">
           <div className="h-full max-w-[18rem] p-4">
             <SidebarContent
               collapsed={false}

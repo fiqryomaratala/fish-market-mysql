@@ -4,7 +4,10 @@ import { Logo } from '@/components/ui/Logo'
 
 export function AppHeader() {
   const location = useLocation()
-  const isMarketplaceTheme = location.pathname.startsWith('/products')
+  const isMarketplaceTheme =
+    location.pathname.startsWith('/products') ||
+    location.pathname.startsWith('/cart') ||
+    location.pathname.startsWith('/checkout')
 
   return (
     <header

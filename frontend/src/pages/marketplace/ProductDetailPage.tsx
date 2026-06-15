@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { AlertCircle, Heart, ShoppingCart, Wallet } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { ActionButton } from '@/components/product-detail/ActionButton'
 import { BatchInfoCard } from '@/components/product-detail/BatchInfoCard'
 import { LoadingSkeleton } from '@/components/product-detail/LoadingSkeleton'
@@ -10,6 +11,7 @@ import { ProductTabs } from '@/components/product-detail/ProductTabs'
 import { QuantitySelector } from '@/components/product-detail/QuantitySelector'
 import { RelatedProducts } from '@/components/product-detail/RelatedProducts'
 import { TrackingCard } from '@/components/product-detail/TrackingCard'
+import { useAddCart } from '@/hooks/useCart'
 import { useProduct } from '@/hooks/useProduct'
 import { useProducts } from '@/hooks/useProducts'
 import { FALLBACK_PLACEHOLDER_IMAGE } from '@/services/product.service'
@@ -61,6 +63,7 @@ function ProductDetailPage() {
   const navigate = useNavigate()
   const { id } = useParams()
   const [quantity, setQuantity] = useState(1)
+  const addCartMutation = useAddCart()
   const { data, isLoading, error, refetch } = useProduct(id)
   const { data: products, isLoading: isLoadingProducts, error: productsError } = useProducts()
   const product = data
@@ -121,6 +124,8 @@ function ProductDetailPage() {
   const formattedPrice = currencyFormatter.format(product.price)
   const formattedHarvestDate = formatDate(product.harvest_date)
   const categoryLabel = product.category || '-'
+  const addToCartError =
+    addCartMutation.error instanceof Error ? addCartMutation.error.message : ''
   const statusToneClassName =
     product.status === 'Fresh Harvest'
       ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
@@ -168,11 +173,30 @@ function ProductDetailPage() {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <ActionButton
-              label="Add To Cart"
+              label={addCartMutation.isPending ? 'Adding...' : 'Add To Cart'}
               icon={<ShoppingCart className="size-4" />}
-              onClick={() => navigate('/cart')}
+              onClick={async () => {
+                try {
+                  await addCartMutation.mutateAsync({
+                    product_id: product.id,
+                    quantity: currentQuantity,
+                  })
+                  toast.success('Product added to cart')
+                  navigate('/cart')
+                } catch (mutationError) {
+                  toast.error(
+                    mutationError instanceof Error
+                      ? mutationError.message
+                      : 'Failed to add product to cart',
+                  )
+                }
+              }}
               disabled={product.stock <= 0}
-              className={product.stock <= 0 ? 'cursor-not-allowed opacity-50 hover:translate-y-0' : ''}
+              className={
+                product.stock <= 0 || addCartMutation.isPending
+                  ? 'cursor-not-allowed opacity-50 hover:translate-y-0'
+                  : ''
+              }
             />
             <ActionButton
               label="Buy Now"
@@ -188,6 +212,12 @@ function ProductDetailPage() {
               variant="ghost"
             />
           </div>
+
+          {addToCartError ? (
+            <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+              {addToCartError}
+            </p>
+          ) : null}
         </div>
       </section>
 
