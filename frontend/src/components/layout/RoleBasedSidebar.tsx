@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useNavigation } from '@/hooks/useNavigation'
 
@@ -22,6 +22,7 @@ function SidebarContent({
   onToggleCollapse,
 }: Omit<RoleBasedSidebarProps, 'mobileOpen'>) {
   const { items, role } = useNavigation()
+  const location = useLocation()
   const desktopToggleClassName =
     'hidden lg:flex size-12 items-center justify-center rounded-[10px] border border-slate-200 bg-slate-50 text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600'
   const mobileCloseClassName =
@@ -76,6 +77,15 @@ function SidebarContent({
         {items.map((item) => {
           const Icon = item.icon
           const badge = badgeMap[item.title]
+          const isMarketplaceAliasActive =
+            role === 'customer' &&
+            item.path === '/customer/marketplace' &&
+            location.pathname.startsWith('/products')
+          const isCartAliasActive =
+            role === 'customer' &&
+            item.path === '/customer/cart' &&
+            location.pathname.startsWith('/cart')
+          const isActiveItem = isMarketplaceAliasActive || isCartAliasActive
 
           return (
             <NavLink
@@ -87,7 +97,7 @@ function SidebarContent({
                 `group flex items-center ${collapsed ? 'justify-center' : 'gap-3'} ${
                   collapsed ? 'rounded-[10px] px-0 py-0' : 'rounded-[10px] px-1.5 py-1.5'
                 } transition ${
-                  isActive
+                  isActive || isActiveItem
                     ? 'text-blue-700'
                     : 'text-slate-500 hover:text-blue-600'
                 }`
@@ -99,7 +109,7 @@ function SidebarContent({
                     className={`flex shrink-0 items-center justify-center border transition ${
                       collapsed ? 'size-[3.3rem] rounded-[10px]' : 'size-12 rounded-[10px]'
                     } ${
-                      isActive
+                      isActive || isActiveItem
                         ? 'border-blue-600 bg-blue-600 text-white shadow-none ring-0'
                         : 'border-slate-200 bg-white text-blue-500 shadow-none ring-0 group-hover:border-blue-200 group-hover:text-blue-600'
                     }`}

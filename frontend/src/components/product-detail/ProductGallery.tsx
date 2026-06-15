@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FALLBACK_PLACEHOLDER_IMAGE } from '@/services/product.service'
 
 type ProductGalleryProps = {
   name: string
@@ -6,7 +7,7 @@ type ProductGalleryProps = {
 }
 
 export function ProductGallery({ name, images }: ProductGalleryProps) {
-  const safeImages = images.length > 0 ? images : ['https://placehold.co/1200x900?text=Fish']
+  const safeImages = images.length > 0 ? images : [FALLBACK_PLACEHOLDER_IMAGE]
   const [selectedImage, setSelectedImage] = useState(safeImages[0])
 
   return (
@@ -16,6 +17,9 @@ export function ProductGallery({ name, images }: ProductGalleryProps) {
           <img
             src={selectedImage}
             alt={name}
+            onError={(event) => {
+              event.currentTarget.src = FALLBACK_PLACEHOLDER_IMAGE
+            }}
             className="h-full w-full object-cover transition duration-500 hover:scale-105"
           />
         </div>
@@ -40,6 +44,9 @@ export function ProductGallery({ name, images }: ProductGalleryProps) {
                 <img
                   src={image}
                   alt={`${name} thumbnail ${index + 1}`}
+                  onError={(event) => {
+                    event.currentTarget.src = FALLBACK_PLACEHOLDER_IMAGE
+                  }}
                   className="h-full w-full object-cover"
                 />
               </div>

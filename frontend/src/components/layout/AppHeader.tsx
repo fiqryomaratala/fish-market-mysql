@@ -1,13 +1,49 @@
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { ChevronDown, LogOut, Settings, UserCircle2 } from 'lucide-react'
 import { publicNavigation } from '@/config/navigation'
 import { Logo } from '@/components/ui/Logo'
+import { getRoleLabel } from '@/config/navigation'
+import { useAuth } from '@/hooks/useAuth'
+import { useNavigation } from '@/hooks/useNavigation'
+
+function getInitials(name?: string) {
+  if (!name) {
+    return 'FM'
+  }
+
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
+}
 
 export function AppHeader() {
   const location = useLocation()
+  const { user, role, isAuthenticated, logout } = useAuth()
+  const { profilePath, settingsPath } = useNavigation()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement | null>(null)
   const isMarketplaceTheme =
     location.pathname.startsWith('/products') ||
     location.pathname.startsWith('/cart') ||
     location.pathname.startsWith('/checkout')
+  const navigationItems = isAuthenticated
+    ? publicNavigation.filter((item) => item.path !== '/login')
+    : publicNavigation
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!dropdownRef.current?.contains(event.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    window.addEventListener('mousedown', handleOutsideClick)
+
+    return () => window.removeEventListener('mousedown', handleOutsideClick)
+  }, [])
 
   return (
     <header
@@ -39,7 +75,7 @@ export function AppHeader() {
         </NavLink>
 
         <nav className="hidden items-center gap-2 md:flex">
-          {publicNavigation.map((item) => (
+          {navigationItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -59,6 +95,77 @@ export function AppHeader() {
             </NavLink>
           ))}
         </nav>
+
+        {isAuthenticated ? (
+          <div className="relative hidden md:block" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setDropdownOpen((current) => !current)}
+              className={`flex items-center gap-3 rounded-[10px] border px-2.5 py-2 text-left shadow-sm transition ${
+                isMarketplaceTheme
+                  ? 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600'
+                  : 'border-white/10 bg-white/5 text-slate-200 hover:border-cyan-300/40 hover:text-white'
+              }`}
+            >
+              <span className="flex size-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950">
+                {getInitials(user?.name)}
+              </span>
+              <span className="hidden min-w-0 sm:block">
+                <span
+                  className={`block truncate text-sm font-semibold ${
+                    isMarketplaceTheme ? 'text-slate-900' : 'text-white'
+                  }`}
+                >
+                  {user?.name ?? 'Guest'}
+                </span>
+                <span
+                  className={`block truncate text-xs ${
+                    isMarketplaceTheme ? 'text-slate-500' : 'text-slate-400'
+                  }`}
+                >
+                  {getRoleLabel(role)}
+                </span>
+              </span>
+              <ChevronDown
+                className={`hidden size-4 sm:block ${
+                  isMarketplaceTheme ? 'text-slate-400' : 'text-slate-400'
+                }`}
+              />
+            </button>
+
+            {dropdownOpen ? (
+              <div className="absolute right-0 mt-2 w-56 rounded-[10px] border border-slate-200 bg-white p-2 shadow-lg shadow-slate-200/60">
+                <NavLink
+                  to={profilePath}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
+                >
+                  <UserCircle2 className="size-4 text-blue-600" />
+                  <span>Profile</span>
+                </NavLink>
+                <NavLink
+                  to={settingsPath}
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
+                >
+                  <Settings className="size-4 text-blue-600" />
+                  <span>Settings</span>
+                </NavLink>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false)
+                    void logout()
+                  }}
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-rose-500 transition hover:bg-rose-50 hover:text-rose-600"
+                >
+                  <LogOut className="size-4 text-rose-500" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </header>
   )
