@@ -101,11 +101,11 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
             </button>
 
             {dropdownOpen ? (
-              <div className="absolute right-0 mt-3 w-56 rounded-2xl border border-slate-200 bg-white/95 p-2 shadow-2xl shadow-slate-200/70 backdrop-blur-xl">
+              <div className="absolute right-0 mt-2 w-56 rounded-[10px] border border-slate-200 bg-white p-2 shadow-lg shadow-slate-200/60">
                 <NavLink
                   to={profilePath}
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-700 transition hover:bg-blue-50 hover:text-blue-600"
+                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
                 >
                   <UserCircle2 className="size-4 text-blue-600" />
                   <span>Profile</span>
@@ -113,7 +113,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                 <NavLink
                   to={settingsPath}
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-700 transition hover:bg-blue-50 hover:text-blue-600"
+                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
                 >
                   <Settings className="size-4 text-blue-600" />
                   <span>Settings</span>
@@ -124,9 +124,9 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                     setDropdownOpen(false)
                     void logout()
                   }}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-rose-200 transition hover:bg-rose-400/10 hover:text-rose-100"
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-rose-500 transition hover:bg-rose-50 hover:text-rose-600"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut className="size-4 text-rose-500" />
                   <span>Logout</span>
                 </button>
               </div>
