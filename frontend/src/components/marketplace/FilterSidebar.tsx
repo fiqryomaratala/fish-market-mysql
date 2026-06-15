@@ -28,7 +28,7 @@ export function FilterSidebar({
   onCloseMobile,
 }: FilterSidebarProps) {
   const sidebarContent = (
-    <div className="h-full rounded-[2rem] border border-slate-200 bg-white/90 p-6 shadow-xl shadow-slate-200/80 backdrop-blur">
+    <div className="h-full rounded-xl border border-slate-200 bg-white/90 p-6 shadow-xl shadow-slate-200/80 backdrop-blur">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
@@ -39,7 +39,7 @@ export function FilterSidebar({
         <button
           type="button"
           onClick={onCloseMobile}
-          className="inline-flex rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-blue-200 hover:text-blue-600 lg:hidden"
+          className="inline-flex rounded-xl border border-slate-200 p-2 text-slate-500 transition hover:border-blue-200 hover:text-blue-600 lg:hidden"
           aria-label="Tutup filter"
         >
           <X className="size-4" />

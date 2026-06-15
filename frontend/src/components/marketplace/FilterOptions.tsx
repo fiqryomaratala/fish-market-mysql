@@ -58,7 +58,7 @@ function RadioGroup<T extends string>({
           return (
             <label
               key={option}
-              className={`flex cursor-pointer items-center gap-3 rounded-3xl border px-5 py-4 text-slate-800 shadow-sm transition-all duration-200 ease-in-out hover:shadow-[0_8px_20px_rgba(15,23,42,0.05)] ${
+              className={`flex cursor-pointer items-center gap-3 rounded-xl border px-5 py-4 text-slate-800 shadow-sm transition-all duration-200 ease-in-out hover:shadow-[0_8px_20px_rgba(15,23,42,0.05)] ${
                 isChecked
                   ? 'border-blue-200 bg-blue-50/60 shadow-[0_10px_24px_rgba(59,130,246,0.10)]'
                   : 'border-slate-200 bg-white hover:border-slate-400'
@@ -134,7 +134,7 @@ export function FilterOptions({
       <button
         type="button"
         onClick={onReset}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3.5 text-sm font-semibold text-slate-700 transition-all duration-200 ease-in-out hover:border-slate-400 hover:text-slate-900"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-semibold text-slate-700 transition-all duration-200 ease-in-out hover:border-slate-400 hover:text-slate-900"
       >
         <RotateCcw className="size-4" />
         Atur Ulang Filter

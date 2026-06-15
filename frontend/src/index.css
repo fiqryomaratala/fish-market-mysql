@@ -40,6 +40,15 @@ select {
   min-height: 100vh;
 }
 
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 .price-range-input {
   appearance: textfield;
 }

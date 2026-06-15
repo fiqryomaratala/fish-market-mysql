@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Bell, ChevronDown, LogOut, Menu, Settings, UserCircle2 } from 'lucide-react'
 import { getRoleLabel } from '@/config/navigation'
-import { Logo } from '@/components/ui/Logo'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigation } from '@/hooks/useNavigation'
 
@@ -24,7 +23,7 @@ function getInitials(name?: string) {
 
 export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
   const { user, role, logout } = useAuth()
-  const { items, profilePath, settingsPath } = useNavigation()
+  const { profilePath, settingsPath } = useNavigation()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -41,22 +40,27 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
   }, [])
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 shadow-lg shadow-slate-200/40 backdrop-blur-xl">
-      <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+      <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onOpenMobileMenu}
-            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 lg:hidden"
+            className="rounded-[10px] border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 lg:hidden"
             aria-label="Open navigation drawer"
           >
             <Menu className="size-5" />
           </button>
 
-          <NavLink to="/" className="flex items-center gap-3">
-            <Logo />
+          <NavLink
+            to="/"
+            className="flex items-center gap-3 px-1 py-1 transition hover:text-blue-600"
+          >
+            <span className="flex size-12 items-center justify-center rounded-[10px] bg-linear-to-br from-cyan-300 via-sky-400 to-emerald-300 text-lg font-black text-slate-950">
+              FM
+            </span>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">
                 Fish Market
               </p>
               <p className="text-xs text-slate-500">Marketplace workspace</p>
@@ -64,29 +68,10 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
           </NavLink>
         </div>
 
-        <nav className="hidden items-center gap-2 xl:flex">
-          {items.slice(0, 5).map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.path === '/admin' || item.path === '/staff'}
-              className={({ isActive }) =>
-                `rounded-xl px-4 py-2 text-sm transition ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600'
-                }`
-              }
-            >
-              {item.title}
-            </NavLink>
-          ))}
-        </nav>
-
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="relative rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            className="relative rounded-[10px] border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             aria-label="Notifications"
           >
             <Bell className="size-5" />
@@ -99,9 +84,9 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
             <button
               type="button"
               onClick={() => setDropdownOpen((current) => !current)}
-              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-left text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+              className="flex items-center gap-3 rounded-[10px] border border-slate-200 bg-white px-2.5 py-2 text-left text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             >
-              <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20">
+              <span className="flex size-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20">
                 {getInitials(user?.name)}
               </span>
               <span className="hidden min-w-0 sm:block">
