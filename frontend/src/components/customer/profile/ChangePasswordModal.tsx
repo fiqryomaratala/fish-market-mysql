@@ -1,13 +1,21 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { LoaderCircle, LockKeyhole, ShieldAlert, X } from 'lucide-react'
+import {
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  LockKeyhole,
+  ShieldAlert,
+  X,
+  type LucideIcon,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import type { ChangePasswordPayload } from '@/types/profile'
 
 const changePasswordSchema = z
   .object({
-    old_password: z.string().min(1, 'Kata sandi lama wajib diisi'),
+    current_password: z.string().min(1, 'Kata sandi lama wajib diisi'),
     new_password: z.string().min(8, 'Kata sandi minimal 8 karakter'),
     confirm_password: z.string().min(8, 'Konfirmasi kata sandi minimal 8 karakter'),
   })
@@ -17,12 +25,19 @@ const changePasswordSchema = z
   })
 
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>
+type PasswordFieldKey = keyof ChangePasswordFormValues
 
 type ChangePasswordModalProps = {
   isOpen: boolean
   isSubmitting: boolean
   onClose: () => void
   onSubmit: (payload: ChangePasswordPayload) => void
+}
+
+const defaultVisibilityState: Record<PasswordFieldKey, boolean> = {
+  current_password: false,
+  new_password: false,
+  confirm_password: false,
 }
 
 export function ChangePasswordModal({
@@ -39,15 +54,24 @@ export function ChangePasswordModal({
   } = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      old_password: '',
+      current_password: '',
       new_password: '',
       confirm_password: '',
     },
   })
+  const [visibility, setVisibility] = useState(defaultVisibilityState)
+
+  const toggleVisibility = (field: PasswordFieldKey) => {
+    setVisibility((current) => ({
+      ...current,
+      [field]: !current[field],
+    }))
+  }
 
   useEffect(() => {
     if (!isOpen) {
       reset()
+      setVisibility(defaultVisibilityState)
     }
   }, [isOpen, reset])
 
@@ -82,7 +106,7 @@ export function ChangePasswordModal({
         <form
           onSubmit={handleSubmit((values) =>
             onSubmit({
-              old_password: values.old_password,
+              current_password: values.current_password,
               new_password: values.new_password,
             })
           )}
@@ -90,36 +114,33 @@ export function ChangePasswordModal({
         >
           <PasswordField
             label="Kata Sandi Lama"
-            error={errors.old_password?.message}
-            input={
-              <input
-                {...register('old_password')}
-                type="password"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
-              />
-            }
+            field="current_password"
+            error={errors.current_password?.message}
+            placeholder="Masukkan kata sandi lama"
+            isVisible={visibility.current_password}
+            register={register}
+            onToggleVisibility={toggleVisibility}
+            focusRingClassName="focus-within:border-sky-400 focus-within:ring-4 focus-within:ring-sky-100"
           />
           <PasswordField
             label="Kata Sandi Baru"
+            field="new_password"
             error={errors.new_password?.message}
-            input={
-              <input
-                {...register('new_password')}
-                type="password"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
-              />
-            }
+            placeholder="Masukkan kata sandi baru"
+            isVisible={visibility.new_password}
+            register={register}
+            onToggleVisibility={toggleVisibility}
+            focusRingClassName="focus-within:border-emerald-400 focus-within:ring-4 focus-within:ring-emerald-100"
           />
           <PasswordField
             label="Konfirmasi Kata Sandi"
+            field="confirm_password"
             error={errors.confirm_password?.message}
-            input={
-              <input
-                {...register('confirm_password')}
-                type="password"
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-              />
-            }
+            placeholder="Ulangi kata sandi baru"
+            isVisible={visibility.confirm_password}
+            register={register}
+            onToggleVisibility={toggleVisibility}
+            focusRingClassName="focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100"
           />
 
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -159,15 +180,50 @@ export function ChangePasswordModal({
 
 type PasswordFieldProps = {
   label: string
-  input: ReactNode
+  field: PasswordFieldKey
   error?: string
+  placeholder: string
+  isVisible: boolean
+  focusRingClassName: string
+  register: ReturnType<typeof useForm<ChangePasswordFormValues>>['register']
+  onToggleVisibility: (field: PasswordFieldKey) => void
 }
 
-function PasswordField({ label, input, error }: PasswordFieldProps) {
+function PasswordField({
+  label,
+  field,
+  error,
+  placeholder,
+  isVisible,
+  focusRingClassName,
+  register,
+  onToggleVisibility,
+}: PasswordFieldProps) {
+  const registration = register(field)
+  const EyeIcon: LucideIcon = isVisible ? Eye : EyeOff
+
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-semibold text-slate-700">{label}</span>
-      {input}
+      <div
+        className={`relative rounded-xl border border-slate-200 bg-white transition ${focusRingClassName}`}
+      >
+        <input
+          {...registration}
+          type={isVisible ? 'text' : 'password'}
+          placeholder={placeholder}
+          className="w-full rounded-xl bg-transparent px-4 py-3 pr-10 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+        />
+        <button
+          type="button"
+          onClick={() => onToggleVisibility(field)}
+          className="absolute inset-y-0 right-3 inline-flex items-center justify-center text-gray-400 transition hover:text-gray-600"
+          aria-label={isVisible ? `Sembunyikan ${label.toLowerCase()}` : `Tampilkan ${label.toLowerCase()}`}
+          aria-pressed={isVisible}
+        >
+          <EyeIcon className="h-5 w-5" />
+        </button>
+      </div>
       {error ? <p className="mt-2 text-sm text-rose-500">{error}</p> : null}
     </label>
   )
