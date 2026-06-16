@@ -25,6 +25,7 @@ const OrderDetailPage = lazy(() => import('@/pages/orders/OrderDetailPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const CustomerDashboardPage = lazy(() => import('@/pages/customer/CustomerDashboardPage'))
+const CustomerProfilePage = lazy(() => import('@/pages/customer/CustomerProfilePage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const AdminProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
 const InventoryPage = lazy(() => import('@/pages/admin/InventoryPage'))
@@ -109,11 +110,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'profile',
-                element: placeholderPage(
-                  'Customer',
-                  'Profile',
-                  'Halaman profil pelanggan untuk mengelola data akun, alamat, dan preferensi belanja.',
-                ),
+                element: withSuspense(<CustomerProfilePage />),
               },
               {
                 path: 'settings',

@@ -74,7 +74,7 @@ function EmptyCartState() {
       <div className="rounded-full bg-blue-50 p-5 text-blue-600">
         <ShoppingBag className="size-8" />
       </div>
-      <h1 className="mt-6 text-3xl font-semibold text-slate-900">Your cart is empty</h1>
+      <h1 className="mt-6 text-3xl font-semibold text-slate-900">Keranjang Anda masih kosong</h1>
       <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500">
         Belum ada produk yang ditambahkan ke keranjang. Jelajahi marketplace untuk memilih batch ikan terbaik sebelum checkout.
       </p>
@@ -82,7 +82,7 @@ function EmptyCartState() {
         to="/products"
         className="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700"
       >
-        Continue Shopping
+        Lanjut Belanja
       </Link>
     </section>
   )
@@ -108,7 +108,7 @@ function CartErrorState({
         className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-200 transition hover:-translate-y-0.5 hover:bg-red-600"
       >
         <RefreshCcw className="size-4" />
-        Retry
+        Coba Lagi
       </button>
     </section>
   )
@@ -140,27 +140,33 @@ function CartPage() {
         id: targetId,
         payload: { quantity: nextQuantity },
       })
-      toast.success('Cart updated successfully')
+      toast.success('Keranjang berhasil diperbarui')
     } catch (mutationError) {
-      toast.error(mutationError instanceof Error ? mutationError.message : 'Failed to update cart')
+      toast.error(
+        mutationError instanceof Error ? mutationError.message : 'Gagal memperbarui keranjang',
+      )
     }
   }
 
   const handleDeleteItem = async (itemId: number) => {
     try {
       await deleteCartMutation.mutateAsync(itemId)
-      toast.success('Item removed from cart')
+      toast.success('Produk berhasil dihapus dari keranjang')
     } catch (mutationError) {
-      toast.error(mutationError instanceof Error ? mutationError.message : 'Failed to remove item')
+      toast.error(
+        mutationError instanceof Error ? mutationError.message : 'Gagal menghapus produk',
+      )
     }
   }
 
   const handleClearCart = async () => {
     try {
       await clearCartMutation.mutateAsync()
-      toast.success('Cart cleared successfully')
+      toast.success('Keranjang berhasil dikosongkan')
     } catch (mutationError) {
-      toast.error(mutationError instanceof Error ? mutationError.message : 'Failed to clear cart')
+      toast.error(
+        mutationError instanceof Error ? mutationError.message : 'Gagal mengosongkan keranjang',
+      )
     }
   }
 
@@ -200,7 +206,9 @@ function CartPage() {
   return (
     <div className="space-y-6">
       <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.12),_transparent_24%),linear-gradient(135deg,_#ffffff_0%,_#f8fafc_55%,_#eff6ff_100%)] p-6 shadow-2xl shadow-slate-200/70 md:p-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">Cart</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">
+          Keranjang
+        </p>
         <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-3xl font-semibold text-slate-900 md:text-5xl">
@@ -218,7 +226,7 @@ function CartPage() {
             className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Trash2 className="size-4" />
-            Clear Cart
+            Kosongkan Keranjang
           </button>
         </div>
       </section>
@@ -230,11 +238,11 @@ function CartPage() {
               <table className="min-w-full">
                 <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   <tr>
-                    <th className="px-6 py-4">Product</th>
-                    <th className="px-4 py-4">Price</th>
-                    <th className="px-4 py-4">Quantity</th>
+                    <th className="px-6 py-4">Produk</th>
+                    <th className="px-4 py-4">Harga</th>
+                    <th className="px-4 py-4">Jumlah</th>
                     <th className="px-4 py-4">Subtotal</th>
-                    <th className="px-6 py-4 text-right">Delete</th>
+                    <th className="px-6 py-4 text-right">Hapus</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -311,7 +319,7 @@ function CartPage() {
 
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Quantity</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Jumlah</p>
                     <div className="mt-2">
                       <QuantityControl
                         item={item}
@@ -346,13 +354,15 @@ function CartPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">
-                  Summary
+                  Ringkasan
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-900">Order Summary</h2>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+                  Ringkasan Pesanan
+                </h2>
               </div>
               {isFetching ? (
                 <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-                  Syncing
+                  Menyinkronkan
                 </span>
               ) : null}
             </div>
@@ -389,7 +399,7 @@ function CartPage() {
               to="/products"
               className="mt-3 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             >
-              Continue Shopping
+              Lanjut Belanja
             </Link>
           </div>
         </aside>
