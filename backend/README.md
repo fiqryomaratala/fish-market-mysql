@@ -34,6 +34,27 @@ Menjalankan backend dengan Docker:
 docker compose up -d --build
 ```
 
+Perintah di atas sekarang default untuk development lokal, jadi hanya menyalakan MySQL agar backend Go lokal bisa tetap memakai `http://localhost:8080` tanpa bentrok port.
+
+Jika ingin menjalankan full stack Docker sekaligus:
+
+```bash
+docker compose --profile fullstack up -d --build
+```
+
+Solusi cepat jika port `8080` bentrok saat menjalankan backend lokal:
+
+```bash
+docker compose down --remove-orphans
+docker compose up -d --build
+go run cmd/server/main.go
+```
+
+Penjelasan singkat:
+- `docker compose down --remove-orphans` membersihkan container lama yang masih bisa menahan port `8080`
+- `docker compose up -d --build` menyalakan ulang service default untuk development lokal, yaitu MySQL
+- `go run cmd/server/main.go` menjalankan backend Go lokal di `http://localhost:8080`
+
 Setelah backend berjalan:
 
 - Backend container direct: `http://localhost:8081`
@@ -43,7 +64,8 @@ Setelah backend berjalan:
 Catatan port development:
 
 - Backend Go lokal default berjalan di `http://localhost:8080`
-- Backend Docker dipublish ke `http://localhost:8081`
+- `docker compose up -d --build` default hanya menyalakan MySQL untuk kebutuhan backend lokal
+- Backend Docker full stack dipublish ke `http://localhost:8081`
 - Nginx Docker tetap tersedia di `http://localhost`
 
 ## Continuous Integration

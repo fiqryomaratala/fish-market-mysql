@@ -1,5 +1,7 @@
 services:
   backend:
+    profiles:
+      - fullstack
     build:
       context: .
       dockerfile: Dockerfile
@@ -52,6 +54,8 @@ services:
       start_period: 20s
 
   nginx:
+    profiles:
+      - fullstack
     image: nginx:1.27-alpine
     container_name: fish_market_nginx
     restart: unless-stopped

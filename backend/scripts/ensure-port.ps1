@@ -1,8 +1,6 @@
 param(
   [int]$Port = 8080,
   [switch]$KillExisting,
-  [switch]$UseFallback,
-  [int[]]$FallbackPorts = @(8081, 8082, 8083, 8090),
   [switch]$StartServer
 )
 
@@ -38,25 +36,6 @@ function Test-PortFree {
   return $null -eq (Get-PortOwner -TargetPort $TargetPort)
 }
 
-function Resolve-AvailablePort {
-  param(
-    [int]$PrimaryPort,
-    [int[]]$CandidatePorts
-  )
-
-  if (Test-PortFree -TargetPort $PrimaryPort) {
-    return $PrimaryPort
-  }
-
-  foreach ($candidate in $CandidatePorts) {
-    if (Test-PortFree -TargetPort $candidate) {
-      return $candidate
-    }
-  }
-
-  throw "Tidak ada port yang tersedia pada daftar kandidat: $($CandidatePorts -join ', ')"
-}
-
 $owner = Get-PortOwner -TargetPort $Port
 
 if ($owner) {
@@ -71,15 +50,12 @@ if ($owner) {
   Write-Host "Port $Port sedang kosong." -ForegroundColor Green
 }
 
-$selectedPort = $Port
-
-if ($UseFallback) {
-  $selectedPort = Resolve-AvailablePort -PrimaryPort $Port -CandidatePorts $FallbackPorts
-  Write-Host "Port terpilih: $selectedPort" -ForegroundColor Cyan
-}
-
 if ($StartServer) {
-  $env:APP_PORT = "$selectedPort"
-  Write-Host "Menjalankan backend pada port $selectedPort ..." -ForegroundColor Cyan
+  if (-not (Test-PortFree -TargetPort $Port) -and -not $KillExisting) {
+    throw "Port $Port sedang dipakai. Backend dikonfigurasi hanya boleh berjalan di port ini."
+  }
+
+  $env:APP_PORT = "$Port"
+  Write-Host "Menjalankan backend pada port $Port ..." -ForegroundColor Cyan
   go run cmd/server/main.go
 }

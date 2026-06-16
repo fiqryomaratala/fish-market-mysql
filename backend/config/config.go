@@ -12,7 +12,6 @@ type Config struct {
 	AppName            string
 	AppEnv             string
 	AppPort            string
-	AppFallbackPorts   string
 	BaseURL            string
 	CORSAllowedOrigins string
 	LogLevel           string
@@ -40,7 +39,6 @@ func LoadConfig() {
 			AppName:            getEnv("APP_NAME", "Fish Marketplace Backend"),
 			AppEnv:             getEnv("APP_ENV", "development"),
 			AppPort:            getEnv("APP_PORT", "8080"),
-			AppFallbackPorts:   getEnv("APP_FALLBACK_PORTS", "8081,8082,8083,8090"),
 			BaseURL:            getEnv("BASE_URL", "http://localhost:8080"),
 			CORSAllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"),
 			LogLevel:           getEnv("LOG_LEVEL", "debug"),
