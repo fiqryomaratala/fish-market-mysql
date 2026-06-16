@@ -453,3 +453,16 @@
 {"level":"info","time":"2026-06-16T14:25:32.507+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
 {"level":"info","time":"2026-06-16T14:25:32.508+0700","caller":"logger/logger.go:66","msg":"profile photo updated","module":"AUTH","user_id":2}
 {"level":"info","time":"2026-06-16T14:25:32.509+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
+{"level":"info","time":"2026-06-16T15:33:49.864+0700","caller":"logger/logger.go:66","msg":"profile photo updated","module":"AUTH","user_id":10}
+{"level":"info","time":"2026-06-16T15:33:49.864+0700","caller":"logger/logger.go:66","msg":"profile updated","module":"AUTH","user_id":10}
+{"level":"info","time":"2026-06-16T15:33:49.917+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T15:33:49.977+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T15:33:49.977+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"warn","time":"2026-06-16T15:33:50.028+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-16T15:33:50.030+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T15:33:50.080+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-16T15:33:50.080+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-16T15:33:50.136+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-16T15:33:50.136+0700","caller":"logger/logger.go:66","msg":"profile updated","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-16T15:33:50.137+0700","caller":"logger/logger.go:66","msg":"profile photo updated","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-16T15:33:50.138+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}

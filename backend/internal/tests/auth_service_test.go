@@ -168,3 +168,38 @@ func TestAuthServiceUpdateProfilePhoto(t *testing.T) {
 	assert.NotNil(t, updatedUser)
 	assert.Equal(t, "/uploads/profile/customer_10_123.png", updatedUser.PhotoURL)
 }
+
+func TestAuthServiceUpdateProfile(t *testing.T) {
+	SetupTest(t)
+
+	var updatedUser *models.User
+	userRepo := &mocks.MockUserRepository{
+		FindByIDFunc: func(id uint) (*models.User, error) {
+			return &models.User{
+				Model:   gorm.Model{ID: id},
+				Name:    "John Doe",
+				Email:   "john@example.com",
+				Phone:   "08123",
+				Address: "Alamat lama",
+				Role:    "customer",
+			}, nil
+		},
+		UpdateFunc: func(user *models.User) error {
+			updatedUser = user
+			return nil
+		},
+	}
+
+	service := services.NewAuthService(userRepo)
+	user, err := service.UpdateProfile(10, "John Updated", "08123456789", "Alamat baru", nil)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, "John Updated", user.Name)
+	assert.Equal(t, "08123456789", user.Phone)
+	assert.Equal(t, "Alamat baru", user.Address)
+	assert.NotNil(t, updatedUser)
+	assert.Equal(t, "John Updated", updatedUser.Name)
+	assert.Equal(t, "08123456789", updatedUser.Phone)
+	assert.Equal(t, "Alamat baru", updatedUser.Address)
+}

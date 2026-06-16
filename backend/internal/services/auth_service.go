@@ -25,6 +25,7 @@ type AuthService interface {
 	Register(name, email, password string) (*models.User, error)
 	Login(email, password string, audit *AuditContext) (*LoginResult, error)
 	GetProfile(userID uint) (*models.User, error)
+	UpdateProfile(userID uint, name, phone, address string, audit *AuditContext) (*models.User, error)
 	UpdateProfilePhoto(userID uint, photoURL string, audit *AuditContext) (*models.User, error)
 }
 
@@ -130,6 +131,34 @@ func (s *authService) GetProfile(userID uint) (*models.User, error) {
 	if user == nil {
 		return nil, ErrUserNotFound
 	}
+
+	return user, nil
+}
+
+func (s *authService) UpdateProfile(userID uint, name, phone, address string, audit *AuditContext) (*models.User, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		logger.Error("failed to find user before profile update", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return nil, err
+	}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+
+	user.Name = strings.TrimSpace(name)
+	user.Phone = strings.TrimSpace(phone)
+	user.Address = strings.TrimSpace(address)
+
+	if err := s.userRepo.Update(user); err != nil {
+		logger.Error("failed to update profile", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return nil, err
+	}
+
+	if audit != nil {
+		helpers.LogActivity(audit.UserID, "UPDATE", "PROFILE", "Memperbarui data profil", audit.IPAddress, audit.UserAgent)
+	}
+
+	logger.Info("profile updated", zap.String("module", "AUTH"), zap.Uint("user_id", user.ID))
 
 	return user, nil
 }

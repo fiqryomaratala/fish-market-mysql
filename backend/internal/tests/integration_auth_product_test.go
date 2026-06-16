@@ -231,6 +231,16 @@ func TestIntegrationAuthProductFlow(t *testing.T) {
 	require.Equal(t, http.StatusOK, profileAliasRecorder.Code)
 	assert.Contains(t, profileAliasRecorder.Body.String(), customerEmail)
 
+	updateProfileRecorder := performJSONRequest(t, router, http.MethodPut, "/api/profile", map[string]string{
+		"name":    "Customer Update",
+		"phone":   "08123456789",
+		"address": "Jl. Ikan Segar No. 1",
+	}, customerToken)
+	require.Equal(t, http.StatusOK, updateProfileRecorder.Code)
+	assert.Contains(t, updateProfileRecorder.Body.String(), `"name":"Customer Update"`)
+	assert.Contains(t, updateProfileRecorder.Body.String(), `"phone":"08123456789"`)
+	assert.Contains(t, updateProfileRecorder.Body.String(), `"address":"Jl. Ikan Segar No. 1"`)
+
 	customerAdminRecorder := performJSONRequest(t, router, http.MethodGet, "/api/admin/dashboard", nil, customerToken)
 	require.Equal(t, http.StatusForbidden, customerAdminRecorder.Code)
 	assert.Contains(t, customerAdminRecorder.Body.String(), `"message":"Forbidden"`)
@@ -310,6 +320,7 @@ func setupIntegrationRouter(t *testing.T, uploadBaseDir string, seedUsers ...*mo
 
 	profileAPI := router.Group("/api")
 	profileAPI.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
+	profileAPI.PUT("/profile", middleware.AuthMiddleware(), authHandler.UpdateProfile)
 	profileAPI.POST("/profile/photo", middleware.AuthMiddleware(), authHandler.UploadProfilePhoto)
 
 	customer := router.Group("/api/customer")
