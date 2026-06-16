@@ -107,7 +107,7 @@ function LoginPage() {
               id="email"
               type="email"
               placeholder="you@example.com"
-              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+              className="autofill-safe w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('email')}
             />
           </div>
@@ -129,7 +129,7 @@ function LoginPage() {
               id="password"
               type={isPasswordVisible ? 'text' : 'password'}
               placeholder="Masukkan password Anda"
-              className="w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+              className="autofill-safe w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
               {...register('password')}
             />
             <button

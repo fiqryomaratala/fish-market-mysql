@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Bell, ChevronDown, LogOut, Menu, Settings, UserCircle2 } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, Menu, UserCircle2 } from 'lucide-react'
 import { getRoleLabel } from '@/config/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigation } from '@/hooks/useNavigation'
@@ -23,7 +23,7 @@ function getInitials(name?: string) {
 
 export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
   const { user, role, logout } = useAuth()
-  const { profilePath, settingsPath } = useNavigation()
+  const { profilePath } = useNavigation()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -109,14 +109,6 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                 >
                   <UserCircle2 className="size-4 text-blue-600" />
                   <span>Profile</span>
-                </NavLink>
-                <NavLink
-                  to={settingsPath}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
-                >
-                  <Settings className="size-4 text-blue-600" />
-                  <span>Settings</span>
                 </NavLink>
                 <button
                   type="button"

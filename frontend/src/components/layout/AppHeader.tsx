@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { ChevronDown, LogOut, Settings, UserCircle2 } from 'lucide-react'
+import { ChevronDown, LogOut, UserCircle2 } from 'lucide-react'
 import { publicNavigation } from '@/config/navigation'
 import { Logo } from '@/components/ui/Logo'
 import { getRoleLabel } from '@/config/navigation'
@@ -22,7 +22,7 @@ function getInitials(name?: string) {
 export function AppHeader() {
   const location = useLocation()
   const { user, role, isAuthenticated, logout } = useAuth()
-  const { profilePath, settingsPath } = useNavigation()
+  const { profilePath } = useNavigation()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const isMarketplaceTheme =
@@ -143,14 +143,6 @@ export function AppHeader() {
                 >
                   <UserCircle2 className="size-4 text-blue-600" />
                   <span>Profile</span>
-                </NavLink>
-                <NavLink
-                  to={settingsPath}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
-                >
-                  <Settings className="size-4 text-blue-600" />
-                  <span>Settings</span>
                 </NavLink>
                 <button
                   type="button"
