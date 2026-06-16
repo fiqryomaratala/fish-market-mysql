@@ -6,7 +6,7 @@ type SecurityCardProps = {
 
 export function SecurityCard({ onChangePassword }: SecurityCardProps) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-100/70">
+    <section className="profile-card rounded-xl border border-slate-200 bg-white p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">
@@ -21,7 +21,7 @@ export function SecurityCard({ onChangePassword }: SecurityCardProps) {
         <button
           type="button"
           onClick={onChangePassword}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 transition duration-200 hover:-translate-y-0.5 hover:bg-slate-800"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-slate-800"
         >
           <KeyRound className="size-4" />
           Ubah Kata Sandi
@@ -57,8 +57,8 @@ type SecurityFeatureProps = {
 
 function SecurityFeature({ icon: Icon, title, description }: SecurityFeatureProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition duration-200 hover:border-cyan-200 hover:bg-cyan-50/40">
-      <div className="flex size-11 items-center justify-center rounded-2xl bg-white shadow-sm">
+    <div className="profile-subcard rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition duration-200 hover:border-cyan-200 hover:bg-cyan-50/40">
+      <div className="profile-subcard flex size-11 items-center justify-center rounded-2xl border border-slate-100 bg-white">
         <Icon className="size-5 text-sky-600" />
       </div>
       <h3 className="mt-4 text-base font-semibold text-slate-900">{title}</h3>

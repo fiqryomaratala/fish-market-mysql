@@ -36,7 +36,7 @@ function formatRole(role: string) {
 
 export function AccountInfoCard({ profile, lastLogin }: AccountInfoCardProps) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sky-100/80">
+    <section className="profile-card rounded-xl border border-slate-200 bg-white p-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">
           Informasi Akun
@@ -62,9 +62,9 @@ type AccountItemProps = {
 
 function AccountItem({ icon: Icon, label, value }: AccountItemProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition duration-200 hover:border-sky-200 hover:bg-sky-50/40">
+    <div className="profile-subcard rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition duration-200 hover:border-sky-200 hover:bg-sky-50/40">
       <div className="flex items-start gap-3">
-        <div className="rounded-2xl bg-white p-2 shadow-sm">
+        <div className="profile-subcard rounded-2xl border border-slate-100 bg-white p-2">
           <Icon className="size-4 text-sky-600" />
         </div>
         <div className="min-w-0">

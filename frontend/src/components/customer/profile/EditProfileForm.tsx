@@ -51,7 +51,7 @@ export function EditProfileForm({
   return (
     <form
       onSubmit={handleSubmit((values) => onSubmit(values))}
-      className="rounded-xl border border-cyan-100 bg-gradient-to-br from-cyan-50/80 via-white to-emerald-50/60 p-6 shadow-lg shadow-cyan-100/50"
+      className="profile-card rounded-xl border border-slate-200 bg-gradient-to-br from-cyan-50/80 via-white to-emerald-50/60 p-6"
     >
       <div className="flex items-center justify-between gap-3">
         <div>
@@ -101,7 +101,7 @@ export function EditProfileForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-200 transition duration-200 hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:from-sky-700 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />}
           Simpan

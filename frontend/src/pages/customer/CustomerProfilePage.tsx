@@ -122,7 +122,7 @@ function CustomerProfilePage() {
 
   if (profileQuery.isError || !profile) {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-xl border border-rose-200 bg-white px-6 py-12 text-center shadow-lg shadow-rose-100/70">
+      <div className="profile-card flex min-h-[420px] flex-col items-center justify-center rounded-xl border border-rose-200 bg-white px-6 py-12 text-center">
         <div className="rounded-full bg-rose-50 p-5 text-rose-500">
           <RefreshCcw className="size-8" />
         </div>
@@ -133,7 +133,7 @@ function CustomerProfilePage() {
         <button
           type="button"
           onClick={() => void profileQuery.refetch()}
-          className="mt-6 rounded-xl bg-rose-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:bg-rose-600"
+          className="mt-6 rounded-xl bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-600"
         >
           Coba Lagi
         </button>
@@ -145,7 +145,7 @@ function CustomerProfilePage() {
     <>
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/70">
+          <div className="profile-card rounded-xl border border-slate-200 bg-white p-4">
             <p className="px-3 text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">
               Menu Pengaturan
             </p>
@@ -161,7 +161,7 @@ function CustomerProfilePage() {
                     onClick={() => scrollToSection(item.id)}
                     className={`flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition duration-200 ${
                       isActive
-                        ? 'bg-gradient-to-r from-sky-600 to-emerald-500 text-white shadow-lg shadow-cyan-200'
+                        ? 'bg-gradient-to-r from-sky-600 to-emerald-500 text-white'
                         : 'bg-slate-50 text-slate-700 hover:bg-cyan-50 hover:text-sky-700'
                     }`}
                   >

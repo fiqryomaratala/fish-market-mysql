@@ -7,7 +7,7 @@ type AddressCardProps = {
 
 export function AddressCard({ address, onEditAddress }: AddressCardProps) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-100/80">
+    <section className="profile-card rounded-xl border border-slate-200 bg-white p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-600">
@@ -26,9 +26,9 @@ export function AddressCard({ address, onEditAddress }: AddressCardProps) {
         </button>
       </div>
 
-      <div className="mt-6 rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5">
+      <div className="profile-subcard mt-6 rounded-xl border border-slate-100 bg-gradient-to-br from-emerald-50 to-white p-5">
         <div className="flex items-start gap-3">
-          <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+          <div className="profile-subcard rounded-2xl border border-slate-100 bg-white p-2.5">
             <MapPinHouse className="size-5 text-emerald-600" />
           </div>
           <div>

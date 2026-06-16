@@ -44,7 +44,7 @@ export function ProfileCard({
   onEdit,
 }: ProfileCardProps) {
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-cyan-100/60 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-100/80 sm:p-7">
+    <section className="profile-card rounded-xl border border-slate-200 bg-white p-6 sm:p-7">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex items-start gap-4">
           <ProfileAvatarUpload
@@ -77,7 +77,7 @@ export function ProfileCard({
         <button
           type="button"
           onClick={onEdit}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-200 transition duration-200 hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-600"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:from-sky-700 hover:to-emerald-600"
         >
           <UserRound className="size-4" />
           Edit Profil
@@ -113,9 +113,9 @@ type InfoItemProps = {
 
 function InfoItem({ icon: Icon, label, value, colorClassName }: InfoItemProps) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition duration-200 hover:border-cyan-200 hover:bg-cyan-50/40">
+    <div className="profile-subcard rounded-xl border border-slate-100 bg-slate-50/80 p-4 transition duration-200 hover:border-cyan-200 hover:bg-cyan-50/40">
       <div className="flex items-start gap-3">
-        <div className="rounded-2xl bg-white p-2 shadow-sm">
+        <div className="profile-subcard rounded-2xl border border-slate-100 bg-white p-2">
           <Icon className={`size-4 ${colorClassName}`} />
         </div>
         <div className="min-w-0">

@@ -80,7 +80,7 @@ export function ProfileAvatarUpload({
         onChange={(event) => void handleFileChange(event)}
       />
 
-      <div className="relative mx-auto flex size-24 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-cyan-50 shadow-lg shadow-cyan-100/60">
+      <div className="profile-subcard relative mx-auto flex size-24 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-gradient-to-br from-slate-50 via-white to-cyan-50">
         {photoUrl ? (
           <img src={photoUrl} alt={name} className="size-full object-cover" />
         ) : (

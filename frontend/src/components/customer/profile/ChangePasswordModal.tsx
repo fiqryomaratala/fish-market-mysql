@@ -57,7 +57,7 @@ export function ChangePasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-900/20">
+      <div className="profile-card w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-emerald-100">
@@ -133,7 +133,7 @@ export function ChangePasswordModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-200 transition duration-200 hover:-translate-y-0.5 hover:from-sky-700 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:from-sky-700 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting ? (
                 <LoaderCircle className="size-4 animate-spin" />

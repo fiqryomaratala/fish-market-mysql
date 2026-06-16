@@ -4,7 +4,7 @@ export function LoadingSkeleton() {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           key={index}
-          className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/70"
+          className="order-card rounded-xl border border-slate-200 bg-white p-5"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-3">
@@ -18,7 +18,7 @@ export function LoadingSkeleton() {
             {Array.from({ length: 4 }).map((__, cardIndex) => (
               <div
                 key={cardIndex}
-                className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+                className="order-subcard rounded-xl border border-slate-100 bg-slate-50 p-4"
               >
                 <div className="h-4 w-24 animate-pulse rounded-full bg-slate-200" />
                 <div className="mt-3 h-5 w-full animate-pulse rounded-full bg-slate-200" />
