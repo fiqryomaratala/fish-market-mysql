@@ -6,7 +6,6 @@ import {
   LoaderCircle,
   LockKeyhole,
   ShieldAlert,
-  X,
   type LucideIcon,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -92,15 +91,6 @@ export function ChangePasswordModal({
               Pastikan kata sandi baru kuat dan hanya diketahui oleh Anda.
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700"
-            aria-label="Tutup modal ubah kata sandi"
-          >
-            <X className="size-4" />
-          </button>
         </div>
 
         <form
@@ -108,6 +98,7 @@ export function ChangePasswordModal({
             onSubmit({
               current_password: values.current_password,
               new_password: values.new_password,
+              confirm_password: values.confirm_password,
             })
           )}
           className="mt-6 space-y-4"
