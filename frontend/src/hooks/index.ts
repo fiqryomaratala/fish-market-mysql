@@ -1,4 +1,5 @@
 export * from '@/hooks/useDashboard'
+export * from '@/hooks/useAdminDashboard'
 export * from '@/hooks/useCart'
 export * from '@/hooks/useCheckout'
 export * from '@/hooks/useFishBatches'

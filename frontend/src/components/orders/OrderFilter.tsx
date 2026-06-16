@@ -83,14 +83,16 @@ export function OrderFilter({
           onChange={(value) => onSortChange(value as OrderSortOption)}
         />
 
-        <button
-          type="button"
-          onClick={onReset}
-          className="order-subcard mt-7 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-        >
-          <RotateCcw className="size-4" />
-          Reset Filter
-        </button>
+        <div className="flex items-end">
+          <button
+            type="button"
+            onClick={onReset}
+            className="order-subcard inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 xl:w-auto"
+          >
+            <RotateCcw className="size-4" />
+            Reset Filter
+          </button>
+        </div>
       </div>
     </section>
   )

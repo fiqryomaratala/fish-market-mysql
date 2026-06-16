@@ -9,13 +9,6 @@ type RoleBasedSidebarProps = {
   onToggleCollapse: () => void
 }
 
-const badgeMap: Record<string, string> = {
-  Orders: '3',
-  Notifications: '8',
-  Harvest: '2',
-  Inventory: '12',
-}
-
 function SidebarContent({
   collapsed,
   onCloseMobile,
@@ -76,7 +69,6 @@ function SidebarContent({
       <nav className={`mt-5 flex-1 ${collapsed ? 'space-y-6' : 'space-y-2.5'}`}>
         {items.map((item) => {
           const Icon = item.icon
-          const badge = badgeMap[item.title]
           const isMarketplaceAliasActive =
             role === 'customer' &&
             item.path === '/customer/marketplace' &&
@@ -125,11 +117,6 @@ function SidebarContent({
                       <span className="min-w-0 flex-1 truncate text-sm font-medium">
                         {item.title}
                       </span>
-                      {badge ? (
-                        <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-500">
-                          {badge}
-                        </span>
-                      ) : null}
                     </>
                   ) : null}
                 </>
