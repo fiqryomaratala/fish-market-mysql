@@ -10,7 +10,7 @@ export function ErrorState({ onRetry }: ErrorStateProps) {
       <div className="mb-5 rounded-full bg-red-50 p-4 text-red-500">
         <AlertCircle className="size-9" />
       </div>
-      <h2 className="text-2xl font-semibold text-slate-900">Failed to load orders.</h2>
+      <h2 className="text-2xl font-semibold text-slate-900">Gagal memuat pesanan.</h2>
       <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
         Terjadi masalah saat mengambil histori pesanan dari server.
       </p>
@@ -19,7 +19,7 @@ export function ErrorState({ onRetry }: ErrorStateProps) {
         onClick={onRetry}
         className="mt-6 rounded-xl bg-red-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-200 transition hover:-translate-y-0.5 hover:bg-red-600"
       >
-        Retry
+        Coba Lagi
       </button>
     </div>
   )

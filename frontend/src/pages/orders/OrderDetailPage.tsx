@@ -68,7 +68,7 @@ function OrderDetailPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
             <Calendar className="size-4 text-blue-600" />
-            Order Date
+            Tanggal Pesanan
           </div>
           <p className="mt-2 text-sm text-slate-500">
             {data.created_at ? dateFormatter.format(new Date(data.created_at)) : '-'}
@@ -89,7 +89,7 @@ function OrderDetailPage() {
           <p className="mt-2 text-sm text-slate-500">{data.items.length} item</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
-          <p className="text-sm font-semibold text-slate-700">Total Price</p>
+          <p className="text-sm font-semibold text-slate-700">Total Harga</p>
           <p className="mt-2 text-lg font-semibold text-slate-900">
             {currencyFormatter.format(data.total_price)}
           </p>

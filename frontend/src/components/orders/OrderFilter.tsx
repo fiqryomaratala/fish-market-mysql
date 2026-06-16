@@ -33,7 +33,22 @@ const statusOptions: OrderFilterStatus[] = [
   'Cancelled',
 ]
 
-const sortOptions: OrderSortOption[] = ['Newest', 'Oldest', 'Highest Total', 'Lowest Total']
+const statusLabelMap: Record<OrderFilterStatus, string> = {
+  All: 'Semua',
+  Pending: 'Menunggu',
+  Paid: 'Dibayar',
+  Processing: 'Diproses',
+  Shipping: 'Dikirim',
+  Completed: 'Selesai',
+  Cancelled: 'Dibatalkan',
+}
+
+const sortOptions: Array<{ label: string; value: OrderSortOption }> = [
+  { label: 'Terbaru', value: 'Newest' },
+  { label: 'Terlama', value: 'Oldest' },
+  { label: 'Total Tertinggi', value: 'Highest Total' },
+  { label: 'Total Terendah', value: 'Lowest Total' },
+]
 
 export function OrderFilter({
   search,
@@ -52,16 +67,19 @@ export function OrderFilter({
         <SortDropdown
           label="Status"
           value={status}
-          options={statusOptions}
-          placeholder="All"
+          options={statusOptions.map((option) => ({
+            label: statusLabelMap[option],
+            value: option,
+          }))}
+          placeholder="Semua"
           onChange={(value) => onStatusChange(value as OrderFilterStatus)}
         />
 
         <SortDropdown
-          label="Sort"
+          label="Urutkan"
           value={sort}
           options={sortOptions}
-          placeholder="Newest"
+          placeholder="Terbaru"
           onChange={(value) => onSortChange(value as OrderSortOption)}
         />
 

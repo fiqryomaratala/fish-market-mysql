@@ -24,7 +24,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
-            Invoice Number
+            Nomor Invoice
           </p>
           <h3 className="mt-2 truncate text-xl font-semibold text-slate-900">
             {order.invoice_number}
@@ -38,7 +38,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
             <Calendar className="size-4 text-blue-600" />
-            Order Date
+            Tanggal Pesanan
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             {order.created_at ? dateFormatter.format(new Date(order.created_at)) : '-'}
@@ -48,7 +48,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
             <CreditCard className="size-4 text-emerald-600" />
-            Payment Method
+            Metode Pembayaran
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-500">{order.payment_method}</p>
         </div>
@@ -62,7 +62,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-sm font-semibold text-slate-700">Total Price</p>
+          <p className="text-sm font-semibold text-slate-700">Total Harga</p>
           <p className="mt-2 text-lg font-semibold text-slate-900">
             {currencyFormatter.format(order.total)}
           </p>
@@ -87,7 +87,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
           onClick={() => onViewDetail(order.id)}
           className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-emerald-600"
         >
-          View Detail
+          Lihat Detail
         </button>
       </div>
     </article>

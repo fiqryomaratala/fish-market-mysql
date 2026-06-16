@@ -92,7 +92,7 @@ function OrderHistoryPage() {
       <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.18),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.14),_transparent_26%),linear-gradient(135deg,_#ffffff_0%,_#f8fafc_54%,_#ecfeff_100%)] p-6 shadow-2xl shadow-slate-200/70 md:p-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">
-            Order History
+            Riwayat Pesanan
           </p>
           <h1 className="mt-4 text-3xl font-semibold text-slate-900 md:text-5xl">
             Pantau seluruh pesanan Anda dalam satu dashboard yang rapi.
@@ -123,11 +123,12 @@ function OrderHistoryPage() {
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
         <p className="text-sm text-slate-500">
           Menampilkan <span className="font-semibold text-slate-900">{filteredOrders.length}</span>{' '}
-          order
+          pesanan
         </p>
         <p className="text-sm text-slate-500">
-          Backend total: <span className="font-semibold text-emerald-600">{data?.meta.total ?? 0}</span>
-          {isFetching && !isLoading ? ' • syncing...' : ''}
+          Total dari backend:{' '}
+          <span className="font-semibold text-emerald-600">{data?.meta.total ?? 0}</span>
+          {isFetching && !isLoading ? ' • menyinkronkan...' : ''}
         </p>
       </div>
 
