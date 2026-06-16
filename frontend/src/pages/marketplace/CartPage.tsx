@@ -1,6 +1,7 @@
 import { Minus, Pencil, Plus, RefreshCcw, ShoppingBag, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
 import { useCart, useClearCart, useDeleteCart, useUpdateCart } from '@/hooks/useCart'
@@ -209,11 +210,30 @@ function CartPage() {
   }
 
   const handleClearCart = async () => {
-    const isConfirmed = window.confirm(
-      'Apakah Anda yakin ingin menghapus semua produk dari keranjang?',
-    )
+    const result = await Swal.fire({
+      title: 'Hapus semua produk?',
+      text: 'Semua produk di keranjang akan dihapus dan tindakan ini tidak dapat dibatalkan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus semua',
+      cancelButtonText: 'Batal',
+      reverseButtons: true,
+      focusCancel: true,
+      background: '#ffffff',
+      color: '#0f172a',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#e2e8f0',
+      customClass: {
+        popup: 'rounded-[1.75rem] shadow-2xl',
+        title: 'text-2xl font-semibold text-slate-900',
+        htmlContainer: 'text-sm leading-6 text-slate-500',
+        confirmButton: 'rounded-xl px-5 py-3 text-sm font-semibold',
+        cancelButton: 'rounded-xl px-5 py-3 text-sm font-semibold text-slate-700',
+        actions: 'gap-3',
+      },
+    })
 
-    if (!isConfirmed) {
+    if (!result.isConfirmed) {
       return
     }
 
@@ -350,9 +370,7 @@ function CartPage() {
                     return (
                     <tr
                       key={item.id}
-                      className={`transition hover:bg-slate-50/80 ${
-                        isSelected ? 'bg-red-50/80 ring-1 ring-inset ring-red-100' : ''
-                      }`}
+                      className="transition hover:bg-slate-50/80"
                     >
                       {isEditMode ? (
                         <td className="px-6 py-5">
@@ -420,9 +438,7 @@ function CartPage() {
               return (
               <article
                 key={item.id}
-                className={`rounded-xl border bg-white p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5 ${
-                  isSelected ? 'border-red-200 bg-red-50/70' : 'border-slate-200'
-                }`}
+                className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5"
               >
                 <div className="flex gap-4">
                   {isEditMode ? (
