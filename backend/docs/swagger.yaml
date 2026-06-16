@@ -9,6 +9,21 @@ definitions:
       success:
         type: boolean
     type: object
+  handlers.ChangePasswordRequest:
+    properties:
+      confirm_password:
+        minLength: 8
+        type: string
+      current_password:
+        type: string
+      new_password:
+        minLength: 8
+        type: string
+    required:
+    - confirm_password
+    - current_password
+    - new_password
+    type: object
   handlers.AddToCartRequest:
     properties:
       product_id:
@@ -572,6 +587,42 @@ paths:
           schema:
             $ref: '#/definitions/handlers.APIResponse'
       summary: Register user
+      tags:
+      - Authentication
+  /profile/password:
+    put:
+      consumes:
+      - application/json
+      description: Change password for the currently authenticated user
+      parameters:
+      - description: Change password payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Change user password
       tags:
       - Authentication
   /batches:

@@ -46,6 +46,12 @@ type UpdateProfileRequest struct {
 	Address string `json:"address" validate:"required,max=255"`
 }
 
+type ChangePasswordRequest struct {
+	CurrentPassword string `json:"current_password" validate:"required"`
+	NewPassword     string `json:"new_password" validate:"required,min=8"`
+	ConfirmPassword string `json:"confirm_password" validate:"required,min=8"`
+}
+
 type UserResponse struct {
 	ID    uint   `json:"id"`
 	Name  string `json:"name"`
@@ -235,6 +241,70 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 		"photo_url":  user.PhotoURL,
 		"created_at": user.CreatedAt,
 	})
+}
+
+// ChangePassword godoc
+// @Summary Change user password
+// @Description Change password for the currently authenticated user
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body ChangePasswordRequest true "Change password payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /profile/password [put]
+func (h *AuthHandler) ChangePassword(c *gin.Context) {
+	userIDValue, exists := c.Get("user_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	userID, ok := userIDValue.(uint)
+	if !ok {
+		utils.Unauthorized(c)
+		return
+	}
+
+	var req ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
+		return
+	}
+
+	err := h.authService.ChangePassword(
+		userID,
+		req.CurrentPassword,
+		req.NewPassword,
+		req.ConfirmPassword,
+		auditContextFromGin(c),
+	)
+	if err != nil {
+		if errors.Is(err, services.ErrPasswordConfirmationMismatch) {
+			utils.ValidationError(c, appvalidator.FieldError("confirm_password", "confirm_password does not match new_password"))
+			return
+		}
+		if errors.Is(err, services.ErrCurrentPasswordIncorrect) {
+			utils.Error(c, http.StatusUnauthorized, "Current password is incorrect")
+			return
+		}
+		if errors.Is(err, services.ErrUserNotFound) {
+			utils.Unauthorized(c)
+			return
+		}
+
+		middleware.HandleError(c, err)
+		return
+	}
+
+	utils.Success(c, "Password berhasil diperbarui", nil)
 }
 
 func (h *AuthHandler) UploadProfilePhoto(c *gin.Context) {

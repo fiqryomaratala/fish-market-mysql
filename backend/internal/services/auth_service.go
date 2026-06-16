@@ -15,6 +15,8 @@ import (
 var ErrEmailAlreadyExists = errors.New("email already exists")
 var ErrInvalidCredentials = errors.New("invalid email or password")
 var ErrUserNotFound = errors.New("user not found")
+var ErrCurrentPasswordIncorrect = errors.New("current password is incorrect")
+var ErrPasswordConfirmationMismatch = errors.New("password confirmation does not match")
 
 type LoginResult struct {
 	Token string
@@ -27,6 +29,7 @@ type AuthService interface {
 	GetProfile(userID uint) (*models.User, error)
 	UpdateProfile(userID uint, name, phone, address string, audit *AuditContext) (*models.User, error)
 	UpdateProfilePhoto(userID uint, photoURL string, audit *AuditContext) (*models.User, error)
+	ChangePassword(userID uint, currentPassword, newPassword, confirmPassword string, audit *AuditContext) error
 }
 
 type authService struct {
@@ -192,4 +195,44 @@ func (s *authService) UpdateProfilePhoto(userID uint, photoURL string, audit *Au
 	logger.Info("profile photo updated", zap.String("module", "AUTH"), zap.Uint("user_id", user.ID))
 
 	return user, nil
+}
+
+func (s *authService) ChangePassword(userID uint, currentPassword, newPassword, confirmPassword string, audit *AuditContext) error {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		logger.Error("failed to find user before password change", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return err
+	}
+	if user == nil {
+		return ErrUserNotFound
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword)); err != nil {
+		logger.Warn("password change failed because current password did not match", zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return ErrCurrentPasswordIncorrect
+	}
+
+	if newPassword != confirmPassword {
+		return ErrPasswordConfirmationMismatch
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error("failed to hash password during password change", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return err
+	}
+
+	user.Password = string(hashedPassword)
+	if err := s.userRepo.Update(user); err != nil {
+		logger.Error("failed to update password", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return err
+	}
+
+	if audit != nil {
+		helpers.LogActivity(audit.UserID, "UPDATE", "PROFILE", "Mengubah kata sandi", audit.IPAddress, audit.UserAgent)
+	}
+
+	logger.Info("password updated", zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+
+	return nil
 }

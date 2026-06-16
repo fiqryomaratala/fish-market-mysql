@@ -26,6 +26,7 @@ func RegisterAuthRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		api.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
 		api.PUT("/profile", middleware.AuthMiddleware(), authHandler.UpdateProfile)
+		api.PUT("/profile/password", middleware.AuthMiddleware(), authHandler.ChangePassword)
 		api.POST("/profile/photo", middleware.AuthMiddleware(), authHandler.UploadProfilePhoto)
 	}
 }

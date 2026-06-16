@@ -258,6 +258,62 @@
           }
         },
         {
+          "name": "PUT Change Customer Password",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set('customer_new_password', 'passwordBaru123');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('customer password change works', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "  pm.environment.set('customer_password', pm.environment.get('customer_new_password'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{customer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"{{customer_password}}\",\n  \"new_password\": \"{{customer_new_password}}\",\n  \"confirm_password\": \"{{customer_new_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profile/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "password"
+              ]
+            }
+          }
+        },
+        {
           "name": "GET Admin Dashboard Access",
           "event": [
             {

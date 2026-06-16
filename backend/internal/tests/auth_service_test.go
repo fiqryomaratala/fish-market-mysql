@@ -203,3 +203,80 @@ func TestAuthServiceUpdateProfile(t *testing.T) {
 	assert.Equal(t, "08123456789", updatedUser.Phone)
 	assert.Equal(t, "Alamat baru", updatedUser.Address)
 }
+
+func TestAuthServiceChangePasswordSuccess(t *testing.T) {
+	SetupTest(t)
+
+	currentHash, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	assert.NoError(t, err)
+
+	var updatedUser *models.User
+	userRepo := &mocks.MockUserRepository{
+		FindByIDFunc: func(id uint) (*models.User, error) {
+			return &models.User{
+				Model:    gorm.Model{ID: id},
+				Email:    "john@example.com",
+				Password: string(currentHash),
+				Role:     "customer",
+			}, nil
+		},
+		UpdateFunc: func(user *models.User) error {
+			updatedUser = user
+			return nil
+		},
+	}
+
+	service := services.NewAuthService(userRepo)
+	err = service.ChangePassword(10, "password123", "newpassword123", "newpassword123", nil)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, updatedUser)
+	assert.NotEqual(t, string(currentHash), updatedUser.Password)
+	assert.NoError(t, bcrypt.CompareHashAndPassword([]byte(updatedUser.Password), []byte("newpassword123")))
+}
+
+func TestAuthServiceChangePasswordWrongCurrentPassword(t *testing.T) {
+	SetupTest(t)
+
+	currentHash, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	assert.NoError(t, err)
+
+	userRepo := &mocks.MockUserRepository{
+		FindByIDFunc: func(id uint) (*models.User, error) {
+			return &models.User{
+				Model:    gorm.Model{ID: id},
+				Email:    "john@example.com",
+				Password: string(currentHash),
+				Role:     "customer",
+			}, nil
+		},
+	}
+
+	service := services.NewAuthService(userRepo)
+	err = service.ChangePassword(10, "salah123", "newpassword123", "newpassword123", nil)
+
+	assert.ErrorIs(t, err, services.ErrCurrentPasswordIncorrect)
+}
+
+func TestAuthServiceChangePasswordConfirmationMismatch(t *testing.T) {
+	SetupTest(t)
+
+	currentHash, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	assert.NoError(t, err)
+
+	userRepo := &mocks.MockUserRepository{
+		FindByIDFunc: func(id uint) (*models.User, error) {
+			return &models.User{
+				Model:    gorm.Model{ID: id},
+				Email:    "john@example.com",
+				Password: string(currentHash),
+				Role:     "customer",
+			}, nil
+		},
+	}
+
+	service := services.NewAuthService(userRepo)
+	err = service.ChangePassword(10, "password123", "newpassword123", "beda12345", nil)
+
+	assert.ErrorIs(t, err, services.ErrPasswordConfirmationMismatch)
+}

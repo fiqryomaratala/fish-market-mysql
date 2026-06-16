@@ -241,6 +241,23 @@ func TestIntegrationAuthProductFlow(t *testing.T) {
 	assert.Contains(t, updateProfileRecorder.Body.String(), `"phone":"08123456789"`)
 	assert.Contains(t, updateProfileRecorder.Body.String(), `"address":"Jl. Ikan Segar No. 1"`)
 
+	changePasswordRecorder := performJSONRequest(t, router, http.MethodPut, "/api/profile/password", map[string]string{
+		"current_password": customerPassword,
+		"new_password":     "passwordBaru123",
+		"confirm_password": "passwordBaru123",
+	}, customerToken)
+	require.Equal(t, http.StatusOK, changePasswordRecorder.Code)
+	assert.Contains(t, changePasswordRecorder.Body.String(), `"message":"Password berhasil diperbarui"`)
+
+	oldPasswordLoginRecorder := performJSONRequest(t, router, http.MethodPost, "/api/auth/login", map[string]string{
+		"email":    customerEmail,
+		"password": customerPassword,
+	}, "")
+	require.Equal(t, http.StatusUnauthorized, oldPasswordLoginRecorder.Code)
+	assert.Contains(t, oldPasswordLoginRecorder.Body.String(), `"message":"Invalid email or password"`)
+
+	customerToken = loginAndExtractToken(t, router, customerEmail, "passwordBaru123")
+
 	customerAdminRecorder := performJSONRequest(t, router, http.MethodGet, "/api/admin/dashboard", nil, customerToken)
 	require.Equal(t, http.StatusForbidden, customerAdminRecorder.Code)
 	assert.Contains(t, customerAdminRecorder.Body.String(), `"message":"Forbidden"`)
@@ -321,6 +338,7 @@ func setupIntegrationRouter(t *testing.T, uploadBaseDir string, seedUsers ...*mo
 	profileAPI := router.Group("/api")
 	profileAPI.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
 	profileAPI.PUT("/profile", middleware.AuthMiddleware(), authHandler.UpdateProfile)
+	profileAPI.PUT("/profile/password", middleware.AuthMiddleware(), authHandler.ChangePassword)
 	profileAPI.POST("/profile/photo", middleware.AuthMiddleware(), authHandler.UploadProfilePhoto)
 
 	customer := router.Group("/api/customer")
