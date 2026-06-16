@@ -12,6 +12,22 @@ Menjalankan backend secara lokal:
 go run cmd/server/main.go
 ```
 
+Perintah di atas juga akan menjalankan migration database otomatis saat server start.
+
+## Menjalankan Migration
+
+Untuk menjalankan migration database:
+
+```bash
+go run cmd/server/main.go
+```
+
+Jika ingin menjalankan migration sekaligus seeder:
+
+```bash
+go run cmd/seeder/main.go
+```
+
 Menjalankan backend dengan Docker:
 
 ```bash

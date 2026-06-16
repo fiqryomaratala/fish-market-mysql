@@ -138,3 +138,33 @@ func TestGenerateJWT(t *testing.T) {
 	assert.Equal(t, "john@example.com", claims.Email)
 	assert.Equal(t, "customer", claims.Role)
 }
+
+func TestAuthServiceUpdateProfilePhoto(t *testing.T) {
+	SetupTest(t)
+
+	var updatedUser *models.User
+	userRepo := &mocks.MockUserRepository{
+		FindByIDFunc: func(id uint) (*models.User, error) {
+			return &models.User{
+				Model:    gorm.Model{ID: id},
+				Name:     "John Doe",
+				Email:    "john@example.com",
+				PhotoURL: "/uploads/profile/old.png",
+				Role:     "customer",
+			}, nil
+		},
+		UpdateFunc: func(user *models.User) error {
+			updatedUser = user
+			return nil
+		},
+	}
+
+	service := services.NewAuthService(userRepo)
+	user, err := service.UpdateProfilePhoto(10, "/uploads/profile/customer_10_123.png", nil)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+	assert.Equal(t, "/uploads/profile/customer_10_123.png", user.PhotoURL)
+	assert.NotNil(t, updatedUser)
+	assert.Equal(t, "/uploads/profile/customer_10_123.png", updatedUser.PhotoURL)
+}

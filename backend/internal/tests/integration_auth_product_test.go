@@ -94,6 +94,21 @@ func (r *integrationUserRepository) FindByID(id uint) (*models.User, error) {
 	return cloneUser(user), nil
 }
 
+func (r *integrationUserRepository) Update(user *models.User) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if _, ok := r.byID[user.ID]; !ok {
+		return gorm.ErrRecordNotFound
+	}
+
+	user.UpdatedAt = time.Now()
+	cloned := cloneUser(user)
+	r.byID[user.ID] = cloned
+	r.byEmail[user.Email] = cloned
+	return nil
+}
+
 type integrationProductRepository struct {
 	mu       sync.Mutex
 	nextID   uint
@@ -228,6 +243,11 @@ func TestIntegrationAuthProductFlow(t *testing.T) {
 	require.Equal(t, http.StatusOK, customerProfileRecorder.Code)
 	assert.Contains(t, customerProfileRecorder.Body.String(), customerEmail)
 
+	uploadPhotoRecorder := performMultipartRequest(t, router, http.MethodPost, "/api/profile/photo", nil, "photo", "avatar.png", []byte("fake-profile-image"), customerToken)
+	require.Equal(t, http.StatusOK, uploadPhotoRecorder.Code)
+	assert.Contains(t, uploadPhotoRecorder.Body.String(), `"status":"success"`)
+	assert.Contains(t, uploadPhotoRecorder.Body.String(), `"/uploads/profile/customer_`)
+
 	createProductRecorder := performMultipartRequest(t, router, http.MethodPost, "/api/admin/products", map[string]string{
 		"name":        "Ikan Nila Integrasi",
 		"description": "Produk hasil integration test",
@@ -290,6 +310,7 @@ func setupIntegrationRouter(t *testing.T, uploadBaseDir string, seedUsers ...*mo
 
 	profileAPI := router.Group("/api")
 	profileAPI.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
+	profileAPI.POST("/profile/photo", middleware.AuthMiddleware(), authHandler.UploadProfilePhoto)
 
 	customer := router.Group("/api/customer")
 	customer.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("admin", "staff", "customer"))

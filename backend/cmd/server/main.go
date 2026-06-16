@@ -103,6 +103,10 @@ func main() {
 		logger.Error("failed to create upload directory", err)
 		os.Exit(1)
 	}
+	if err := os.MkdirAll(filepath.Join(cfg.UploadPath, "profile"), os.ModePerm); err != nil {
+		logger.Error("failed to create profile upload directory", err)
+		os.Exit(1)
+	}
 
 	r := gin.New()
 	r.Use(

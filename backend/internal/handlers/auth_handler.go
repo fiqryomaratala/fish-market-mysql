@@ -3,7 +3,10 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"path/filepath"
 
+	"github.com/fiqryomaratala/backend/config"
+	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/fiqryomaratala/backend/internal/utils"
@@ -171,9 +174,76 @@ func (h *AuthHandler) Profile(c *gin.Context) {
 	}
 
 	utils.Success(c, "", gin.H{
-		"id":    user.ID,
-		"name":  user.Name,
-		"email": user.Email,
-		"role":  user.Role,
+		"id":        user.ID,
+		"name":      user.Name,
+		"email":     user.Email,
+		"role":      user.Role,
+		"photo_url": user.PhotoURL,
+	})
+}
+
+func (h *AuthHandler) UploadProfilePhoto(c *gin.Context) {
+	userIDValue, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  "error",
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	userID, ok := userIDValue.(uint)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  "error",
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	file, err := c.FormFile("photo")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": "File photo wajib diunggah",
+		})
+		return
+	}
+
+	cfg := config.GetConfig()
+	uploadDir := filepath.Join(cfg.UploadPath, "profile")
+	photoURL, err := helpers.SaveUploadedProfilePhoto(file, uploadDir, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	user, err := h.authService.UpdateProfilePhoto(userID, photoURL, auditContextFromGin(c))
+	if err != nil {
+		_ = helpers.DeleteUploadedFile(photoURL)
+
+		statusCode := http.StatusInternalServerError
+		message := "Gagal mengupdate foto profil"
+		if errors.Is(err, services.ErrUserNotFound) {
+			statusCode = http.StatusUnauthorized
+			message = "Unauthorized"
+		}
+
+		c.JSON(statusCode, gin.H{
+			"status":  "error",
+			"message": message,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Foto profil berhasil diupdate",
+		"data": gin.H{
+			"photo_url": user.PhotoURL,
+		},
 	})
 }

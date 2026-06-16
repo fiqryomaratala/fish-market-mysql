@@ -11,6 +11,7 @@ type UserRepository interface {
 	Create(user *models.User) error
 	FindByEmail(email string) (*models.User, error)
 	FindByID(id uint) (*models.User, error)
+	Update(user *models.User) error
 }
 
 type userRepository struct {
@@ -49,4 +50,8 @@ func (r *userRepository) FindByID(id uint) (*models.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (r *userRepository) Update(user *models.User) error {
+	return r.db.Save(user).Error
 }

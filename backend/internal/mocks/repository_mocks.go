@@ -11,6 +11,7 @@ type MockUserRepository struct {
 	CreateFunc      func(user *models.User) error
 	FindByEmailFunc func(email string) (*models.User, error)
 	FindByIDFunc    func(id uint) (*models.User, error)
+	UpdateFunc      func(user *models.User) error
 }
 
 func (m *MockUserRepository) Create(user *models.User) error {
@@ -32,6 +33,13 @@ func (m *MockUserRepository) FindByID(id uint) (*models.User, error) {
 		return m.FindByIDFunc(id)
 	}
 	return nil, nil
+}
+
+func (m *MockUserRepository) Update(user *models.User) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(user)
+	}
+	return nil
 }
 
 type MockProductRepository struct {

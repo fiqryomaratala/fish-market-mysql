@@ -25,6 +25,7 @@ type AuthService interface {
 	Register(name, email, password string) (*models.User, error)
 	Login(email, password string, audit *AuditContext) (*LoginResult, error)
 	GetProfile(userID uint) (*models.User, error)
+	UpdateProfilePhoto(userID uint, photoURL string, audit *AuditContext) (*models.User, error)
 }
 
 type authService struct {
@@ -129,6 +130,37 @@ func (s *authService) GetProfile(userID uint) (*models.User, error) {
 	if user == nil {
 		return nil, ErrUserNotFound
 	}
+
+	return user, nil
+}
+
+func (s *authService) UpdateProfilePhoto(userID uint, photoURL string, audit *AuditContext) (*models.User, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		logger.Error("failed to find user before profile photo update", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return nil, err
+	}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+
+	oldPhotoURL := user.PhotoURL
+	user.PhotoURL = strings.TrimSpace(photoURL)
+
+	if err := s.userRepo.Update(user); err != nil {
+		logger.Error("failed to update profile photo", err, zap.String("module", "AUTH"), zap.Uint("user_id", userID))
+		return nil, err
+	}
+
+	if oldPhotoURL != "" && oldPhotoURL != user.PhotoURL {
+		_ = helpers.DeleteUploadedFile(oldPhotoURL)
+	}
+
+	if audit != nil {
+		helpers.LogActivity(audit.UserID, "UPDATE", "PROFILE", "Memperbarui foto profil", audit.IPAddress, audit.UserAgent)
+	}
+
+	logger.Info("profile photo updated", zap.String("module", "AUTH"), zap.Uint("user_id", user.ID))
 
 	return user, nil
 }
