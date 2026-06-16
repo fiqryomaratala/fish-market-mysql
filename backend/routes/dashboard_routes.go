@@ -21,10 +21,11 @@ func RegisterDashboardRoutes(r *gin.Engine, db *gorm.DB) {
 	dashboard.Use(middleware.RoleMiddleware("admin", "staff"))
 	{
 		dashboard.GET("", dashboardHandler.GetSummary)
-		dashboard.GET("/production", dashboardHandler.GetProduction)
+		dashboard.GET("/summary", dashboardHandler.GetSummary)
+		dashboard.GET("/sales", dashboardHandler.GetSales)
 		dashboard.GET("/harvest", dashboardHandler.GetHarvest)
-		dashboard.GET("/feed", dashboardHandler.GetFeed)
-		dashboard.GET("/batch-status", dashboardHandler.GetBatchStatus)
-		dashboard.GET("/recent-harvest", dashboardHandler.GetRecentHarvest)
+		dashboard.GET("/orders/latest", dashboardHandler.GetLatestOrders)
+		dashboard.GET("/inventory-alert", dashboardHandler.GetInventoryAlerts)
+		dashboard.GET("/activity", dashboardHandler.GetRecentActivity)
 	}
 }
