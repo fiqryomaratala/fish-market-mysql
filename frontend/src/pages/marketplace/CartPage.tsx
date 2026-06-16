@@ -82,7 +82,7 @@ function EmptyCartState() {
       </p>
       <Link
         to="/products"
-        className="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700"
+        className="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold !text-white visited:!text-white hover:!text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
       >
         Lanjut Belanja
       </Link>
