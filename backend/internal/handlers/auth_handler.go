@@ -143,6 +143,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 // @Success 200 {object} APIResponse
 // @Failure 401 {object} APIResponse
 // @Failure 500 {object} APIResponse
+// @Router /profile [get]
 // @Router /auth/profile [get]
 // @Router /customer/profile [get]
 func (h *AuthHandler) Profile(c *gin.Context) {

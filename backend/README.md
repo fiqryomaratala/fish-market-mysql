@@ -20,8 +20,15 @@ docker compose up -d --build
 
 Setelah backend berjalan:
 
-- API root: `http://localhost/`
-- Swagger: `http://localhost/swagger/index.html`
+- Backend container direct: `http://localhost:8081`
+- API root via Nginx: `http://localhost/`
+- Swagger via Nginx: `http://localhost/swagger/index.html`
+
+Catatan port development:
+
+- Backend Go lokal default berjalan di `http://localhost:8080`
+- Backend Docker dipublish ke `http://localhost:8081`
+- Nginx Docker tetap tersedia di `http://localhost`
 
 ## Continuous Integration
 

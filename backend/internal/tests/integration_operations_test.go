@@ -1116,6 +1116,9 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	auth.POST("/login", authHandler.Login)
 	auth.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
 
+	api := router.Group("/api")
+	api.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
+
 	customer := router.Group("/api/customer")
 	customer.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("admin", "staff", "customer"))
 	customer.GET("/profile", authHandler.Profile)

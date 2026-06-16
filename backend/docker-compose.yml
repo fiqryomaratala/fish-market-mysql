@@ -25,6 +25,8 @@ services:
       UPLOAD_PATH: /app/uploads
     volumes:
       - uploads_data:/app/uploads
+    ports:
+      - "8081:8080"
     expose:
       - "8080"
 

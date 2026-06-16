@@ -212,6 +212,10 @@ func TestIntegrationAuthProductFlow(t *testing.T) {
 	require.Equal(t, http.StatusOK, profileRecorder.Code)
 	assert.Contains(t, profileRecorder.Body.String(), customerEmail)
 
+	profileAliasRecorder := performJSONRequest(t, router, http.MethodGet, "/api/profile", nil, customerToken)
+	require.Equal(t, http.StatusOK, profileAliasRecorder.Code)
+	assert.Contains(t, profileAliasRecorder.Body.String(), customerEmail)
+
 	customerAdminRecorder := performJSONRequest(t, router, http.MethodGet, "/api/admin/dashboard", nil, customerToken)
 	require.Equal(t, http.StatusForbidden, customerAdminRecorder.Code)
 	assert.Contains(t, customerAdminRecorder.Body.String(), `"message":"Forbidden"`)
@@ -283,6 +287,9 @@ func setupIntegrationRouter(t *testing.T, uploadBaseDir string, seedUsers ...*mo
 	auth.POST("/register", authHandler.Register)
 	auth.POST("/login", authHandler.Login)
 	auth.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
+
+	profileAPI := router.Group("/api")
+	profileAPI.GET("/profile", middleware.AuthMiddleware(), authHandler.Profile)
 
 	customer := router.Group("/api/customer")
 	customer.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("admin", "staff", "customer"))

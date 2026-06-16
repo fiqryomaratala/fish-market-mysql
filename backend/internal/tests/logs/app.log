@@ -420,3 +420,21 @@
 {"level":"info","time":"2026-06-11T22:44:22.284+0700","caller":"logger/logger.go:66","msg":"notification created","module":"NOTIFICATION","user_id":3,"type":"ORDER"}
 {"level":"info","time":"2026-06-11T22:44:22.284+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
 {"level":"info","time":"2026-06-11T22:44:22.284+0700","caller":"logger/logger.go:66","msg":"notification marked as read","module":"NOTIFICATION","notification_id":2,"user_id":3}
+{"level":"info","time":"2026-06-16T13:21:00.548+0700","caller":"logger/logger.go:66","msg":"register attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T13:21:00.596+0700","caller":"logger/logger.go:66","msg":"register successful","module":"AUTH","user_id":2,"email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T13:21:00.596+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T13:21:00.642+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"customer1@fishmarket.com"}
+{"level":"warn","time":"2026-06-16T13:21:00.644+0700","caller":"logger/logger.go:70","msg":"login failed because password did not match","module":"AUTH","user_id":2}
+{"level":"info","time":"2026-06-16T13:21:00.644+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"integration.customer@example.com"}
+{"level":"info","time":"2026-06-16T13:21:00.690+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":3,"role":"customer"}
+{"level":"info","time":"2026-06-16T13:21:00.691+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-16T13:21:00.691+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"customer"}
+{"level":"info","time":"2026-06-16T13:21:00.692+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-16T13:21:00.738+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-16T13:21:00.738+0700","caller":"logger/logger.go:66","msg":"checkout started","module":"ORDER","user_id":3}
+{"level":"info","time":"2026-06-16T13:21:00.738+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":2}
+{"level":"info","time":"2026-06-16T13:21:00.738+0700","caller":"logger/logger.go:66","msg":"checkout successful","module":"ORDER","user_id":3,"invoice":"INV-2026-000001"}
+{"level":"info","time":"2026-06-16T13:21:00.739+0700","caller":"logger/logger.go:66","msg":"order payment updated","module":"ORDER","order_id":1,"payment_status":"paid"}
+{"level":"info","time":"2026-06-16T13:21:00.739+0700","caller":"logger/logger.go:66","msg":"order status updated","module":"ORDER","order_id":1,"status":"completed"}
+{"level":"info","time":"2026-06-16T13:21:00.739+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-16T13:21:00.739+0700","caller":"logger/logger.go:66","msg":"product created","module":"PRODUCT","product_id":1,"name":"Ikan Nila Integrasi"}
