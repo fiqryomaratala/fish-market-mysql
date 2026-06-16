@@ -1,4 +1,5 @@
-import { Minus, Plus, RefreshCcw, ShoppingBag, Trash2 } from 'lucide-react'
+import { Minus, Pencil, Plus, RefreshCcw, ShoppingBag, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
@@ -121,6 +122,8 @@ function CartPage() {
   const updateCartMutation = useUpdateCart()
   const deleteCartMutation = useDeleteCart()
   const clearCartMutation = useClearCart()
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const items = data?.items ?? []
   const totalItems = data?.total_items ?? 0
@@ -128,16 +131,44 @@ function CartPage() {
   const isMutating =
     updateCartMutation.isPending || deleteCartMutation.isPending || clearCartMutation.isPending
 
+  useEffect(() => {
+    setSelectedItems((current) =>
+      current.filter((id) =>
+        items.some((item) => (isAuthenticated ? item.id : item.product_id) === id),
+      ),
+    )
+
+    if (items.length === 0) {
+      setIsEditMode(false)
+    }
+  }, [isAuthenticated, items])
+
+  const getTargetItemId = (item: CartItem) => (isAuthenticated ? item.id : item.product_id)
+
+  const toggleEditMode = () => {
+    setIsEditMode((current) => {
+      if (current) {
+        setSelectedItems([])
+      }
+
+      return !current
+    })
+  }
+
+  const handleToggleItemSelection = (itemId: number) => {
+    setSelectedItems((current) =>
+      current.includes(itemId) ? current.filter((id) => id !== itemId) : [...current, itemId],
+    )
+  }
+
   const handleQuantityChange = async (item: CartItem, nextQuantity: number) => {
     if (nextQuantity < 1 || nextQuantity > item.stock || nextQuantity === item.quantity) {
       return
     }
 
-    const targetId = isAuthenticated ? item.id : item.product_id
-
     try {
       await updateCartMutation.mutateAsync({
-        id: targetId,
+        id: getTargetItemId(item),
         payload: { quantity: nextQuantity },
       })
       toast.success('Keranjang berhasil diperbarui')
@@ -159,10 +190,38 @@ function CartPage() {
     }
   }
 
+  const handleDeleteSelected = async () => {
+    if (selectedItems.length === 0) {
+      toast.info('Pilih setidaknya satu produk untuk dihapus')
+      return
+    }
+
+    try {
+      await Promise.all(selectedItems.map((itemId) => deleteCartMutation.mutateAsync(itemId)))
+      toast.success('Produk terpilih berhasil dihapus dari keranjang')
+      setSelectedItems([])
+      setIsEditMode(false)
+    } catch (mutationError) {
+      toast.error(
+        mutationError instanceof Error ? mutationError.message : 'Gagal menghapus produk terpilih',
+      )
+    }
+  }
+
   const handleClearCart = async () => {
+    const isConfirmed = window.confirm(
+      'Apakah Anda yakin ingin menghapus semua produk dari keranjang?',
+    )
+
+    if (!isConfirmed) {
+      return
+    }
+
     try {
       await clearCartMutation.mutateAsync()
       toast.success('Keranjang berhasil dikosongkan')
+      setSelectedItems([])
+      setIsEditMode(false)
     } catch (mutationError) {
       toast.error(
         mutationError instanceof Error ? mutationError.message : 'Gagal mengosongkan keranjang',
@@ -221,14 +280,51 @@ function CartPage() {
 
           <button
             type="button"
-            onClick={handleClearCart}
-            disabled={clearCartMutation.isPending}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5 hover:border-red-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={toggleEditMode}
+            disabled={isMutating}
+            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <Trash2 className="size-4" />
-            Kosongkan Keranjang
+            <Pencil className="size-4" />
+            {isEditMode ? 'Selesai' : 'Ubah'}
           </button>
         </div>
+
+        {isEditMode ? (
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-lg shadow-slate-200/50 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-slate-900">Mode ubah aktif</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Pilih produk yang ingin dihapus dari keranjang Anda.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleDeleteSelected}
+                disabled={selectedItems.length === 0 || isMutating}
+                className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Hapus yang dipilih
+              </button>
+              <button
+                type="button"
+                onClick={handleClearCart}
+                disabled={isMutating}
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Hapus semua
+              </button>
+              <button
+                type="button"
+                onClick={toggleEditMode}
+                disabled={isMutating}
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
@@ -238,6 +334,7 @@ function CartPage() {
               <table className="min-w-full">
                 <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   <tr>
+                    {isEditMode ? <th className="px-6 py-4">Pilih</th> : null}
                     <th className="px-6 py-4">Produk</th>
                     <th className="px-4 py-4">Harga</th>
                     <th className="px-4 py-4">Jumlah</th>
@@ -246,8 +343,30 @@ function CartPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {items.map((item) => (
-                    <tr key={item.id} className="transition hover:bg-slate-50/80">
+                  {items.map((item) => {
+                    const targetItemId = getTargetItemId(item)
+                    const isSelected = selectedItems.includes(targetItemId)
+
+                    return (
+                    <tr
+                      key={item.id}
+                      className={`transition hover:bg-slate-50/80 ${
+                        isSelected ? 'bg-red-50/80 ring-1 ring-inset ring-red-100' : ''
+                      }`}
+                    >
+                      {isEditMode ? (
+                        <td className="px-6 py-5">
+                          <label className="inline-flex items-center justify-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleItemSelection(targetItemId)}
+                              disabled={isMutating}
+                              className="size-5 rounded border-slate-300 text-red-500 focus:ring-2 focus:ring-red-200"
+                            />
+                          </label>
+                        </td>
+                      ) : null}
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
                           <img
@@ -269,7 +388,7 @@ function CartPage() {
                       <td className="px-4 py-5">
                         <QuantityControl
                           item={item}
-                          disabled={isMutating}
+                          disabled={isMutating || isEditMode}
                           onChange={handleQuantityChange}
                         />
                       </td>
@@ -279,29 +398,44 @@ function CartPage() {
                       <td className="px-6 py-5 text-right">
                         <button
                           type="button"
-                          onClick={() =>
-                            handleDeleteItem(isAuthenticated ? item.id : item.product_id)
-                          }
-                          disabled={isMutating}
+                          onClick={() => handleDeleteItem(targetItemId)}
+                          disabled={isMutating || isEditMode}
                           className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <Trash2 className="size-4" />
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             </div>
           </div>
 
           <div className="grid gap-4 md:hidden">
-            {items.map((item) => (
+            {items.map((item) => {
+              const targetItemId = getTargetItemId(item)
+              const isSelected = selectedItems.includes(targetItemId)
+
+              return (
               <article
                 key={item.id}
-                className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5"
+                className={`rounded-xl border bg-white p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5 ${
+                  isSelected ? 'border-red-200 bg-red-50/70' : 'border-slate-200'
+                }`}
               >
                 <div className="flex gap-4">
+                  {isEditMode ? (
+                    <label className="mt-1 inline-flex shrink-0 items-start justify-center">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleToggleItemSelection(targetItemId)}
+                        disabled={isMutating}
+                        className="size-5 rounded border-slate-300 text-red-500 focus:ring-2 focus:ring-red-200"
+                      />
+                    </label>
+                  ) : null}
                   <img
                     src={item.image_url}
                     alt={item.name}
@@ -323,15 +457,15 @@ function CartPage() {
                     <div className="mt-2">
                       <QuantityControl
                         item={item}
-                        disabled={isMutating}
+                        disabled={isMutating || isEditMode}
                         onChange={handleQuantityChange}
                       />
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleDeleteItem(isAuthenticated ? item.id : item.product_id)}
-                    disabled={isMutating}
+                    onClick={() => handleDeleteItem(targetItemId)}
+                    disabled={isMutating || isEditMode}
                     className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Trash2 className="size-4" />
@@ -345,7 +479,7 @@ function CartPage() {
                   </span>
                 </div>
               </article>
-            ))}
+            )})}
           </div>
         </section>
 
