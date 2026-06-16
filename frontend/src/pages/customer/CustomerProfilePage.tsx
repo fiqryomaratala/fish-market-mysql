@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
-import { RefreshCcw, ShieldCheck, UserRound, Warehouse, WalletCards } from 'lucide-react'
+import { RefreshCcw, ShieldCheck, UserRound, Warehouse } from 'lucide-react'
 import { toast } from 'sonner'
-import { AccountInfoCard } from '@/components/customer/profile/AccountInfoCard'
 import { AddressCard } from '@/components/customer/profile/AddressCard'
 import { ChangePasswordModal } from '@/components/customer/profile/ChangePasswordModal'
 import { EditProfileForm } from '@/components/customer/profile/EditProfileForm'
@@ -22,7 +21,6 @@ const sectionItems = [
   { id: 'profile', label: 'Profil', icon: UserRound },
   { id: 'security', label: 'Keamanan', icon: ShieldCheck },
   { id: 'address', label: 'Alamat', icon: Warehouse },
-  { id: 'account-information', label: 'Informasi Akun', icon: WalletCards },
 ] as const
 
 type SectionId = (typeof sectionItems)[number]['id']
@@ -42,10 +40,6 @@ function getErrorMessage(error: unknown) {
   return 'Terjadi kesalahan. Silakan coba lagi.'
 }
 
-function getLastLoginLabel() {
-  return 'Data belum tersedia'
-}
-
 function CustomerProfilePage() {
   usePageTitle('Profil Pelanggan')
 
@@ -61,7 +55,6 @@ function CustomerProfilePage() {
   const profileSectionRef = useRef<HTMLElement | null>(null)
   const securitySectionRef = useRef<HTMLElement | null>(null)
   const addressSectionRef = useRef<HTMLElement | null>(null)
-  const accountInformationSectionRef = useRef<HTMLElement | null>(null)
 
   const profile = profileQuery.data
   const currentPhotoUrl = photoUrl ?? profile?.avatar ?? ''
@@ -74,9 +67,7 @@ function CustomerProfilePage() {
         ? profileSectionRef
         : sectionId === 'security'
           ? securitySectionRef
-          : sectionId === 'address'
-            ? addressSectionRef
-            : accountInformationSectionRef
+          : addressSectionRef
 
     targetRef.current?.scrollIntoView({
       behavior: 'smooth',
@@ -218,14 +209,6 @@ function CustomerProfilePage() {
                 })
               }}
             />
-          </section>
-
-          <section
-            ref={accountInformationSectionRef}
-            id="account-information"
-            className="scroll-mt-24"
-          >
-            <AccountInfoCard profile={profile} lastLogin={getLastLoginLabel()} />
           </section>
         </div>
       </div>
