@@ -362,7 +362,7 @@ function CartPage() {
                               checked={isSelected}
                               onChange={() => handleToggleItemSelection(targetItemId)}
                               disabled={isMutating}
-                              className="size-5 rounded border-slate-300 text-red-500 focus:ring-2 focus:ring-red-200"
+                              className="size-5 rounded border-slate-300 bg-white text-red-500 focus:ring-2 focus:ring-red-200"
                             />
                           </label>
                         </td>
@@ -432,7 +432,7 @@ function CartPage() {
                         checked={isSelected}
                         onChange={() => handleToggleItemSelection(targetItemId)}
                         disabled={isMutating}
-                        className="size-5 rounded border-slate-300 text-red-500 focus:ring-2 focus:ring-red-200"
+                        className="size-5 rounded border-slate-300 bg-white text-red-500 focus:ring-2 focus:ring-red-200"
                       />
                     </label>
                   ) : null}
