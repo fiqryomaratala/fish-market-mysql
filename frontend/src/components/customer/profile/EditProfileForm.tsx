@@ -9,7 +9,6 @@ const editProfileSchema = z.object({
   name: z.string().trim().min(1, 'Nama wajib diisi'),
   phone: z.string().trim().min(1, 'Nomor telepon wajib diisi'),
   address: z.string().trim().min(1, 'Alamat wajib diisi'),
-  avatar: z.string().trim().or(z.literal('')),
 })
 
 type EditProfileFormValues = z.infer<typeof editProfileSchema>
@@ -38,7 +37,6 @@ export function EditProfileForm({
       name: profile.name,
       phone: profile.phone,
       address: profile.address,
-      avatar: profile.avatar,
     },
   })
 
@@ -47,7 +45,6 @@ export function EditProfileForm({
       name: profile.name,
       phone: profile.phone,
       address: profile.address,
-      avatar: profile.avatar,
     })
   }, [profile, reset])
 
@@ -60,7 +57,7 @@ export function EditProfileForm({
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Edit Profil</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Perbarui nama, kontak, alamat, dan avatar akun pelanggan.
+            Perbarui nama, kontak, dan alamat akun pelanggan.
           </p>
         </div>
       </div>
@@ -83,17 +80,6 @@ export function EditProfileForm({
             <input
               {...register('phone')}
               className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
-            />
-          }
-        />
-        <Field
-          label="URL Avatar"
-          error={errors.avatar?.message}
-          input={
-            <input
-              {...register('avatar')}
-              placeholder="https://example.com/avatar.jpg"
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
             />
           }
         />

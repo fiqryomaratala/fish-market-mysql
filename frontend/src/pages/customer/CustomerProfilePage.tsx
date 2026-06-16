@@ -8,7 +8,14 @@ import { EditProfileForm } from '@/components/customer/profile/EditProfileForm'
 import { LoadingSkeleton } from '@/components/customer/profile/LoadingSkeleton'
 import { ProfileCard } from '@/components/customer/profile/ProfileCard'
 import { SecurityCard } from '@/components/customer/profile/SecurityCard'
-import { useAuth, useChangePassword, usePageTitle, useProfile, useUpdateProfile } from '@/hooks'
+import {
+  useAuth,
+  useChangePassword,
+  usePageTitle,
+  useProfile,
+  useUpdateProfile,
+  useUploadProfilePhoto,
+} from '@/hooks'
 import type { ChangePasswordPayload, UpdateProfilePayload } from '@/types/profile'
 
 const sectionItems = [
@@ -45,16 +52,19 @@ function CustomerProfilePage() {
   const { refreshUser } = useAuth()
   const profileQuery = useProfile()
   const updateProfileMutation = useUpdateProfile()
+  const uploadProfilePhotoMutation = useUploadProfilePhoto()
   const changePasswordMutation = useChangePassword()
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionId>('profile')
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const profileSectionRef = useRef<HTMLElement | null>(null)
   const securitySectionRef = useRef<HTMLElement | null>(null)
   const addressSectionRef = useRef<HTMLElement | null>(null)
   const accountInformationSectionRef = useRef<HTMLElement | null>(null)
 
   const profile = profileQuery.data
+  const currentPhotoUrl = photoUrl ?? profile?.avatar ?? ''
 
   const scrollToSection = (sectionId: SectionId) => {
     setActiveSection(sectionId)
@@ -90,6 +100,17 @@ function CustomerProfilePage() {
       await changePasswordMutation.mutateAsync(payload)
       setIsPasswordModalOpen(false)
       toast.success('Password berhasil diperbarui.')
+    } catch (error) {
+      toast.error(getErrorMessage(error))
+    }
+  }
+
+  const handlePhotoUpload = async (file: File) => {
+    try {
+      const result = await uploadProfilePhotoMutation.mutateAsync(file)
+      setPhotoUrl(result.photo_url)
+      await refreshUser()
+      toast.success('Foto profil berhasil diperbarui.')
     } catch (error) {
       toast.error(getErrorMessage(error))
     }
@@ -157,6 +178,9 @@ function CustomerProfilePage() {
           <section ref={profileSectionRef} id="profile" className="scroll-mt-24 space-y-6">
             <ProfileCard
               profile={profile}
+              avatarUrl={currentPhotoUrl}
+              isUploadingPhoto={uploadProfilePhotoMutation.isPending}
+              onPhotoUpload={handlePhotoUpload}
               onEdit={() => {
                 setActiveSection('profile')
                 setIsEditingProfile(true)

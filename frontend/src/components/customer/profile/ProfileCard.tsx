@@ -1,18 +1,13 @@
 import { BadgeCheck, CalendarDays, Mail, MapPin, Phone, ShieldCheck, UserRound } from 'lucide-react'
+import { ProfileAvatarUpload } from '@/components/customer/profile/ProfileAvatarUpload'
 import type { UserProfile } from '@/types/profile'
 
 type ProfileCardProps = {
   profile: UserProfile
+  avatarUrl?: string
+  isUploadingPhoto: boolean
+  onPhotoUpload: (file: File) => Promise<void>
   onEdit: () => void
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('')
 }
 
 function formatRole(role: string) {
@@ -41,22 +36,23 @@ function formatMemberSince(dateString: string) {
   }).format(date)
 }
 
-export function ProfileCard({ profile, onEdit }: ProfileCardProps) {
+export function ProfileCard({
+  profile,
+  avatarUrl,
+  isUploadingPhoto,
+  onPhotoUpload,
+  onEdit,
+}: ProfileCardProps) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-cyan-100/60 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-100/80 sm:p-7">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex items-start gap-4">
-          {profile.avatar ? (
-            <img
-              src={profile.avatar}
-              alt={profile.name}
-              className="size-20 rounded-3xl border border-cyan-100 object-cover shadow-lg shadow-cyan-100/70"
-            />
-          ) : (
-            <div className="flex size-20 items-center justify-center rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-400 to-emerald-400 text-2xl font-bold text-white shadow-lg shadow-cyan-100/70">
-              {getInitials(profile.name || 'FM')}
-            </div>
-          )}
+          <ProfileAvatarUpload
+            name={profile.name || 'Fish Market'}
+            photoUrl={avatarUrl}
+            isUploading={isUploadingPhoto}
+            onUpload={onPhotoUpload}
+          />
 
           <div className="min-w-0">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">

@@ -13,10 +13,14 @@ export interface UpdateProfilePayload {
   name: string
   phone: string
   address: string
-  avatar: string
+  avatar?: string
 }
 
 export interface ChangePasswordPayload {
   old_password: string
   new_password: string
+}
+
+export interface UploadProfilePhotoResponse {
+  photo_url: string
 }
