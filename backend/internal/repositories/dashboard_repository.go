@@ -53,7 +53,7 @@ func (r *dashboardRepository) GetSalesSeries(startDate time.Time) ([]dto.Dashboa
 	var items []dto.DashboardSalesPoint
 
 	err := r.db.Table("orders").
-		Select("DATE_FORMAT(created_at, '%Y-%m-%d') as date, COALESCE(SUM(total_price), 0) as revenue, COUNT(id) as orders").
+		Select("DATE(created_at) as date, COALESCE(SUM(total_price), 0) as revenue, COUNT(id) as orders").
 		Where("created_at >= ?", startDate).
 		Group("DATE(created_at)").
 		Order("DATE(created_at) ASC").
