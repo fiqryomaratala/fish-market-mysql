@@ -16,71 +16,84 @@ function SidebarContent({
 }: Omit<RoleBasedSidebarProps, 'mobileOpen'>) {
   const { items, role } = useNavigation()
   const location = useLocation()
-  const desktopToggleClassName =
-    'hidden lg:flex size-12 items-center justify-center rounded-[10px] border border-slate-200 bg-slate-50 text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600'
   const mobileCloseClassName =
     'flex size-12 items-center justify-center rounded-[10px] border border-slate-200 bg-slate-50 text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 lg:hidden'
-  const expandedContentClassName = collapsed
-    ? 'pointer-events-none max-w-0 translate-x-2 opacity-0'
-    : 'max-w-[13rem] translate-x-0 opacity-100'
+  const navItemShellClassName = collapsed
+    ? 'justify-center rounded-[10px] px-0 py-0'
+    : 'rounded-[10px] px-1.5 py-1.5'
+  const navItemIconClassName = collapsed
+    ? 'size-[3.3rem] rounded-[10px]'
+    : 'size-12 rounded-[10px]'
+  const navItemLabelClassName = collapsed
+    ? 'pointer-events-none hidden opacity-0'
+    : 'block opacity-100'
 
   return (
-    <div
-      className={`flex h-full min-h-0 flex-col bg-white transition-[padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        collapsed
-          ? 'px-2.5 py-4'
-          : 'px-4 py-4'
-      }`}
-    >
-      <div
-        className={`border-b border-slate-200 pb-4 transition-[grid-template-columns,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          collapsed
-            ? 'flex justify-center'
-            : 'grid grid-cols-[2rem_minmax(0,1fr)_3rem] items-center'
-        }`}
-      >
-        <div
-          aria-hidden="true"
-          className={`hidden h-12 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:block ${
-            collapsed ? 'w-0 opacity-0' : 'w-8 opacity-100'
-          }`}
-        />
+    <div className="flex h-full min-h-0 flex-col bg-white px-4 py-4">
+      <div className="border-b border-slate-200 pb-4">
+        {collapsed ? (
+          <div className="flex items-center justify-center">
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="group hidden items-center text-slate-500 transition hover:text-blue-600 lg:flex"
+              aria-label="Expand sidebar"
+            >
+              <span className={`flex shrink-0 items-center justify-center border border-slate-200 bg-white text-blue-500 transition group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600 ${navItemIconClassName}`}>
+                <ChevronRight className="size-4" />
+              </span>
+            </button>
 
-        <div
-          className={`min-w-0 overflow-hidden text-left transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${expandedContentClassName}`}
-        >
-          <div className="min-w-0 text-left">
-            <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
-              Fish Market
-            </p>
-            <p className="truncate text-xs text-slate-500">Navigation for {role ?? 'guest'}</p>
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              className={mobileCloseClassName}
+              aria-label="Close navigation drawer"
+            >
+              <X className="size-4" />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <div className="min-w-0 text-left">
+                <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
+                  Fish Market
+                </p>
+                <p className="truncate text-xs text-slate-500">Navigation for {role ?? 'guest'}</p>
+              </div>
+            </div>
 
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className={desktopToggleClassName}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
-        </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                className="group hidden items-center text-slate-500 transition hover:text-blue-600 lg:flex"
+                aria-label="Collapse sidebar"
+              >
+                <span
+                  className={`flex shrink-0 items-center justify-center border border-slate-200 bg-white text-blue-500 transition group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600 ${navItemIconClassName}`}
+                >
+                  <ChevronLeft className="size-4" />
+                </span>
+              </button>
 
-        <button
-          type="button"
-          onClick={onCloseMobile}
-          className={mobileCloseClassName}
-          aria-label="Close navigation drawer"
-        >
-          <X className="size-4" />
-        </button>
+              <button
+                type="button"
+                onClick={onCloseMobile}
+                className={mobileCloseClassName}
+                aria-label="Close navigation drawer"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 min-h-0 flex-1 overflow-hidden">
         <nav
-          className={`scrollbar-hidden h-full overflow-y-auto transition-[padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            collapsed ? 'pr-0' : 'pr-1'
-          } ${
+          className={`scrollbar-hidden h-full overflow-y-auto pr-1 ${
             collapsed ? 'space-y-6' : 'space-y-2.5'
           }`}
         >
@@ -106,9 +119,7 @@ function SidebarContent({
                 end={item.path === '/admin' || item.path === '/staff'}
                 onClick={onCloseMobile}
                 className={({ isActive }) =>
-                  `group flex items-center overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${collapsed ? 'justify-center' : 'gap-3'} ${
-                    collapsed ? 'rounded-[10px] px-0 py-0' : 'rounded-[10px] px-1.5 py-1.5'
-                  } transition ${
+                  `group flex items-center gap-3 overflow-hidden ${navItemShellClassName} ${
                     isActive || isActiveItem
                       ? 'text-blue-700'
                       : 'text-slate-500 hover:text-blue-600'
@@ -118,9 +129,7 @@ function SidebarContent({
                 {({ isActive }) => (
                   <>
                     <span
-                      className={`flex shrink-0 items-center justify-center border transition ${
-                        collapsed ? 'size-[3.3rem] rounded-[10px]' : 'size-12 rounded-[10px]'
-                      } ${
+                      className={`flex shrink-0 items-center justify-center border ${navItemIconClassName} ${
                         isActive || isActiveItem
                           ? 'border-blue-600 bg-blue-600 text-white shadow-none ring-0'
                           : 'border-slate-200 bg-white text-blue-500 shadow-none ring-0 group-hover:border-blue-200 group-hover:text-blue-600'
@@ -130,9 +139,9 @@ function SidebarContent({
                     </span>
 
                     <span
-                      className={`min-w-0 flex-1 truncate text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${expandedContentClassName}`}
+                      className={`min-w-0 flex-1 truncate text-sm font-medium transition-opacity duration-200 ${navItemLabelClassName}`}
                     >
-                        {item.title}
+                      {item.title}
                     </span>
                   </>
                 )}
@@ -143,7 +152,7 @@ function SidebarContent({
       </div>
 
       <div
-        className={`mt-3 shrink-0 overflow-hidden rounded-[10px] border bg-emerald-50 text-sm text-emerald-700 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`mt-3 shrink-0 overflow-hidden rounded-[10px] border bg-emerald-50 text-sm text-emerald-700 ${
           collapsed
             ? 'max-h-0 border-transparent opacity-0'
             : 'max-h-32 border-emerald-200 opacity-100'
