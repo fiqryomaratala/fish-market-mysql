@@ -20,7 +20,7 @@ export function HarvestChart({ data }: HarvestChartProps) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600">
-            Harvest Trend
+            Tren Panen
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Panen Per Bulan</h2>
         </div>
@@ -57,7 +57,7 @@ export function HarvestChart({ data }: HarvestChartProps) {
                 border: '1px solid #bbf7d0',
                 boxShadow: '0 16px 40px rgba(148, 163, 184, 0.16)',
               }}
-              formatter={(value) => [`${formatNumber(Number(value ?? 0))} kg`, 'Harvest']}
+              formatter={(value) => [`${formatNumber(Number(value ?? 0))} kg`, 'Panen']}
             />
             <Bar dataKey="total_weight" fill="#10b981" radius={[10, 10, 4, 4]} maxBarSize={28} />
           </BarChart>

@@ -43,19 +43,19 @@ export const navigationItems: NavItem[] = [
   { title: 'Harvest', path: '/staff/harvest', icon: Package, roles: 'staff' },
   { title: 'Inventory', path: '/staff/inventory', icon: Warehouse, roles: 'staff' },
   { title: 'Dashboard', path: '/admin', icon: LayoutDashboard, roles: 'admin' },
-  { title: 'Users', path: '/admin/users', icon: Users, roles: 'admin' },
-  { title: 'Products', path: '/admin/products', icon: Store, roles: 'admin' },
-  { title: 'Inventory', path: '/admin/inventory', icon: Warehouse, roles: 'admin' },
-  { title: 'Ponds', path: '/admin/ponds', icon: Waves, roles: 'admin' },
-  { title: 'Fish Batches', path: '/admin/fish-batches', icon: Fish, roles: 'admin' },
-  { title: 'Feeding Logs', path: '/admin/feeding', icon: ClipboardList, roles: 'admin' },
-  { title: 'Harvest', path: '/admin/harvest', icon: Package, roles: 'admin' },
-  { title: 'Orders', path: '/admin/orders', icon: ReceiptText, roles: 'admin' },
-  { title: 'Reports', path: '/admin/reports', icon: BarChart3, roles: 'admin' },
-  { title: 'Analytics', path: '/admin/analytics', icon: ChartColumnIncreasing, roles: 'admin' },
-  { title: 'Notifications', path: '/admin/notifications', icon: Bell, roles: 'admin' },
-  { title: 'Activity Logs', path: '/admin/activity-logs', icon: Activity, roles: 'admin' },
-  { title: 'Settings', path: '/admin/settings', icon: Settings, roles: 'admin' },
+  { title: 'Pengguna', path: '/admin/users', icon: Users, roles: 'admin' },
+  { title: 'Produk', path: '/admin/products', icon: Store, roles: 'admin' },
+  { title: 'Inventaris', path: '/admin/inventory', icon: Warehouse, roles: 'admin' },
+  { title: 'Kolam', path: '/admin/ponds', icon: Waves, roles: 'admin' },
+  { title: 'Batch Ikan', path: '/admin/fish-batches', icon: Fish, roles: 'admin' },
+  { title: 'Log Pakan', path: '/admin/feeding', icon: ClipboardList, roles: 'admin' },
+  { title: 'Panen', path: '/admin/harvest', icon: Package, roles: 'admin' },
+  { title: 'Pesanan', path: '/admin/orders', icon: ReceiptText, roles: 'admin' },
+  { title: 'Laporan', path: '/admin/reports', icon: BarChart3, roles: 'admin' },
+  { title: 'Analitik', path: '/admin/analytics', icon: ChartColumnIncreasing, roles: 'admin' },
+  { title: 'Notifikasi', path: '/admin/notifications', icon: Bell, roles: 'admin' },
+  { title: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: 'admin' },
+  { title: 'Pengaturan', path: '/admin/settings', icon: Settings, roles: 'admin' },
 ]
 
 export function getNavigationByRole(role: string | null | undefined) {
@@ -115,5 +115,5 @@ export function getRoleLabel(role: UserRole | null) {
     return 'Customer'
   }
 
-  return 'Guest'
+  return 'Tamu'
 }

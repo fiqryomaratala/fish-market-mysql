@@ -20,7 +20,7 @@ export function SalesChart({ data }: SalesChartProps) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
-            Sales Overview
+            Ringkasan Penjualan
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Penjualan 30 Hari Terakhir</h2>
         </div>
@@ -64,8 +64,8 @@ export function SalesChart({ data }: SalesChartProps) {
               }}
               formatter={(value, name) =>
                 name === 'revenue'
-                  ? [formatCurrencyValue(Number(value ?? 0)), 'Revenue']
-                  : [formatNumber(Number(value ?? 0)), 'Orders']
+                  ? [formatCurrencyValue(Number(value ?? 0)), 'Pendapatan']
+                  : [formatNumber(Number(value ?? 0)), 'Pesanan']
               }
               labelFormatter={(label) =>
                 formatDate(label, {

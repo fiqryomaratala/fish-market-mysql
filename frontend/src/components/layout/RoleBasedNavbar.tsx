@@ -71,7 +71,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">
                 Fish Market
               </p>
-              <p className="text-xs text-slate-500">ERP workspace</p>
+              <p className="text-xs text-slate-500">Ruang kerja ERP</p>
             </div>
           </NavLink>
         </div>
@@ -81,7 +81,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
             <Search className="size-4 text-slate-400" />
             <input
               type="search"
-              placeholder="Search users, orders, products, ponds..."
+              placeholder="Cari pengguna, pesanan, produk, kolam..."
               className="w-full border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
           </label>
@@ -91,7 +91,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
           <NavLink
             to="/admin/notifications"
             className="relative rounded-[10px] border border-white/70 bg-white/85 p-2.5 text-slate-600 shadow-sm shadow-slate-200/40 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-            aria-label="Notifications"
+            aria-label="Notifikasi"
           >
             <Bell className="size-5" />
             {unreadCount > 0 ? (
@@ -120,7 +120,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
               )}
               <span className="hidden min-w-0 sm:block">
                 <span className="block truncate text-sm font-semibold text-slate-900">
-                  {user?.name ?? 'Guest'}
+                  {user?.name ?? 'Pengguna'}
                 </span>
                 <span className="block truncate text-xs text-slate-500">{getRoleLabel(role)}</span>
               </span>
@@ -135,7 +135,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                   className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
                 >
                   <UserCircle2 className="size-4 text-blue-600" />
-                  <span>Profile</span>
+                  <span>Profil</span>
                 </NavLink>
                 <NavLink
                   to={settingsPath}
@@ -143,7 +143,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                   className="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 hover:text-blue-600"
                 >
                   <Settings className="size-4 text-emerald-600" />
-                  <span>Settings</span>
+                  <span>Pengaturan</span>
                 </NavLink>
                 <button
                   type="button"
@@ -154,7 +154,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
                   className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-sm text-rose-500 transition hover:bg-rose-50 hover:text-rose-600"
                 >
                   <LogOut className="size-4 text-rose-500" />
-                  <span>Logout</span>
+                  <span>Keluar</span>
                 </button>
               </div>
             ) : null}

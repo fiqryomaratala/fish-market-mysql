@@ -13,7 +13,7 @@ export function InventoryAlertCard({ items }: InventoryAlertCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">
-            Inventory Alert
+            Peringatan Inventaris
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Stok Hampir Habis</h2>
         </div>
@@ -47,7 +47,7 @@ export function InventoryAlertCard({ items }: InventoryAlertCardProps) {
         to="/admin/inventory"
         className="mt-6 inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-amber-600"
       >
-        Manage Inventory
+        Kelola Inventaris
         <ArrowRight className="size-4" />
       </Link>
     </section>

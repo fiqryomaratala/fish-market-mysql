@@ -134,7 +134,7 @@ function SidebarContent({
         <div className="mt-3 shrink-0 h-8" />
       ) : (
         <div className="mt-3 shrink-0 rounded-[10px] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-          <p className="font-semibold">Workspace online</p>
+          <p className="font-semibold">Ruang kerja aktif</p>
           <p className="mt-1 text-xs leading-6 text-emerald-600">
             Menu otomatis mengikuti role user yang sedang login.
           </p>

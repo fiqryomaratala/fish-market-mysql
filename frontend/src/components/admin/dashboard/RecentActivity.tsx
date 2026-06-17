@@ -19,7 +19,7 @@ export function RecentActivity({ items }: RecentActivityProps) {
     <section className="rounded-xl border border-white/60 bg-white/75 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
-          Recent Activity
+          Aktivitas Terkini
         </p>
         <h2 className="mt-2 text-2xl font-semibold text-slate-900">Aktivitas Terbaru</h2>
       </div>

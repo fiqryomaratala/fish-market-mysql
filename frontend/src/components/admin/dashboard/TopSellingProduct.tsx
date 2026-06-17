@@ -39,7 +39,7 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
           </span>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600">
-              Top Selling Product
+              Produk Terlaris
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">Belum Ada Data Penjualan</h2>
           </div>
@@ -52,7 +52,7 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
     <section className="overflow-hidden rounded-xl border border-white/60 bg-white/72 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="bg-linear-to-br from-blue-600 via-cyan-500 to-emerald-500 p-6 text-white">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
-          Top Selling Product
+          Produk Terlaris
         </p>
         <h2 className="mt-2 text-2xl font-semibold">Produk Terlaris</h2>
       </div>
@@ -70,13 +70,13 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
           <h3 className="text-xl font-semibold text-slate-900">{product.product_name}</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Sold</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Terjual</p>
               <p className="mt-2 text-lg font-semibold text-slate-900">
                 {formatNumber(product.sold)}
               </p>
             </div>
             <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenue</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Pendapatan</p>
               <p className="mt-2 text-lg font-semibold text-slate-900">
                 {formatCurrency(product.revenue)}
               </p>

@@ -73,7 +73,7 @@ function AdminDashboardPage() {
           }}
           className="mt-6 rounded-xl bg-red-500 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-red-600"
         >
-          Retry
+          Coba Lagi
         </button>
       </section>
     )
@@ -96,26 +96,26 @@ function AdminDashboardPage() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200/90">
-              Admin Command Center
+              Pusat Kendali Admin
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
               ERP dashboard untuk operasional Fish Marketplace
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-blue-50/78">
-              Pantau revenue, order, stok, jadwal panen, dan aktivitas tim dalam satu workspace
+              Pantau pendapatan, pesanan, stok, jadwal panen, dan aktivitas tim dalam satu workspace
               yang ringan dan responsif.
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <article className="rounded-xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
-              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/80">Revenue</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/80">Pendapatan</p>
               <p className="mt-2 text-2xl font-semibold">
                 {formatCompactCurrency(summary.total_revenue)}
               </p>
             </article>
             <article className="rounded-xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
-              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/80">Orders</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/80">Pesanan</p>
               <p className="mt-2 text-2xl font-semibold">{summary.total_orders}</p>
             </article>
           </div>
@@ -124,17 +124,17 @@ function AdminDashboardPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <DashboardCard
-          title="Total Revenue"
+          title="Total Pendapatan"
           value={summary.total_revenue}
           icon={PackageCheck}
           tone="blue"
           prefix="currency"
         />
-        <DashboardCard title="Total Orders" value={summary.total_orders} icon={ShoppingBag} tone="cyan" />
-        <DashboardCard title="Total Products" value={summary.total_products} icon={Boxes} tone="emerald" />
-        <DashboardCard title="Total Customers" value={summary.total_customers} icon={Users} tone="teal" />
-        <DashboardCard title="Total Fish Batch" value={summary.total_batches} icon={Fish} tone="cyan" />
-        <DashboardCard title="Total Pond" value={summary.total_ponds} icon={Waves} tone="emerald" />
+        <DashboardCard title="Total Pesanan" value={summary.total_orders} icon={ShoppingBag} tone="cyan" />
+        <DashboardCard title="Total Produk" value={summary.total_products} icon={Boxes} tone="emerald" />
+        <DashboardCard title="Total Pelanggan" value={summary.total_customers} icon={Users} tone="teal" />
+        <DashboardCard title="Total Batch Ikan" value={summary.total_batches} icon={Fish} tone="cyan" />
+        <DashboardCard title="Total Kolam" value={summary.total_ponds} icon={Waves} tone="emerald" />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_360px]">

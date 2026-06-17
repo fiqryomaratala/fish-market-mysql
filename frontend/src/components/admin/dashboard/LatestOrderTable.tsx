@@ -14,7 +14,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
-            Latest Orders
+            Pesanan Terbaru
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Order Terbaru</h2>
         </div>
@@ -22,7 +22,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
           to="/admin/orders"
           className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
         >
-          View All
+          Lihat Semua
         </Link>
       </div>
 
@@ -53,7 +53,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
                     to={`/orders/${order.id}`}
                     className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
                   >
-                    View Detail
+                    Lihat Detail
                     <ArrowUpRight className="size-3.5" />
                   </Link>
                 </td>
