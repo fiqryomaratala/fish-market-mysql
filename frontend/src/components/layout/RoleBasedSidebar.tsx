@@ -23,7 +23,7 @@ function SidebarContent({
 
   return (
     <div
-      className={`flex h-full flex-col bg-white ${
+      className={`flex h-full min-h-0 flex-col bg-white ${
         collapsed
           ? 'px-2.5 py-4'
           : 'px-4 py-4'
@@ -66,70 +66,74 @@ function SidebarContent({
         </button>
       </div>
 
-      <nav className={`mt-5 flex-1 ${collapsed ? 'space-y-6' : 'space-y-2.5'}`}>
-        {items.map((item) => {
-          const Icon = item.icon
-          const isMarketplaceAliasActive =
-            role === 'customer' &&
-            item.path === '/customer/marketplace' &&
-            location.pathname.startsWith('/products')
-          const isCartAliasActive =
-            role === 'customer' &&
-            item.path === '/customer/cart' &&
-            location.pathname.startsWith('/cart')
-          const isOrdersAliasActive =
-            role === 'customer' && item.path === '/orders' && location.pathname.startsWith('/orders')
-          const isActiveItem =
-            isMarketplaceAliasActive || isCartAliasActive || isOrdersAliasActive
+      <div className="mt-5 min-h-0 flex-1 overflow-hidden">
+        <nav
+          className={`scrollbar-hidden h-full overflow-y-auto pr-1 ${
+            collapsed ? 'space-y-6' : 'space-y-2.5'
+          }`}
+        >
+          {items.map((item) => {
+            const Icon = item.icon
+            const isMarketplaceAliasActive =
+              role === 'customer' &&
+              item.path === '/customer/marketplace' &&
+              location.pathname.startsWith('/products')
+            const isCartAliasActive =
+              role === 'customer' &&
+              item.path === '/customer/cart' &&
+              location.pathname.startsWith('/cart')
+            const isOrdersAliasActive =
+              role === 'customer' && item.path === '/orders' && location.pathname.startsWith('/orders')
+            const isActiveItem =
+              isMarketplaceAliasActive || isCartAliasActive || isOrdersAliasActive
 
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.path === '/admin' || item.path === '/staff'}
-              onClick={onCloseMobile}
-              className={({ isActive }) =>
-                `group flex items-center ${collapsed ? 'justify-center' : 'gap-3'} ${
-                  collapsed ? 'rounded-[10px] px-0 py-0' : 'rounded-[10px] px-1.5 py-1.5'
-                } transition ${
-                  isActive || isActiveItem
-                    ? 'text-blue-700'
-                    : 'text-slate-500 hover:text-blue-600'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <span
-                    className={`flex shrink-0 items-center justify-center border transition ${
-                      collapsed ? 'size-[3.3rem] rounded-[10px]' : 'size-12 rounded-[10px]'
-                    } ${
-                      isActive || isActiveItem
-                        ? 'border-blue-600 bg-blue-600 text-white shadow-none ring-0'
-                        : 'border-slate-200 bg-white text-blue-500 shadow-none ring-0 group-hover:border-blue-200 group-hover:text-blue-600'
-                    }`}
-                  >
-                    <Icon className="size-4" />
-                  </span>
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path === '/admin' || item.path === '/staff'}
+                onClick={onCloseMobile}
+                className={({ isActive }) =>
+                  `group flex items-center ${collapsed ? 'justify-center' : 'gap-3'} ${
+                    collapsed ? 'rounded-[10px] px-0 py-0' : 'rounded-[10px] px-1.5 py-1.5'
+                  } transition ${
+                    isActive || isActiveItem
+                      ? 'text-blue-700'
+                      : 'text-slate-500 hover:text-blue-600'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span
+                      className={`flex shrink-0 items-center justify-center border transition ${
+                        collapsed ? 'size-[3.3rem] rounded-[10px]' : 'size-12 rounded-[10px]'
+                      } ${
+                        isActive || isActiveItem
+                          ? 'border-blue-600 bg-blue-600 text-white shadow-none ring-0'
+                          : 'border-slate-200 bg-white text-blue-500 shadow-none ring-0 group-hover:border-blue-200 group-hover:text-blue-600'
+                      }`}
+                    >
+                      <Icon className="size-4" />
+                    </span>
 
-                  {!collapsed ? (
-                    <>
+                    {!collapsed ? (
                       <span className="min-w-0 flex-1 truncate text-sm font-medium">
                         {item.title}
                       </span>
-                    </>
-                  ) : null}
-                </>
-              )}
-            </NavLink>
-          )
-        })}
-      </nav>
+                    ) : null}
+                  </>
+                )}
+              </NavLink>
+            )
+          })}
+        </nav>
+      </div>
 
       {collapsed ? (
-        <div className="mt-3 h-8" />
+        <div className="mt-3 shrink-0 h-8" />
       ) : (
-        <div className="rounded-[10px] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+        <div className="mt-3 shrink-0 rounded-[10px] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
           <p className="font-semibold">Workspace online</p>
           <p className="mt-1 text-xs leading-6 text-emerald-600">
             Menu otomatis mengikuti role user yang sedang login.
