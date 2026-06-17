@@ -1,13 +1,3 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import ProductsManagementPage from '@/pages/admin/products/ProductsManagementPage'
 
-function ProductsPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Admin Products"
-      description="Kelola katalog produk ikan, harga, kategori, foto, dan status publish untuk marketplace."
-    />
-  )
-}
-
-export default ProductsPage
+export default ProductsManagementPage

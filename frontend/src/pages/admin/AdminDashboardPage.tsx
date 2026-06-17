@@ -20,6 +20,7 @@ import { SalesChart } from '@/components/admin/dashboard/SalesChart'
 import { TopSellingProduct } from '@/components/admin/dashboard/TopSellingProduct'
 import {
   useActivityLog,
+  useAuth,
   useDashboardSummary,
   useHarvestChart,
   useInventoryAlert,
@@ -29,6 +30,7 @@ import {
 import { formatCompactCurrency } from '@/utils/format'
 
 function AdminDashboardPage() {
+  const { role } = useAuth()
   const summaryQuery = useDashboardSummary()
   const salesQuery = useSalesChart()
   const harvestQuery = useHarvestChart()
@@ -47,6 +49,10 @@ function AdminDashboardPage() {
 
   const isLoading = queries.some((query) => query.isLoading)
   const isError = queries.some((query) => query.isError)
+
+  if (role !== 'admin' && role !== 'staff') {
+    return null
+  }
 
   if (isLoading) {
     return <LoadingSkeleton />

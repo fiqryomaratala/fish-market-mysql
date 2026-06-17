@@ -1,13 +1,14 @@
 import api from '@/api/axios'
-import type { ApiResponse, ProductPayload } from '@/types/api'
-import type { Product } from '@/types/product'
+import type { ApiResponse } from '@/types/api'
+import type {
+  Product,
+  ProductListParams,
+  ProductListResult,
+  ProductMutationInput,
+} from '@/types/product'
 
 type ProductApiRecord = Partial<Product> & {
   imageUrl?: string
-  batchCode?: string
-  farmName?: string
-  pondName?: string
-  harvestDate?: string
 }
 
 type ProductListEnvelope = {
@@ -27,7 +28,10 @@ type ProductDetailEnvelope = {
   message?: string
 }
 
-const FALLBACK_PLACEHOLDER_IMAGE = 'https://placehold.co/1200x900?text=Fish'
+const DEFAULT_PAGE = 1
+const DEFAULT_LIMIT = 10
+
+export const FALLBACK_PLACEHOLDER_IMAGE = 'https://placehold.co/1200x900?text=Fish'
 
 function toNumber(value: unknown, fallback = 0) {
   const parsed = Number(value)
@@ -61,42 +65,91 @@ function resolveImageUrl(imageUrl: string) {
   }
 }
 
+function normalizeStatus(rawStatus: string, stock: number) {
+  const normalized = rawStatus.trim().toLowerCase()
+
+  if (normalized === 'hidden') {
+    return 'hidden'
+  }
+
+  if (normalized === 'out_of_stock' || stock <= 0) {
+    return 'out_of_stock'
+  }
+
+  return 'available'
+}
+
 function mapProduct(record: ProductApiRecord, fallbackId = 0): Product {
+  const stock = toNumber(record.stock)
+
   return {
     id: toNumber(record.id, fallbackId),
     name: toStringValue(record.name, 'Produk'),
     description: toStringValue(record.description),
     price: toNumber(record.price),
-    stock: toNumber(record.stock),
+    stock,
+    category: toStringValue(record.category),
+    weight: toNumber(record.weight),
     image_url: resolveImageUrl(
       toStringValue(record.image_url) || toStringValue(record.imageUrl),
     ),
-    batch_code: toStringValue(record.batch_code) || toStringValue(record.batchCode),
-    farm_name: toStringValue(record.farm_name) || toStringValue(record.farmName),
-    pond_name: toStringValue(record.pond_name) || toStringValue(record.pondName),
-    harvest_date:
-      toStringValue(record.harvest_date) || toStringValue(record.harvestDate),
-    category: toStringValue(record.category),
-    weight: toStringValue(record.weight),
-    status: toStringValue(record.status, toNumber(record.stock) > 0 ? 'available' : 'empty'),
+    status: normalizeStatus(toStringValue(record.status), stock),
+    created_at: toStringValue(record.created_at),
+    updated_at: toStringValue(record.updated_at),
+    batch_code: toStringValue(record.batch_code),
+    farm_name: toStringValue(record.farm_name),
+    pond_name: toStringValue(record.pond_name),
+    harvest_date: toStringValue(record.harvest_date),
   }
 }
 
+function toFormData(payload: ProductMutationInput) {
+  const formData = new FormData()
+
+  formData.append('name', payload.name)
+  formData.append('description', payload.description)
+  formData.append('price', String(payload.price))
+  formData.append('stock', String(payload.stock))
+  formData.append('category', payload.category)
+  formData.append('weight', String(payload.weight))
+  formData.append('status', payload.status)
+
+  if (payload.image_url?.trim()) {
+    formData.append('image_url', payload.image_url.trim())
+  }
+
+  if (payload.image) {
+    formData.append('image', payload.image)
+  }
+
+  return formData
+}
+
 class ProductService {
-  async getProducts(): Promise<Product[]> {
+  async getProducts(params: ProductListParams = {}): Promise<ProductListResult> {
     const { data } = await api.get<ProductListEnvelope>('/products', {
       params: {
-        page: 1,
-        limit: 100,
+        page: params.page ?? DEFAULT_PAGE,
+        limit: params.limit ?? DEFAULT_LIMIT,
+        search: params.search || undefined,
+        category: params.category || undefined,
+        status: params.status || undefined,
       },
     })
 
     const items = Array.isArray(data.data?.items) ? data.data.items : []
 
-    return items.map((item, index) => mapProduct(item, index + 1))
+    return {
+      items: items.map((item, index) => mapProduct(item, index + 1)),
+      meta: {
+        page: toNumber(data.data?.meta?.page, params.page ?? DEFAULT_PAGE),
+        limit: toNumber(data.data?.meta?.limit, params.limit ?? DEFAULT_LIMIT),
+        total: toNumber(data.data?.meta?.total, items.length),
+      },
+    }
   }
 
-  async getProductById(id: number): Promise<Product> {
+  async getProduct(id: number): Promise<Product> {
     const { data } = await api.get<ProductDetailEnvelope>(`/products/${id}`)
 
     if (!data.data) {
@@ -106,39 +159,28 @@ class ProductService {
     return mapProduct(data.data, id)
   }
 
-  async getAll() {
-    const products = await this.getProducts()
+  async createProduct(payload: ProductMutationInput): Promise<Product> {
+    const { data } = await api.post<ApiResponse<ProductApiRecord>>(
+      '/admin/products',
+      toFormData(payload),
+    )
 
-    return {
-      data: products,
-      message: 'Products fetched successfully',
-    }
+    return mapProduct(data.data)
   }
 
-  async getById(id: string) {
-    const product = await this.getProductById(Number(id))
+  async updateProduct(id: number, payload: ProductMutationInput): Promise<Product> {
+    const { data } = await api.put<ApiResponse<ProductApiRecord>>(
+      `/admin/products/${id}`,
+      toFormData(payload),
+    )
 
-    return {
-      data: product,
-      message: 'Product fetched successfully',
-    }
+    return mapProduct(data.data, id)
   }
 
-  async create(payload: ProductPayload) {
-    const { data } = await api.post<ApiResponse<Product>>('/products', payload)
-    return data
-  }
-
-  async update(id: string, payload: Partial<ProductPayload>) {
-    const { data } = await api.put<ApiResponse<Product>>(`/products/${id}`, payload)
-    return data
-  }
-
-  async remove(id: string) {
-    const { data } = await api.delete<ApiResponse<null>>(`/products/${id}`)
+  async deleteProduct(id: number) {
+    const { data } = await api.delete<ApiResponse<null>>(`/admin/products/${id}`)
     return data
   }
 }
 
 export const productService = new ProductService()
-export { FALLBACK_PLACEHOLDER_IMAGE }

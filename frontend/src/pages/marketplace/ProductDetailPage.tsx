@@ -71,10 +71,10 @@ function ProductDetailPage() {
   const product = data
 
   const relatedProducts = useMemo(() => {
-    const items = products ?? []
+    const items = products?.items ?? []
 
     return items.filter((item) => item.id !== product?.id).slice(0, 4)
-  }, [product?.id, products])
+  }, [product?.id, products?.items])
 
   if (isLoading) {
     return <LoadingSkeleton />

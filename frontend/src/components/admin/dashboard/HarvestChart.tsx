@@ -16,7 +16,7 @@ type HarvestChartProps = {
 
 export function HarvestChart({ data }: HarvestChartProps) {
   return (
-    <section className="rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600">
@@ -34,8 +34,8 @@ export function HarvestChart({ data }: HarvestChartProps) {
         </div>
       </div>
 
-      <div className="mt-6 h-[260px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="mt-6 h-[260px] min-w-0 w-full">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" vertical={false} />
             <XAxis

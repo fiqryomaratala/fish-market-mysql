@@ -16,7 +16,7 @@ type SalesChartProps = {
 
 export function SalesChart({ data }: SalesChartProps) {
   return (
-    <section className="rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
@@ -32,8 +32,8 @@ export function SalesChart({ data }: SalesChartProps) {
         </div>
       </div>
 
-      <div className="mt-6 h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="mt-6 h-[280px] min-w-0 w-full">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart data={data}>
             <defs>
               <linearGradient id="salesStroke" x1="0" x2="1" y1="0" y2="0">

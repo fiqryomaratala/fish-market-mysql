@@ -25,6 +25,10 @@ api.interceptors.request.use(
   async (config) => {
     const token = localStorage.getItem(ACCESS_TOKEN_KEY)
 
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers['Content-Type']
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

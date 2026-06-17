@@ -81,8 +81,8 @@ function clearGuestCartRecords() {
 }
 
 async function buildSummaryFromProducts(records: GuestCartRecord[]): Promise<CartSummary> {
-  const products = await productService.getProducts()
-  const productLookup = new Map(products.map((product) => [product.id, product]))
+  const products = await productService.getProducts({ page: 1, limit: 1000 })
+  const productLookup = new Map(products.items.map((product) => [product.id, product]))
 
   const items: CartItem[] = records
     .map((record, index) => {
@@ -126,8 +126,8 @@ async function buildSummaryFromProducts(records: GuestCartRecord[]): Promise<Car
 
 async function enrichApiCart(data?: CartApiResponse): Promise<CartSummary> {
   const cartItems = Array.isArray(data?.items) ? data.items : []
-  const products = await productService.getProducts()
-  const productLookup = new Map(products.map((product) => [product.id, product]))
+  const products = await productService.getProducts({ page: 1, limit: 1000 })
+  const productLookup = new Map(products.items.map((product) => [product.id, product]))
 
   const items: CartItem[] = cartItems.map((item, index) => {
     const productId = toNumber(item.product?.id)

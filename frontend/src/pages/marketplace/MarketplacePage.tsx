@@ -70,7 +70,7 @@ function MarketplacePage() {
   const { data, isLoading, error, refetch } = useProducts()
 
   const filteredProducts = useMemo(() => {
-    const items = data ?? []
+    const items = data?.items ?? []
 
     return items
       .filter((product) => {
@@ -122,7 +122,7 @@ function MarketplacePage() {
           new Date(right.harvest_date).getTime() - new Date(left.harvest_date).getTime()
         )
       })
-  }, [data, debouncedSearch, filters, selectedCategory, selectedSort])
+  }, [data?.items, debouncedSearch, filters, selectedCategory, selectedSort])
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / 8))
   const safeCurrentPage = Math.min(currentPage, totalPages)
