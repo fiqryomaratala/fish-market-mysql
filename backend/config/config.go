@@ -39,7 +39,7 @@ func LoadConfig() {
 			AppName:            getEnv("APP_NAME", "Fish Marketplace Backend"),
 			AppEnv:             getEnv("APP_ENV", "development"),
 			AppPort:            getEnv("APP_PORT", "8080"),
-			BaseURL:            getEnv("BASE_URL", "http://localhost:8080"),
+			BaseURL:            getEnv("BASE_URL", "http://localhost"),
 			CORSAllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"),
 			LogLevel:           getEnv("LOG_LEVEL", "debug"),
 			DBHost:             getEnv("DB_HOST", "localhost"),

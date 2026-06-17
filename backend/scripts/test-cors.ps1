@@ -1,6 +1,6 @@
 param(
   [string]$Origin = "http://localhost:5173",
-  [string]$ApiUrl = "http://localhost:8080/api/products"
+  [string]$ApiUrl = "http://localhost/api/products"
 )
 
 Write-Host "Testing preflight request to $ApiUrl from origin $Origin" -ForegroundColor Cyan

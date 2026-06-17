@@ -17,6 +17,7 @@ var ErrProductNotFound = errors.New("product not found")
 type ProductListParams struct {
 	Search   string
 	Category string
+	Status   string
 	Page     int
 	Limit    int
 }
@@ -34,6 +35,9 @@ type CreateProductInput struct {
 	Price       float64
 	Stock       int
 	Category    string
+	Weight      float64
+	Status      string
+	ImageURL    string
 	Image       *multipart.FileHeader
 	Audit       *AuditContext
 }
@@ -44,6 +48,9 @@ type UpdateProductInput struct {
 	Price       float64
 	Stock       int
 	Category    string
+	Weight      float64
+	Status      string
+	ImageURL    string
 	Image       *multipart.FileHeader
 	Audit       *AuditContext
 }
@@ -81,8 +88,9 @@ func (s *productService) Create(input CreateProductInput) (*models.Product, erro
 		Price:       input.Price,
 		Stock:       input.Stock,
 		Category:    strings.TrimSpace(input.Category),
-		ImageURL:    imageURL,
-		Status:      "active",
+		Weight:      input.Weight,
+		ImageURL:    resolveProductImageURL(imageURL, input.ImageURL),
+		Status:      normalizeProductStatus(input.Status, input.Stock),
 	}
 
 	if err := s.productRepo.Create(product); err != nil {
@@ -104,6 +112,7 @@ func (s *productService) GetAll(params ProductListParams) (*ProductListResult, e
 	products, total, err := s.productRepo.FindAll(repositories.ProductFilter{
 		Search:   params.Search,
 		Category: params.Category,
+		Status:   params.Status,
 		Page:     params.Page,
 		Limit:    params.Limit,
 	})
@@ -149,6 +158,8 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 			return nil, err
 		}
 		product.ImageURL = newImageURL
+	} else if strings.TrimSpace(input.ImageURL) != "" {
+		product.ImageURL = strings.TrimSpace(input.ImageURL)
 	}
 
 	product.Name = strings.TrimSpace(input.Name)
@@ -156,6 +167,8 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 	product.Price = input.Price
 	product.Stock = input.Stock
 	product.Category = strings.TrimSpace(input.Category)
+	product.Weight = input.Weight
+	product.Status = normalizeProductStatus(input.Status, input.Stock)
 
 	if err := s.productRepo.Update(product); err != nil {
 		if input.Image != nil && product.ImageURL != "" && product.ImageURL != oldImageURL {
@@ -177,6 +190,33 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 	logger.Info("product updated", zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID), zap.String("name", product.Name))
 
 	return product, nil
+}
+
+func normalizeProductStatus(status string, stock int) string {
+	switch strings.ToLower(strings.TrimSpace(status)) {
+	case "hidden":
+		return "hidden"
+	case "out_of_stock":
+		return "out_of_stock"
+	case "available":
+		if stock <= 0 {
+			return "out_of_stock"
+		}
+		return "available"
+	default:
+		if stock <= 0 {
+			return "out_of_stock"
+		}
+		return "available"
+	}
+}
+
+func resolveProductImageURL(uploadedImageURL, inputImageURL string) string {
+	if strings.TrimSpace(uploadedImageURL) != "" {
+		return strings.TrimSpace(uploadedImageURL)
+	}
+
+	return strings.TrimSpace(inputImageURL)
 }
 
 func (s *productService) Delete(id uint, audit *AuditContext) error {

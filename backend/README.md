@@ -6,17 +6,17 @@ Backend aplikasi Marketplace Ikan dan Sistem Manajemen Budidaya menggunakan Gola
 
 ## Menjalankan Backend
 
-Menjalankan backend secara lokal:
+Menjalankan backend default project ini:
 
 ```bash
-go run cmd/server/main.go
+docker compose up -d --build
 ```
 
-Perintah di atas juga akan menjalankan migration database otomatis saat server start.
+Perintah di atas menyalakan full stack Docker sekaligus: `mysql`, `backend`, dan `nginx`.
 
 ## Menjalankan Migration
 
-Untuk menjalankan migration database:
+Untuk menjalankan migration melalui backend lokal:
 
 ```bash
 go run cmd/server/main.go
@@ -28,45 +28,28 @@ Jika ingin menjalankan migration sekaligus seeder:
 go run cmd/seeder/main.go
 ```
 
-Menjalankan backend dengan Docker:
-
-```bash
-docker compose up -d --build
-```
-
-Perintah di atas sekarang default untuk development lokal, jadi hanya menyalakan MySQL agar backend Go lokal bisa tetap memakai `http://localhost:8080` tanpa bentrok port.
-
-Jika ingin menjalankan full stack Docker sekaligus:
-
-```bash
-docker compose --profile fullstack up -d --build
-```
-
-Solusi cepat jika port `8080` bentrok saat menjalankan backend lokal:
+Solusi cepat jika sebelumnya sempat memakai konfigurasi profile lama atau muncul error network/container lama:
 
 ```bash
 docker compose down --remove-orphans
 docker compose up -d --build
-go run cmd/server/main.go
 ```
 
 Penjelasan singkat:
-- `docker compose down --remove-orphans` membersihkan container lama yang masih bisa menahan port `8080`
-- `docker compose up -d --build` menyalakan ulang service default untuk development lokal, yaitu MySQL
-- `go run cmd/server/main.go` menjalankan backend Go lokal di `http://localhost:8080`
+- `docker compose down --remove-orphans` membersihkan container dan network lama yang bisa membuat `nginx` gagal start
+- `docker compose up -d --build` menyalakan ulang seluruh stack Docker
 
 Setelah backend berjalan:
 
-- Backend container direct: `http://localhost:8081`
 - API root via Nginx: `http://localhost/`
 - Swagger via Nginx: `http://localhost/swagger/index.html`
+- API base URL untuk frontend: `http://localhost/api`
 
 Catatan port development:
 
-- Backend Go lokal default berjalan di `http://localhost:8080`
-- `docker compose up -d --build` default hanya menyalakan MySQL untuk kebutuhan backend lokal
-- Backend Docker full stack dipublish ke `http://localhost:8081`
-- Nginx Docker tetap tersedia di `http://localhost`
+- Backend Docker tidak dipublish langsung ke host, jadi tidak bentrok dengan `http://localhost:8080`
+- Akses API dari browser/frontend diarahkan lewat `nginx` di `http://localhost`
+- Jika ingin menjalankan backend Go lokal di `http://localhost:8080`, matikan stack Docker dulu agar upload dan akses file tidak tercampur
 
 ## Continuous Integration
 

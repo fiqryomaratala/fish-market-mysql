@@ -10,8 +10,9 @@ type Product struct {
 	Price       float64 `gorm:"not null"`
 	Stock       int     `gorm:"default:0"`
 	Category    string
+	Weight      float64 `gorm:"default:0"`
 	ImageURL    string
 	FishBatchID uint
 	FishBatch   FishBatch
-	Status      string `gorm:"default:active"`
+	Status      string `gorm:"default:available"`
 }

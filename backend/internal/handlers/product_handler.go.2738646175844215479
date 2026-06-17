@@ -118,7 +118,7 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
 
-	result, err := h.productService.GetAll(services.ProductListParams{
+		result, err := h.productService.GetAll(services.ProductListParams{
 		Search:   c.Query("search"),
 		Category: c.Query("category"),
 		Status:   c.Query("status"),

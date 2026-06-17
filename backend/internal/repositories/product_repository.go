@@ -11,6 +11,7 @@ import (
 type ProductFilter struct {
 	Search   string
 	Category string
+	Status   string
 	Page     int
 	Limit    int
 }
@@ -56,6 +57,10 @@ func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int
 
 	if filter.Category != "" {
 		query = query.Where("category = ?", strings.TrimSpace(filter.Category))
+	}
+
+	if filter.Status != "" {
+		query = query.Where("status = ?", strings.TrimSpace(filter.Status))
 	}
 
 	if err := query.Count(&total).Error; err != nil {

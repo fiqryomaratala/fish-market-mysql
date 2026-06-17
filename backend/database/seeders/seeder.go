@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	productFishNames = []string{"Nila", "Lele", "Gurame", "Patin", "Bawal", "Mujair", "Bandeng", "Kakap", "Kerapu", "Tongkol"}
+	productFishNames = []string{"Nila", "Lele", "Patin", "Gurame", "Bawal", "Bandeng"}
 	pondNames        = []string{"Kolam A", "Kolam B", "Kolam C", "Kolam D", "Kolam E"}
 	feedTypes        = []string{"Pelet PF-1000", "Pelet PF-800", "Pelet Apung", "Pelet Tenggelam", "Pakan Organik"}
 	batchStatuses    = []string{"active", "harvested"}
@@ -124,9 +124,10 @@ func SeedProducts(tx *gorm.DB) error {
 			Description: "Produk ikan segar " + fishName + " berkualitas tinggi.",
 			Price:       float64(gofakeit.Number(18000, 125000)),
 			Stock:       gofakeit.Number(10, 200),
-			Category:    "ikan konsumsi",
+			Category:    fishName,
+			Weight:      float64(gofakeit.Number(500, 5000)) / 1000,
 			ImageURL:    fmt.Sprintf("https://dummyimage.com/600x400/0ea5e9/ffffff&text=%s", fishName),
-			Status:      "active",
+			Status:      "available",
 		})
 	}
 

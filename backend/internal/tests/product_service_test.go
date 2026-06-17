@@ -35,7 +35,7 @@ func TestProductServiceCreate(t *testing.T) {
 	assert.Equal(t, "Ikan Nila", product.Name)
 	assert.Equal(t, "Segar", product.Description)
 	assert.Equal(t, "Air Tawar", product.Category)
-	assert.Equal(t, "active", product.Status)
+	assert.Equal(t, "available", product.Status)
 }
 
 func TestProductServiceUpdate(t *testing.T) {
