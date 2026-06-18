@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, Plus, RefreshCcw } from 'lucide-react'
-import {
-  PRODUCT_CATEGORIES,
-  PRODUCT_SORT_OPTIONS,
-  PRODUCT_STATUS_OPTIONS,
-  type ProductSortOption,
-} from '@/types/product'
+import { PRODUCT_CATEGORIES, PRODUCT_STATUS_OPTIONS } from '@/types/product'
 
 type DropdownOption<T extends string> = {
   label: string
@@ -15,21 +10,11 @@ type DropdownOption<T extends string> = {
 type FilterBarProps = {
   category: string
   status: string
-  sort: ProductSortOption
   isRefreshing?: boolean
   onCategoryChange: (value: string) => void
   onStatusChange: (value: string) => void
-  onSortChange: (value: ProductSortOption) => void
   onRefresh: () => void
   onAdd: () => void
-}
-
-const sortLabelMap: Record<ProductSortOption, string> = {
-  newest: 'Terbaru',
-  oldest: 'Terlama',
-  highest_price: 'Harga Tertinggi',
-  lowest_price: 'Harga Terendah',
-  stock: 'Stok',
 }
 
 const statusLabelMap: Record<string, string> = {
@@ -117,15 +102,13 @@ function CustomDropdown<T extends string>({
 export function FilterBar({
   category,
   status,
-  sort,
   isRefreshing,
   onCategoryChange,
   onStatusChange,
-  onSortChange,
   onRefresh,
   onAdd,
 }: FilterBarProps) {
-  const [openDropdown, setOpenDropdown] = useState<'category' | 'status' | 'sort' | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<'category' | 'status' | null>(null)
 
   const categoryOptions: DropdownOption<string>[] = [
     { value: 'All', label: 'Semua Kategori' },
@@ -139,11 +122,6 @@ export function FilterBar({
       label: statusLabelMap[item],
     })),
   ]
-
-  const sortOptions: DropdownOption<ProductSortOption>[] = PRODUCT_SORT_OPTIONS.map((item) => ({
-    value: item,
-    label: sortLabelMap[item],
-  }))
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
@@ -171,16 +149,6 @@ export function FilterBar({
             }
             onClose={() => setOpenDropdown(null)}
             onChange={onStatusChange}
-          />
-
-          <CustomDropdown
-            value={sort}
-            options={sortOptions}
-            widthClassName="xl:w-[160px]"
-            isOpen={openDropdown === 'sort'}
-            onToggle={() => setOpenDropdown((current) => (current === 'sort' ? null : 'sort'))}
-            onClose={() => setOpenDropdown(null)}
-            onChange={onSortChange}
           />
         </div>
 

@@ -68,7 +68,7 @@ function ProductsManagementPage() {
   const [searchInput, setSearchInput] = useState('')
   const [category, setCategory] = useState('All')
   const [status, setStatus] = useState('All')
-  const [sort, setSort] = useState<ProductSortOption>('newest')
+  const [sort] = useState<ProductSortOption>('newest')
   const [currentPage, setCurrentPage] = useState(1)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create')
@@ -223,11 +223,9 @@ function ProductsManagementPage() {
           <FilterBar
             category={category}
             status={status}
-            sort={sort}
             isRefreshing={isFetching}
             onCategoryChange={setCategory}
             onStatusChange={setStatus}
-            onSortChange={setSort}
             onRefresh={() => void refetch()}
             onAdd={openCreateModal}
           />
