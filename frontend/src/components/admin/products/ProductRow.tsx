@@ -35,15 +35,15 @@ export function ProductRow({ product, onView, onEdit, onDelete }: ProductRowProp
 
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Price</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Harga</p>
             <p className="mt-1 text-sm font-semibold text-slate-700">{formatCurrency(product.price)}</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Stock</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Stok</p>
             <p className="mt-1 text-sm font-semibold text-slate-700">{formatNumber(product.stock)}</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Created</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Dibuat</p>
             <p className="mt-1 text-sm font-semibold text-slate-700">{formatDate(product.created_at)}</p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export function ProductRow({ product, onView, onEdit, onDelete }: ProductRowProp
             className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700"
           >
             <Eye className="size-4" />
-            View
+            Lihat
           </button>
           <button
             type="button"
@@ -63,7 +63,7 @@ export function ProductRow({ product, onView, onEdit, onDelete }: ProductRowProp
             className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:text-emerald-700"
           >
             <Pencil className="size-4" />
-            Edit
+            Ubah
           </button>
           <button
             type="button"
@@ -71,7 +71,7 @@ export function ProductRow({ product, onView, onEdit, onDelete }: ProductRowProp
             className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-red-200 hover:text-red-700"
           >
             <Trash2 className="size-4" />
-            Delete
+            Hapus
           </button>
         </div>
       </div>

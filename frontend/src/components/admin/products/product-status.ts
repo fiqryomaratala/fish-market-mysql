@@ -1,9 +1,9 @@
 import type { ProductStatus } from '@/types/product'
 
 export const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
-  available: 'Available',
-  out_of_stock: 'Out of Stock',
-  hidden: 'Hidden',
+  available: 'Tersedia',
+  out_of_stock: 'Stok Habis',
+  hidden: 'Disembunyikan',
 }
 
 export const PRODUCT_STATUS_STYLES: Record<ProductStatus, string> = {

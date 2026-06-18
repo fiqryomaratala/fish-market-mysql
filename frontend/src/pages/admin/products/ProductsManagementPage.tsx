@@ -166,7 +166,7 @@ function ProductsManagementPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.34em] text-cyan-700">
-              Product Management
+              Manajemen Produk
             </p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-900">
               Kelola katalog produk Fish Marketplace
@@ -180,7 +180,7 @@ function ProductsManagementPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Total Product
+                Total Produk
               </p>
               <p className="mt-2 text-2xl font-semibold text-slate-900">
                 {data?.items.length ?? 0}
@@ -188,7 +188,7 @@ function ProductsManagementPage() {
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Visible
+                Tersedia
               </p>
               <p className="mt-2 text-2xl font-semibold text-slate-900">
                 {data?.items.filter((item) => item.status === 'available').length ?? 0}
@@ -196,7 +196,7 @@ function ProductsManagementPage() {
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Out of Stock
+                Stok Habis
               </p>
               <p className="mt-2 text-2xl font-semibold text-slate-900">
                 {data?.items.filter((item) => item.status === 'out_of_stock').length ?? 0}
@@ -206,10 +206,17 @@ function ProductsManagementPage() {
         </div>
       </section>
 
-      <section className="space-y-4 rounded-[2rem] border border-slate-200 bg-white p-4 sm:p-5 lg:p-6">
-        <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+      <section className="rounded-[2rem] border border-slate-200 bg-white p-4 sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-1 border-b border-slate-100 pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">
+            Kontrol Produk Admin
+          </p>
+          <h2 className="text-lg font-semibold text-slate-900">Atur pencarian dan aksi produk</h2>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-4">
           <SearchBar
-            className="min-w-0 flex-1 xl:max-w-none"
+            className="min-w-0 flex-1"
             value={searchInput}
             onChange={setSearchInput}
           />
@@ -226,7 +233,7 @@ function ProductsManagementPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-2 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-slate-600">
             <p>
               Menampilkan{' '}
@@ -235,16 +242,12 @@ function ProductsManagementPage() {
             </p>
             <span className="hidden h-4 w-px bg-slate-200 sm:block" />
             <p>
-              Realtime search:{' '}
+              Pencarian realtime:{' '}
               <span className="font-semibold text-cyan-700">
                 {debouncedSearch || 'semua produk'}
               </span>
             </p>
           </div>
-
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
-            Admin Product Controls
-          </p>
         </div>
       </section>
 
@@ -265,7 +268,7 @@ function ProductsManagementPage() {
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
           >
             <RefreshCcw className={`size-4 ${isFetching ? 'animate-spin' : ''}`} />
-            Retry
+            Coba Lagi
           </button>
         </section>
       ) : null}
@@ -275,7 +278,7 @@ function ProductsManagementPage() {
           <div className="rounded-full bg-slate-100 p-4 text-slate-400">
             <Box className="size-7" />
           </div>
-          <h2 className="mt-4 text-2xl font-semibold text-slate-900">No Product Found</h2>
+          <h2 className="mt-4 text-2xl font-semibold text-slate-900">Produk Tidak Ditemukan</h2>
           <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
             Belum ada produk yang cocok dengan filter saat ini. Coba ubah pencarian, filter,
             atau tambahkan produk baru.

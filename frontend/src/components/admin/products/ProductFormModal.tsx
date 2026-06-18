@@ -28,12 +28,12 @@ function getInactiveStatusOptionClass(status: ProductStatus) {
 }
 
 const productFormSchema = z.object({
-  name: z.string().trim().min(1, 'Name required'),
+  name: z.string().trim().min(1, 'Nama wajib diisi'),
   description: z.string().trim().optional(),
-  price: z.coerce.number().gt(0, 'Price must be greater than 0'),
-  stock: z.coerce.number().gte(0, 'Stock must be at least 0'),
-  category: z.string().trim().min(1, 'Category required'),
-  weight: z.coerce.number().gte(0, 'Weight must be at least 0'),
+  price: z.coerce.number().gt(0, 'Harga harus lebih besar dari 0'),
+  stock: z.coerce.number().gte(0, 'Stok minimal 0'),
+  category: z.string().trim().min(1, 'Kategori wajib dipilih'),
+  weight: z.coerce.number().gte(0, 'Berat minimal 0'),
   status: z.enum(PRODUCT_STATUS_OPTIONS),
   image_url: z.string().trim().optional(),
 })
@@ -160,7 +160,7 @@ export function ProductFormModal({
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-600">
-              {mode === 'create' ? 'Add Product' : 'Edit Product'}
+              {mode === 'create' ? 'Tambah Produk' : 'Ubah Produk'}
             </p>
             <h3 className="mt-2 text-2xl font-semibold text-slate-900">
               {mode === 'create' ? 'Tambah produk baru' : `Edit ${product?.name ?? 'produk'}`}
@@ -181,7 +181,7 @@ export function ProductFormModal({
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-700">Name</span>
+                  <span className="text-sm font-medium text-slate-700">Nama</span>
                   <input
                     {...register('name')}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -192,7 +192,7 @@ export function ProductFormModal({
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-700">Category</span>
+                  <span className="text-sm font-medium text-slate-700">Kategori</span>
                   <select
                     {...register('category')}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -211,7 +211,7 @@ export function ProductFormModal({
               </div>
 
               <label className="space-y-2">
-                <span className="text-sm font-medium text-slate-700">Description</span>
+                <span className="text-sm font-medium text-slate-700">Deskripsi</span>
                 <textarea
                   {...register('description')}
                   rows={5}
@@ -221,7 +221,7 @@ export function ProductFormModal({
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-700">Price</span>
+                  <span className="text-sm font-medium text-slate-700">Harga</span>
                   <input
                     type="number"
                     min="0"
@@ -235,7 +235,7 @@ export function ProductFormModal({
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-700">Stock</span>
+                  <span className="text-sm font-medium text-slate-700">Stok</span>
                   <input
                     type="number"
                     min="0"
@@ -248,7 +248,7 @@ export function ProductFormModal({
                 </label>
 
                 <label className="space-y-2">
-                  <span className="text-sm font-medium text-slate-700">Weight (kg)</span>
+                  <span className="text-sm font-medium text-slate-700">Berat (kg)</span>
                   <input
                     type="number"
                     min="0"
@@ -351,7 +351,7 @@ export function ProductFormModal({
                     <Upload className="size-6" />
                   </div>
                   <p className="mt-4 text-sm font-semibold text-slate-900">
-                    Drag & drop image here
+                    Seret dan lepas gambar di sini
                   </p>
                   <p className="mt-2 text-xs leading-6 text-slate-500">
                     Atau pilih file dari perangkat Anda untuk preview sebelum upload.
@@ -362,13 +362,13 @@ export function ProductFormModal({
                     className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700"
                   >
                     <ImagePlus className="size-4" />
-                    Choose Image
+                    Pilih Gambar
                   </button>
                 </div>
               </div>
 
               <label className="space-y-2">
-                <span className="text-sm font-medium text-slate-700">Image URL</span>
+                <span className="text-sm font-medium text-slate-700">URL Gambar</span>
                 <input
                   {...register('image_url')}
                   placeholder="https://..."
@@ -379,7 +379,7 @@ export function ProductFormModal({
               <div className="mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
                 <div className="border-b border-slate-100 bg-slate-50/80 px-4 py-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                    Image Preview
+                    Pratinjau Gambar
                   </p>
                 </div>
 
@@ -410,10 +410,10 @@ export function ProductFormModal({
                 <div className="flex flex-col gap-3 border-t border-slate-100 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                      Selected Source
+                      Sumber Terpilih
                     </p>
                     <p className="mt-1 truncate text-sm text-slate-600">
-                      {selectedImage?.name || imageUrl || 'No image selected'}
+                      {selectedImage?.name || imageUrl || 'Belum ada gambar dipilih'}
                     </p>
                   </div>
 
@@ -428,7 +428,7 @@ export function ProductFormModal({
                     }}
                     className="inline-flex items-center justify-center rounded-xl border border-red-100 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
                   >
-                    Remove Image
+                    Hapus Gambar
                   </button>
                 </div>
               </div>
@@ -441,7 +441,7 @@ export function ProductFormModal({
               onClick={onClose}
               className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300"
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
@@ -449,10 +449,10 @@ export function ProductFormModal({
               className="rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:from-cyan-700 hover:to-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
-                ? 'Saving...'
+                ? 'Menyimpan...'
                 : mode === 'create'
-                  ? 'Create Product'
-                  : 'Save Changes'}
+                  ? 'Tambah Produk'
+                  : 'Simpan Perubahan'}
             </button>
           </div>
         </form>

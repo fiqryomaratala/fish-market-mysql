@@ -2,14 +2,14 @@ export function LoadingSkeleton() {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white">
       <div className="hidden grid-cols-[90px_1.8fr_1fr_1fr_0.8fr_0.9fr_1fr_120px] gap-4 border-b border-slate-200 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:grid">
-        <span>Image</span>
-        <span>Name</span>
-        <span>Category</span>
-        <span>Price</span>
-        <span>Stock</span>
+        <span>Gambar</span>
+        <span>Nama</span>
+        <span>Kategori</span>
+        <span>Harga</span>
+        <span>Stok</span>
         <span>Status</span>
-        <span>Created</span>
-        <span>Action</span>
+        <span>Dibuat</span>
+        <span>Aksi</span>
       </div>
 
       <div className="space-y-4 p-4 lg:p-6">

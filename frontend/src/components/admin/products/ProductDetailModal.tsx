@@ -47,10 +47,10 @@ export function ProductDetailModal({
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-600">
-              Product Detail
+              Detail Produk
             </p>
             <h3 className="mt-2 text-2xl font-semibold text-slate-900">
-              {data?.name || 'Product overview'}
+              {data?.name || 'Ringkasan produk'}
             </h3>
           </div>
 
@@ -59,7 +59,7 @@ export function ProductDetailModal({
             onClick={onClose}
             className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300"
           >
-            Close
+            Tutup
           </button>
         </div>
 
@@ -91,7 +91,7 @@ export function ProductDetailModal({
               className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
             >
               <RefreshCcw className={`size-4 ${isFetching ? 'animate-spin' : ''}`} />
-              Retry
+              Coba Lagi
             </button>
           </div>
         ) : null}
@@ -118,21 +118,21 @@ export function ProductDetailModal({
             <div className="space-y-4">
               <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  Description
+                  Deskripsi
                 </p>
                 <p className="mt-2 text-sm leading-7 text-slate-600">
-                  {data.description || 'No description available.'}
+                  {data.description || 'Belum ada deskripsi produk.'}
                 </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <DetailItem label="Price" value={formatCurrency(data.price)} />
-                <DetailItem label="Stock" value={`${formatNumber(data.stock)} pcs`} />
-                <DetailItem label="Category" value={data.category} />
-                <DetailItem label="Weight" value={`${formatNumber(data.weight)} kg`} />
+                <DetailItem label="Harga" value={formatCurrency(data.price)} />
+                <DetailItem label="Stok" value={`${formatNumber(data.stock)} pcs`} />
+                <DetailItem label="Kategori" value={data.category} />
+                <DetailItem label="Berat" value={`${formatNumber(data.weight)} kg`} />
                 <DetailStatusItem status={data.status} />
-                <DetailItem label="Created At" value={formatDate(data.created_at)} />
-                <DetailItem label="Updated At" value={formatDate(data.updated_at)} />
+                <DetailItem label="Tanggal Dibuat" value={formatDate(data.created_at)} />
+                <DetailItem label="Terakhir Diperbarui" value={formatDate(data.updated_at)} />
               </div>
             </div>
           </div>

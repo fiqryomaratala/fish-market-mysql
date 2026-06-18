@@ -11,8 +11,8 @@ type DeleteModalProps = {
 
 export function DeleteModal({
   isOpen,
-  title = 'Are you sure?',
-  description = 'This action will permanently remove the product from the catalog.',
+  title = 'Yakin ingin menghapus?',
+  description = 'Tindakan ini akan menghapus produk dari katalog secara permanen.',
   isDeleting,
   onClose,
   onConfirm,
@@ -40,7 +40,7 @@ export function DeleteModal({
             onClick={onClose}
             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300"
           >
-            Cancel
+            Batal
           </button>
           <button
             type="button"
@@ -48,7 +48,7 @@ export function DeleteModal({
             disabled={isDeleting}
             className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? 'Menghapus...' : 'Hapus'}
           </button>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ChevronLeft className="size-4" />
-        Previous
+        Sebelumnya
       </button>
 
       <div className="flex flex-wrap items-center justify-center gap-2">
@@ -56,7 +56,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         disabled={currentPage === totalPages}
         className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Next
+        Berikutnya
         <ChevronRight className="size-4" />
       </button>
     </div>
