@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import PondsManagementPage from '@/pages/admin/ponds/PondsManagementPage'
 
 function PondsPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Ponds"
-      description="Ruang untuk monitoring kolam, kualitas air, kapasitas, dan kondisi budidaya per unit kolam."
-    />
-  )
+  return <PondsManagementPage />
 }
 
 export default PondsPage
