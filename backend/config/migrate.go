@@ -54,6 +54,21 @@ func normalizeLegacyProductStatuses() {
 
 func normalizeLegacyProductCategories() {
 	DB.Exec(`
+		UPDATE products p
+		JOIN fish_batches fb ON fb.id = p.fish_batch_id
+		SET p.category = CASE
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'nila' THEN 'Nila'
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'lele' THEN 'Lele'
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'patin' THEN 'Patin'
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'gurame' THEN 'Gurame'
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'bawal' THEN 'Bawal'
+			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'bandeng' THEN 'Bandeng'
+			ELSE p.category
+		END
+		WHERE LOWER(TRIM(COALESCE(fb.fish_type, ''))) IN ('nila', 'lele', 'patin', 'gurame', 'bawal', 'bandeng')
+	`)
+
+	DB.Exec(`
 		UPDATE products
 		SET category = CASE
 			WHEN LOWER(TRIM(COALESCE(category, ''))) = 'nila' THEN 'Nila'
@@ -85,25 +100,4 @@ func normalizeLegacyProductCategories() {
 			OR LOWER(name) LIKE '%bandeng%'
 	`)
 
-	DB.Exec(`
-		UPDATE products p
-		JOIN fish_batches fb ON fb.id = p.fish_batch_id
-		SET p.category = CASE
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'nila' THEN 'Nila'
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'lele' THEN 'Lele'
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'patin' THEN 'Patin'
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'gurame' THEN 'Gurame'
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'bawal' THEN 'Bawal'
-			WHEN LOWER(TRIM(COALESCE(fb.fish_type, ''))) = 'bandeng' THEN 'Bandeng'
-			ELSE p.category
-		END
-		WHERE LOWER(p.category) NOT IN ('nila', 'lele', 'patin', 'gurame', 'bawal', 'bandeng')
-			AND LOWER(p.name) NOT LIKE '%nila%'
-			AND LOWER(p.name) NOT LIKE '%lele%'
-			AND LOWER(p.name) NOT LIKE '%patin%'
-			AND LOWER(p.name) NOT LIKE '%gurame%'
-			AND LOWER(p.name) NOT LIKE '%bawal%'
-			AND LOWER(p.name) NOT LIKE '%bandeng%'
-			AND LOWER(TRIM(COALESCE(fb.fish_type, ''))) IN ('nila', 'lele', 'patin', 'gurame', 'bawal', 'bandeng')
-	`)
 }

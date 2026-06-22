@@ -178,6 +178,7 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 	if err != nil {
 		return nil, err
 	}
+	category = alignCategoryWithFishType(category, product.FishBatch.FishType)
 
 	oldImageURL := product.ImageURL
 	if input.Image != nil {
@@ -256,6 +257,25 @@ func normalizeProductCategory(category string) (string, error) {
 		return "Bandeng", nil
 	default:
 		return "", ErrInvalidProductCategory
+	}
+}
+
+func alignCategoryWithFishType(category, fishType string) string {
+	switch strings.ToLower(strings.TrimSpace(fishType)) {
+	case "nila":
+		return "Nila"
+	case "lele":
+		return "Lele"
+	case "patin":
+		return "Patin"
+	case "gurame":
+		return "Gurame"
+	case "bawal":
+		return "Bawal"
+	case "bandeng":
+		return "Bandeng"
+	default:
+		return category
 	}
 }
 

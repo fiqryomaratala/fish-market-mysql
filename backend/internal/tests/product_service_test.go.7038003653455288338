@@ -72,13 +72,13 @@ func TestProductServiceUpdateUsesFishTypeCategoryWhenBatchIsLinked(t *testing.T)
 	SetupTest(t)
 
 	existing := &models.Product{
-		Model:       models.Product{}.Model,
-		Name:        "Produk Lama",
-		Price:       10000,
-		Stock:       5,
-		Category:    "Bandeng",
+		Model:      models.Product{}.Model,
+		Name:       "Produk Lama",
+		Price:      10000,
+		Stock:      5,
+		Category:   "Bandeng",
 		FishBatchID: 1,
-		FishBatch:   models.FishBatch{FishType: "Lele"},
+		FishBatch:  models.FishBatch{FishType: "Lele"},
 	}
 	productRepo := &mocks.MockProductRepository{
 		FindByIDFunc: func(id uint) (*models.Product, error) {

@@ -84,7 +84,7 @@ func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int
 	}
 
 	offset := (filter.Page - 1) * filter.Limit
-	if err := query.Order("created_at DESC").Offset(offset).Limit(filter.Limit).Find(&products).Error; err != nil {
+	if err := query.Preload("FishBatch").Order("created_at DESC").Offset(offset).Limit(filter.Limit).Find(&products).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -93,7 +93,7 @@ func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int
 
 func (r *productRepository) FindByID(id uint) (*models.Product, error) {
 	var product models.Product
-	err := r.db.Where("status <> ?", "hidden").First(&product, id).Error
+	err := r.db.Preload("FishBatch").Where("status <> ?", "hidden").First(&product, id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -106,7 +106,7 @@ func (r *productRepository) FindByID(id uint) (*models.Product, error) {
 
 func (r *productRepository) FindByIDIncludingHidden(id uint) (*models.Product, error) {
 	var product models.Product
-	err := r.db.First(&product, id).Error
+	err := r.db.Preload("FishBatch").First(&product, id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
