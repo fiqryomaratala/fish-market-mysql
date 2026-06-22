@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import HarvestManagementPage from '@/pages/admin/harvests/HarvestManagementPage'
 
 function HarvestPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Harvest"
-      description="Siapkan perencanaan panen, estimasi hasil, pencatatan realisasi, dan distribusi hasil panen."
-    />
-  )
+  return <HarvestManagementPage />
 }
 
 export default HarvestPage

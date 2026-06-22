@@ -79,22 +79,22 @@ export function FeedingLogRow({
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Batch Code</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Kode Batch</p>
         <p className="text-sm font-semibold text-slate-900">{log.batch_code || '-'}</p>
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Fish Type</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Jenis Ikan</p>
         <p className="text-sm text-slate-700">{log.fish_type || '-'}</p>
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Pond</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Kolam</p>
         <p className="text-sm text-slate-700">{log.pond_name || '-'}</p>
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Feed Name</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Nama Pakan</p>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm text-slate-700">{log.feed_name || '-'}</p>
           <span
@@ -106,17 +106,17 @@ export function FeedingLogRow({
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Quantity</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Jumlah</p>
         <p className="text-sm font-semibold text-slate-900">{formatNumber(log.quantity)} kg</p>
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Feeding Time</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Waktu Pakan</p>
         <p className="text-sm text-slate-700">{formatTime(log.feeding_time)}</p>
       </div>
 
       <div className="mt-4 space-y-2 lg:mt-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Created By</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Dibuat Oleh</p>
         <p className="text-sm text-slate-700">{log.created_by || '-'}</p>
       </div>
 
@@ -125,7 +125,7 @@ export function FeedingLogRow({
           <Eye className="size-4" />
         </ActionButton>
         {canManage ? (
-          <ActionButton label="Edit log" onClick={() => onEdit(log)} tone="cyan">
+          <ActionButton label="Ubah log" onClick={() => onEdit(log)} tone="cyan">
             <Pencil className="size-4" />
           </ActionButton>
         ) : null}

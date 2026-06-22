@@ -56,7 +56,7 @@ export function FeedingLogDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm">
       <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-300/40">
         <div className="flex flex-col gap-2 border-b border-slate-100 pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-600">Detail Feeding Log</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-600">Detail Log Pakan</p>
           <h3 className="text-2xl font-semibold text-slate-900">Rincian aktivitas pemberian pakan</h3>
           <p className="text-sm text-slate-500">
             Detail diambil dari backend dan diperkaya dengan referensi batch serta inventaris saat tersedia.
@@ -113,17 +113,17 @@ export function FeedingLogDetailModal({
             </div>
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <DetailItem label="Batch Code" value={log.batch_code || '-'} />
-              <DetailItem label="Fish Type" value={log.fish_type || '-'} />
-              <DetailItem label="Pond" value={log.pond_name || '-'} />
-              <DetailItem label="Feed Name" value={log.feed_name || '-'} />
-              <DetailItem label="Feed Type" value={log.feed_type || '-'} />
-              <DetailItem label="Quantity" value={`${formatNumber(log.quantity)} kg`} />
-              <DetailItem label="Feeding Time" value={formatDateTime(log.feeding_time)} />
-              <DetailItem label="Notes" value={log.notes || '-'} />
-              <DetailItem label="Created By" value={log.created_by || '-'} />
-              <DetailItem label="Created At" value={log.created_at ? formatDateTime(log.created_at) : '-'} />
-              <DetailItem label="Updated At" value={log.updated_at ? formatDateTime(log.updated_at) : '-'} />
+              <DetailItem label="Kode Batch" value={log.batch_code || '-'} />
+              <DetailItem label="Jenis Ikan" value={log.fish_type || '-'} />
+              <DetailItem label="Kolam" value={log.pond_name || '-'} />
+              <DetailItem label="Nama Pakan" value={log.feed_name || '-'} />
+              <DetailItem label="Jenis Pakan" value={log.feed_type || '-'} />
+              <DetailItem label="Jumlah" value={`${formatNumber(log.quantity)} kg`} />
+              <DetailItem label="Waktu Pakan" value={formatDateTime(log.feeding_time)} />
+              <DetailItem label="Catatan" value={log.notes || '-'} />
+              <DetailItem label="Dibuat Oleh" value={log.created_by || '-'} />
+              <DetailItem label="Dibuat Pada" value={log.created_at ? formatDateTime(log.created_at) : '-'} />
+              <DetailItem label="Diperbarui Pada" value={log.updated_at ? formatDateTime(log.updated_at) : '-'} />
               <DetailItem label="Tanggal Log" value={formatDate(log.feeding_time)} />
             </div>
           </>

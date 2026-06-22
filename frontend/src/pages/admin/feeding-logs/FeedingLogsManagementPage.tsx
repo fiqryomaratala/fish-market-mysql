@@ -268,13 +268,13 @@ function FeedingLogsManagementPage() {
     try {
       if (formMode === 'create') {
         await createFeedingLogMutation.mutateAsync(payload)
-        toast.success('Feeding log berhasil ditambahkan.')
+        toast.success('Log pakan berhasil ditambahkan.')
       } else if (selectedLog) {
         await updateFeedingLogMutation.mutateAsync({
           id: selectedLog.id,
           payload,
         })
-        toast.success('Feeding log berhasil diperbarui.')
+        toast.success('Log pakan berhasil diperbarui.')
       }
 
       setIsFormOpen(false)
@@ -291,7 +291,7 @@ function FeedingLogsManagementPage() {
 
     try {
       await deleteFeedingLogMutation.mutateAsync(deleteTarget.id)
-      toast.success('Feeding log berhasil dihapus.')
+      toast.success('Log pakan berhasil dihapus.')
       setDeleteTarget(null)
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -315,7 +315,7 @@ function FeedingLogsManagementPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-600">
-              Feeding Log Management
+              Manajemen Log Pakan
             </p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-900">
               Kelola pencatatan pemberian pakan dengan rapi
@@ -336,30 +336,30 @@ function FeedingLogsManagementPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
-          title="Total Feeding Logs"
+          title="Total Log Pakan"
           value={formatNumber(summary.totalLogs)}
           description="Jumlah log pakan yang sesuai dengan filter aktif."
           icon={ClipboardList}
           tone="cyan"
         />
         <SummaryCard
-          title="Today's Feeding"
+          title="Pakan Hari Ini"
           value={formatNumber(summary.todayLogs)}
-          description="Jumlah aktivitas feeding yang tercatat hari ini."
+          description="Jumlah aktivitas pemberian pakan yang tercatat hari ini."
           icon={Fish}
           tone="emerald"
         />
         <SummaryCard
-          title="This Week Feeding"
+          title="Pakan Minggu Ini"
           value={formatNumber(summary.thisWeekLogs)}
-          description="Aktivitas feeding selama minggu berjalan dari data yang dimuat."
+          description="Aktivitas pemberian pakan selama minggu berjalan dari data yang dimuat."
           icon={PackageCheck}
           tone="amber"
         />
         <SummaryCard
-          title="Total Feed Used"
+          title="Total Pakan Digunakan"
           value={`${formatNumber(summary.totalFeedUsed)} kg`}
-          description="Akumulasi pakan yang tercatat pada log feeding saat ini."
+          description="Akumulasi pakan yang tercatat pada log pakan saat ini."
           icon={Scale}
           tone="slate"
         />
@@ -439,7 +439,7 @@ function FeedingLogsManagementPage() {
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
           >
             <RefreshCcw className={`size-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Retry
+            Coba Lagi
           </button>
         </section>
       ) : null}
@@ -449,7 +449,7 @@ function FeedingLogsManagementPage() {
           <div className="rounded-full bg-slate-100 p-4 text-slate-400">
             <ClipboardList className="size-7" />
           </div>
-          <h2 className="mt-4 text-2xl font-semibold text-slate-900">No Feeding Logs Found</h2>
+          <h2 className="mt-4 text-2xl font-semibold text-slate-900">Log Pakan Tidak Ditemukan</h2>
           <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
             Belum ada log pakan yang cocok dengan pencarian dan filter saat ini.
           </p>

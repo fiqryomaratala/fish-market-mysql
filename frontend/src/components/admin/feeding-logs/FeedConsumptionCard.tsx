@@ -25,23 +25,23 @@ export function FeedConsumptionCard({
 
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         <article className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Total Feed Used</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Total Pakan Digunakan</p>
           <p className="mt-3 text-2xl font-semibold text-slate-900">{totalFeedUsed}</p>
           <p className="mt-2 text-sm text-slate-500">Akumulasi jumlah pakan dari data log yang dimuat.</p>
         </article>
 
         <article className="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-            Average Feed Per Day
+            Rata-rata Pakan per Hari
           </p>
           <p className="mt-3 text-2xl font-semibold text-slate-900">{averageFeedPerDay}</p>
           <p className="mt-2 text-sm text-slate-500">Rata-rata konsumsi pakan per hari berdasarkan periode data.</p>
         </article>
 
         <article className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Most Used Feed</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Pakan Paling Sering Digunakan</p>
           <p className="mt-3 text-2xl font-semibold text-slate-900">{mostUsedFeed}</p>
-          <p className="mt-2 text-sm text-slate-500">Jenis pakan yang paling sering tercatat pada feeding log.</p>
+          <p className="mt-2 text-sm text-slate-500">Jenis pakan yang paling sering tercatat pada log pakan.</p>
         </article>
       </div>
     </section>

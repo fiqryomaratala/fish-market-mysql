@@ -7,10 +7,10 @@ import type { FeedingLog, FeedingLogMutationInput } from '@/types/feeding-log'
 import type { Inventory } from '@/types/inventory'
 
 const feedingLogFormSchema = z.object({
-  fish_batch_id: z.coerce.number().gt(0, 'Fish Batch wajib dipilih'),
-  feed_inventory_id: z.coerce.number().gt(0, 'Feed Inventory wajib dipilih'),
-  quantity: z.coerce.number().gt(0, 'Quantity harus lebih dari 0'),
-  feeding_time: z.string().trim().min(1, 'Feeding Time wajib diisi'),
+  fish_batch_id: z.coerce.number().gt(0, 'Batch ikan wajib dipilih'),
+  feed_inventory_id: z.coerce.number().gt(0, 'Inventaris pakan wajib dipilih'),
+  quantity: z.coerce.number().gt(0, 'Jumlah harus lebih dari 0'),
+  feeding_time: z.string().trim().min(1, 'Waktu pakan wajib diisi'),
   notes: z.string().trim(),
 })
 
@@ -135,7 +135,7 @@ export function FeedingLogFormModal({
       <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-300/40">
         <div className="flex flex-col gap-2 border-b border-slate-100 pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-600">
-            {mode === 'create' ? 'Tambah Feeding Log' : 'Edit Feeding Log'}
+            {mode === 'create' ? 'Tambah Log Pakan' : 'Ubah Log Pakan'}
           </p>
           <h3 className="text-2xl font-semibold text-slate-900">
             {mode === 'create'
@@ -143,7 +143,7 @@ export function FeedingLogFormModal({
               : `Perbarui log pakan ${log?.batch_code ?? ''}`}
           </h3>
           <p className="text-sm text-slate-500">
-            Pilih batch ikan, inventaris pakan, jumlah, dan waktu feeding dari data backend yang tersedia.
+            Pilih batch ikan, inventaris pakan, jumlah, dan waktu pemberian pakan dari data backend yang tersedia.
           </p>
         </div>
 
@@ -172,7 +172,7 @@ export function FeedingLogFormModal({
         >
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-semibold text-slate-700">Fish Batch</label>
+              <label className="text-sm font-semibold text-slate-700">Batch Ikan</label>
               <select
                 {...register('fish_batch_id', { valueAsNumber: true })}
                 className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -188,7 +188,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Feed Inventory</label>
+              <label className="text-sm font-semibold text-slate-700">Inventaris Pakan</label>
               <select
                 {...register('feed_inventory_id', { valueAsNumber: true })}
                 className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -204,7 +204,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Quantity</label>
+              <label className="text-sm font-semibold text-slate-700">Jumlah</label>
               <input
                 type="number"
                 step="0.01"
@@ -216,7 +216,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Feeding Time</label>
+              <label className="text-sm font-semibold text-slate-700">Waktu Pakan</label>
               <input
                 type="datetime-local"
                 {...register('feeding_time')}
@@ -226,7 +226,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Current Stock</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Stok Saat Ini</p>
               <p className="mt-2 text-xl font-semibold text-slate-900">
                 {selectedInventory ? selectedInventory.stock : '-'}
               </p>
@@ -236,7 +236,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Unit</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Satuan</p>
               <p className="mt-2 text-xl font-semibold text-slate-900">
                 {selectedInventory?.unit || '-'}
               </p>
@@ -246,7 +246,7 @@ export function FeedingLogFormModal({
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-sm font-semibold text-slate-700">Notes</label>
+              <label className="text-sm font-semibold text-slate-700">Catatan</label>
               <textarea
                 rows={4}
                 {...register('notes')}
@@ -280,7 +280,7 @@ export function FeedingLogFormModal({
               {isSubmitting
                 ? 'Menyimpan...'
                 : mode === 'create'
-                  ? 'Simpan Feeding Log'
+                  ? 'Simpan Log Pakan'
                   : 'Simpan Perubahan'}
             </button>
           </div>

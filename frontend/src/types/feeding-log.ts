@@ -46,34 +46,34 @@ export interface FeedingLogMutationInput {
   created_by?: string
 }
 
-export type FeedingSession = 'Morning Feeding' | 'Afternoon Feeding' | 'Evening Feeding'
+export type FeedingSession = 'Pakan Pagi' | 'Pakan Siang' | 'Pakan Sore'
 
 export function getFeedingSession(feedingTime: string): FeedingSession {
   const date = new Date(feedingTime)
 
   if (Number.isNaN(date.getTime())) {
-    return 'Morning Feeding'
+    return 'Pakan Pagi'
   }
 
   const hour = date.getHours()
 
   if (hour < 12) {
-    return 'Morning Feeding'
+    return 'Pakan Pagi'
   }
 
   if (hour < 17) {
-    return 'Afternoon Feeding'
+    return 'Pakan Siang'
   }
 
-  return 'Evening Feeding'
+  return 'Pakan Sore'
 }
 
 export function getFeedingSessionClasses(session: FeedingSession) {
-  if (session === 'Morning Feeding') {
+  if (session === 'Pakan Pagi') {
     return 'border-amber-200 bg-amber-50 text-amber-700'
   }
 
-  if (session === 'Afternoon Feeding') {
+  if (session === 'Pakan Siang') {
     return 'border-cyan-200 bg-cyan-50 text-cyan-700'
   }
 

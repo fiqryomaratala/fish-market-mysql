@@ -33,7 +33,7 @@ const PondsPage = lazy(() => import('@/pages/admin/PondsPage'))
 const FishBatchesPage = lazy(() => import('@/pages/admin/FishBatchesPage'))
 const FeedingPage = lazy(() => import('@/pages/admin/FeedingPage'))
 const HarvestPage = lazy(() => import('@/pages/admin/HarvestPage'))
-const OrdersPage = lazy(() => import('@/pages/admin/OrdersPage'))
+const OrdersPage = lazy(() => import('@/pages/admin/orders/OrderManagementPage').then((m) => ({ default: m.OrderManagementPage })))
 const ReportsPage = lazy(() => import('@/pages/admin/ReportsPage'))
 const AnalyticsPage = lazy(() => import('@/pages/admin/AnalyticsPage'))
 const NotificationsPage = lazy(() => import('@/pages/admin/NotificationsPage'))
@@ -149,7 +149,8 @@ export const router = createBrowserRouter([
               { path: 'fish-batches', element: withSuspense(<FishBatchesPage />) },
               { path: 'feeding', element: <Navigate to="/staff/feeding-logs" replace /> },
               { path: 'feeding-logs', element: withSuspense(<FeedingPage />) },
-              { path: 'harvest', element: withSuspense(<HarvestPage />) },
+              { path: 'harvest', element: <Navigate to="/staff/harvests" replace /> },
+              { path: 'harvests', element: withSuspense(<HarvestPage />) },
               { path: 'inventory', element: withSuspense(<InventoryPage />) },
               {
                 path: 'profile',
@@ -199,7 +200,8 @@ export const router = createBrowserRouter([
               { path: 'fish-batches', element: withSuspense(<FishBatchesPage />) },
               { path: 'feeding', element: <Navigate to="/admin/feeding-logs" replace /> },
               { path: 'feeding-logs', element: withSuspense(<FeedingPage />) },
-              { path: 'harvest', element: withSuspense(<HarvestPage />) },
+              { path: 'harvest', element: <Navigate to="/admin/harvests" replace /> },
+              { path: 'harvests', element: withSuspense(<HarvestPage />) },
               { path: 'orders', element: withSuspense(<OrdersPage />) },
               { path: 'reports', element: withSuspense(<ReportsPage />) },
               { path: 'analytics', element: withSuspense(<AnalyticsPage />) },
