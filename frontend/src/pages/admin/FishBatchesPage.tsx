@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import FishBatchesManagementPage from '@/pages/admin/fish-batches/FishBatchesManagementPage'
 
 function FishBatchesPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Fish Batches"
-      description="Kelola batch ikan dari tebar benih hingga panen, termasuk status pertumbuhan dan histori operasional."
-    />
-  )
+  return <FishBatchesManagementPage />
 }
 
 export default FishBatchesPage

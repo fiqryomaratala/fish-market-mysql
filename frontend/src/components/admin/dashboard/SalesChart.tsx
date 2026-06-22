@@ -1,8 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import {
   CartesianGrid,
   Line,
   LineChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -15,6 +15,35 @@ type SalesChartProps = {
 }
 
 export function SalesChart({ data }: SalesChartProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [chartSize, setChartSize] = useState({ width: 0, height: 280 })
+
+  useEffect(() => {
+    const element = containerRef.current
+
+    if (!element) {
+      return
+    }
+
+    const updateSize = () => {
+      const width = element.clientWidth
+      const height = element.clientHeight
+
+      if (width > 0 && height > 0) {
+        setChartSize({ width, height })
+      }
+    }
+
+    updateSize()
+
+    const observer = new ResizeObserver(updateSize)
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
   return (
     <section className="min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
@@ -32,9 +61,9 @@ export function SalesChart({ data }: SalesChartProps) {
         </div>
       </div>
 
-      <div className="mt-6 h-[280px] min-h-[280px] min-w-0 w-full">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={280}>
-          <LineChart data={data}>
+      <div ref={containerRef} className="mt-6 h-[280px] min-h-[280px] min-w-0 w-full">
+        {chartSize.width > 0 && chartSize.height > 0 ? (
+          <LineChart width={chartSize.width} height={chartSize.height} data={data}>
             <defs>
               <linearGradient id="salesStroke" x1="0" x2="1" y1="0" y2="0">
                 <stop offset="0%" stopColor="#0f766e" />
@@ -85,7 +114,9 @@ export function SalesChart({ data }: SalesChartProps) {
               activeDot={{ r: 5, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
             />
           </LineChart>
-        </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full animate-pulse rounded-xl bg-slate-100" />
+        )}
       </div>
     </section>
   )
