@@ -126,8 +126,13 @@ function toFormData(payload: ProductMutationInput) {
 }
 
 class ProductService {
-  async getProducts(params: ProductListParams = {}): Promise<ProductListResult> {
-    const { data } = await api.get<ProductListEnvelope>('/products', {
+  async getProducts(
+    params: ProductListParams = {},
+    options?: { admin?: boolean },
+  ): Promise<ProductListResult> {
+    const endpoint = options?.admin ? '/admin/products' : '/products'
+
+    const { data } = await api.get<ProductListEnvelope>(endpoint, {
       params: {
         page: params.page ?? DEFAULT_PAGE,
         limit: params.limit ?? DEFAULT_LIMIT,
@@ -149,8 +154,9 @@ class ProductService {
     }
   }
 
-  async getProduct(id: number): Promise<Product> {
-    const { data } = await api.get<ProductDetailEnvelope>(`/products/${id}`)
+  async getProduct(id: number, options?: { admin?: boolean }): Promise<Product> {
+    const endpoint = options?.admin ? `/admin/products/${id}` : `/products/${id}`
+    const { data } = await api.get<ProductDetailEnvelope>(endpoint)
 
     if (!data.data) {
       throw new Error('Product not found')

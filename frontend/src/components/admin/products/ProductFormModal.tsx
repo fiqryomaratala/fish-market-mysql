@@ -32,7 +32,12 @@ const productFormSchema = z.object({
   description: z.string().trim().optional(),
   price: z.coerce.number().gt(0, 'Harga harus lebih besar dari 0'),
   stock: z.coerce.number().gte(0, 'Stok minimal 0'),
-  category: z.string().trim().min(1, 'Kategori wajib dipilih'),
+  category: z
+    .string()
+    .trim()
+    .refine((value) => PRODUCT_CATEGORIES.includes(value as (typeof PRODUCT_CATEGORIES)[number]), {
+      message: 'Kategori wajib dipilih',
+    }),
   weight: z.coerce.number().gte(0, 'Berat minimal 0'),
   status: z.enum(PRODUCT_STATUS_OPTIONS),
   image_url: z.string().trim().optional(),

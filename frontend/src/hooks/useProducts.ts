@@ -2,9 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import { productService } from '@/services'
 import type { ProductListParams } from '@/types/product'
 
-export function useProducts(params: ProductListParams = {}) {
+type UseProductsOptions = {
+  admin?: boolean
+}
+
+export function useProducts(params: ProductListParams = {}, options: UseProductsOptions = {}) {
   return useQuery({
-    queryKey: ['products', params],
-    queryFn: async () => productService.getProducts(params),
+    queryKey: ['products', params, options.admin ? 'admin' : 'public'],
+    queryFn: async () => productService.getProducts(params, options),
   })
 }

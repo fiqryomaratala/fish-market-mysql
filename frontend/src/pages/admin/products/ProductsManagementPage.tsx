@@ -89,7 +89,7 @@ function ProductsManagementPage() {
     search: debouncedSearch || undefined,
     category: category === 'All' ? undefined : category,
     status: status === 'All' ? undefined : status,
-  })
+  }, { admin: true })
 
   const createProductMutation = useCreateProduct()
   const updateProductMutation = useUpdateProduct()

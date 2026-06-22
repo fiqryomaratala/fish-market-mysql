@@ -35,7 +35,9 @@ export function ProductDetailModal({
   isOpen,
   onClose,
 }: ProductDetailModalProps) {
-  const { data, isLoading, error, refetch, isFetching } = useProduct(productId ?? undefined)
+  const { data, isLoading, error, refetch, isFetching } = useProduct(productId ?? undefined, {
+    admin: true,
+  })
 
   if (!isOpen) {
     return null
