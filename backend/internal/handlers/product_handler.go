@@ -37,7 +37,7 @@ type ProductRequest struct {
 	Description string  `form:"description"`
 	Price       float64 `form:"price" validate:"gt=0"`
 	Stock       int     `form:"stock" validate:"gte=0"`
-	Category    string  `form:"category" validate:"required"`
+	Category    string  `form:"category" validate:"required,oneof=Nila Lele Patin Gurame Bawal Bandeng nila lele patin gurame bawal bandeng"`
 	Weight      float64 `form:"weight" validate:"gte=0"`
 	ImageURL    string  `form:"image_url"`
 	Status      string  `form:"status" validate:"omitempty,oneof=available out_of_stock hidden"`
@@ -95,6 +95,10 @@ func (h *ProductHandler) Create(c *gin.Context) {
 		Audit:       auditContextFromGin(c),
 	})
 	if err != nil {
+		if errors.Is(err, services.ErrInvalidProductCategory) {
+			utils.ValidationError(c, appvalidator.FieldError("category", "kategori produk tidak valid"))
+			return
+		}
 		middleware.HandleError(c, err)
 		return
 	}
@@ -115,15 +119,24 @@ func (h *ProductHandler) Create(c *gin.Context) {
 // @Failure 500 {object} APIResponse
 // @Router /products [get]
 func (h *ProductHandler) GetAll(c *gin.Context) {
+	h.getAll(c, false)
+}
+
+func (h *ProductHandler) GetAllAdmin(c *gin.Context) {
+	h.getAll(c, true)
+}
+
+func (h *ProductHandler) getAll(c *gin.Context, allowHidden bool) {
 	page := parsePositiveInt(c.DefaultQuery("page", "1"), 1)
 	limit := parsePositiveInt(c.DefaultQuery("limit", "10"), 10)
 
 	result, err := h.productService.GetAll(services.ProductListParams{
-		Search:   c.Query("search"),
-		Category: c.Query("category"),
-		Status:   c.Query("status"),
-		Page:     page,
-		Limit:    limit,
+		Search:      c.Query("search"),
+		Category:    c.Query("category"),
+		Status:      c.Query("status"),
+		AllowHidden: allowHidden,
+		Page:        page,
+		Limit:       limit,
 	})
 	if err != nil {
 		middleware.HandleError(c, err)
@@ -157,14 +170,31 @@ func (h *ProductHandler) GetAll(c *gin.Context) {
 // @Failure 500 {object} APIResponse
 // @Router /products/{id} [get]
 func (h *ProductHandler) GetByID(c *gin.Context) {
+	h.getByID(c, false)
+}
+
+func (h *ProductHandler) GetByIDAdmin(c *gin.Context) {
+	h.getByID(c, true)
+}
+
+func (h *ProductHandler) getByID(c *gin.Context, allowHidden bool) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		utils.Error(c, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
-	product, err := h.productService.GetByID(uint(id))
+	var product *models.Product
+	if allowHidden {
+		product, err = h.productService.GetByIDIncludingHidden(uint(id))
+	} else {
+		product, err = h.productService.GetByID(uint(id))
+	}
 	if err != nil {
+		if errors.Is(err, services.ErrInvalidProductCategory) {
+			utils.ValidationError(c, appvalidator.FieldError("category", "kategori produk tidak valid"))
+			return
+		}
 		middleware.HandleError(c, err)
 		return
 	}
@@ -257,6 +287,10 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 	}
 
 	if err := h.productService.Delete(uint(id), auditContextFromGin(c)); err != nil {
+		if errors.Is(err, services.ErrProductHasRelations) {
+			utils.Error(c, http.StatusConflict, err.Error())
+			return
+		}
 		middleware.HandleError(c, err)
 		return
 	}

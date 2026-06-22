@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"mime/multipart"
 	"strings"
 
@@ -14,16 +13,14 @@ import (
 )
 
 var ErrProductNotFound = errors.New("product not found")
-var ErrInvalidProductCategory = errors.New("invalid product category")
-var ErrProductHasRelations = errors.New("product still has related data")
 
 type ProductListParams struct {
-	Search      string
-	Category    string
-	Status      string
+	Search   string
+	Category string
+	Status   string
 	AllowHidden bool
-	Page        int
-	Limit       int
+	Page     int
+	Limit    int
 }
 
 type ProductListResult struct {
@@ -87,17 +84,12 @@ func (s *productService) Create(input CreateProductInput) (*models.Product, erro
 		return nil, err
 	}
 
-	category, err := normalizeProductCategory(input.Category)
-	if err != nil {
-		return nil, err
-	}
-
 	product := &models.Product{
 		Name:        strings.TrimSpace(input.Name),
 		Description: strings.TrimSpace(input.Description),
 		Price:       input.Price,
 		Stock:       input.Stock,
-		Category:    category,
+		Category:    strings.TrimSpace(input.Category),
 		Weight:      input.Weight,
 		ImageURL:    resolveProductImageURL(imageURL, input.ImageURL),
 		Status:      normalizeProductStatus(input.Status, input.Stock),
@@ -120,12 +112,12 @@ func (s *productService) Create(input CreateProductInput) (*models.Product, erro
 
 func (s *productService) GetAll(params ProductListParams) (*ProductListResult, error) {
 	products, total, err := s.productRepo.FindAll(repositories.ProductFilter{
-		Search:      params.Search,
-		Category:    params.Category,
-		Status:      params.Status,
+		Search:   params.Search,
+		Category: params.Category,
+		Status:   params.Status,
 		AllowHidden: params.AllowHidden,
-		Page:        params.Page,
-		Limit:       params.Limit,
+		Page:     params.Page,
+		Limit:    params.Limit,
 	})
 	if err != nil {
 		return nil, err
@@ -174,11 +166,6 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 		return nil, ErrProductNotFound
 	}
 
-	category, err := normalizeProductCategory(input.Category)
-	if err != nil {
-		return nil, err
-	}
-
 	oldImageURL := product.ImageURL
 	if input.Image != nil {
 		newImageURL, err := helpers.SaveUploadedProductImage(input.Image, s.uploadDir)
@@ -195,7 +182,7 @@ func (s *productService) Update(id uint, input UpdateProductInput) (*models.Prod
 	product.Description = strings.TrimSpace(input.Description)
 	product.Price = input.Price
 	product.Stock = input.Stock
-	product.Category = category
+	product.Category = strings.TrimSpace(input.Category)
 	product.Weight = input.Weight
 	product.Status = normalizeProductStatus(input.Status, input.Stock)
 
@@ -240,25 +227,6 @@ func normalizeProductStatus(status string, stock int) string {
 	}
 }
 
-func normalizeProductCategory(category string) (string, error) {
-	switch strings.ToLower(strings.TrimSpace(category)) {
-	case "nila":
-		return "Nila", nil
-	case "lele":
-		return "Lele", nil
-	case "patin":
-		return "Patin", nil
-	case "gurame":
-		return "Gurame", nil
-	case "bawal":
-		return "Bawal", nil
-	case "bandeng":
-		return "Bandeng", nil
-	default:
-		return "", ErrInvalidProductCategory
-	}
-}
-
 func resolveProductImageURL(uploadedImageURL, inputImageURL string) string {
 	if strings.TrimSpace(uploadedImageURL) != "" {
 		return strings.TrimSpace(uploadedImageURL)
@@ -268,29 +236,13 @@ func resolveProductImageURL(uploadedImageURL, inputImageURL string) string {
 }
 
 func (s *productService) Delete(id uint, audit *AuditContext) error {
-	product, err := s.productRepo.FindByIDIncludingHidden(id)
+	product, err := s.productRepo.FindByID(id)
 	if err != nil {
 		logger.Error("failed to find product before delete", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", id))
 		return err
 	}
 	if product == nil {
 		return ErrProductNotFound
-	}
-
-	usage, err := s.productRepo.GetRelationUsage(id)
-	if err != nil {
-		logger.Error("failed to inspect product relations before delete", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", id))
-		return err
-	}
-
-	if usage.CartRefs > 0 || usage.OrderItemRefs > 0 || usage.InventoryRefs > 0 {
-		return fmt.Errorf(
-			"%w: cart=%d, order_items=%d, inventories=%d",
-			ErrProductHasRelations,
-			usage.CartRefs,
-			usage.OrderItemRefs,
-			usage.InventoryRefs,
-		)
 	}
 
 	if err := s.productRepo.Delete(product); err != nil {

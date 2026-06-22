@@ -9,6 +9,7 @@ import (
 	"github.com/fiqryomaratala/backend/internal/models"
 	"github.com/fiqryomaratala/backend/internal/services"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestCheckoutServiceCheckoutSuccess(t *testing.T) {
@@ -23,7 +24,7 @@ func TestCheckoutServiceCheckoutSuccess(t *testing.T) {
 					Model:     models.Cart{}.Model,
 					ProductID: 1,
 					Quantity:  2,
-					Product:   models.Product{Name: "Ikan Nila", Price: 35000},
+					Product:   models.Product{Model: gorm.Model{ID: 1}, Name: "Ikan Nila", Price: 35000, Status: "available"},
 				},
 			}, nil
 		},
@@ -103,7 +104,7 @@ func TestCheckoutServiceInventoryNotEnough(t *testing.T) {
 						Model:     models.Cart{}.Model,
 						ProductID: 1,
 						Quantity:  3,
-						Product:   models.Product{Name: "Ikan Nila", Price: 35000},
+						Product:   models.Product{Model: gorm.Model{ID: 1}, Name: "Ikan Nila", Price: 35000, Status: "available"},
 					},
 				}, nil
 			},

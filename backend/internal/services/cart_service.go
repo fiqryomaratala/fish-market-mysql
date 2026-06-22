@@ -101,6 +101,14 @@ func (s *cartService) GetByUserID(userID uint) (*dto.CartResponse, error) {
 	}
 
 	for _, item := range items {
+		if item.Product.ID == 0 || item.Product.Status == "hidden" {
+			itemToDelete := item
+			if err := s.cartRepo.Delete(&itemToDelete); err != nil {
+				return nil, err
+			}
+			continue
+		}
+
 		subtotal := float64(item.Quantity) * item.Product.Price
 		response.Items = append(response.Items, dto.CartItem{
 			ID: item.ID,
@@ -124,6 +132,12 @@ func (s *cartService) Update(cartID uint, input UpdateCartInput) (*dto.CartRespo
 		return nil, err
 	}
 	if item == nil || item.UserID != input.UserID {
+		return nil, ErrCartItemNotFound
+	}
+	if item.Product.ID == 0 || item.Product.Status == "hidden" {
+		if err := s.cartRepo.Delete(item); err != nil {
+			return nil, err
+		}
 		return nil, ErrCartItemNotFound
 	}
 

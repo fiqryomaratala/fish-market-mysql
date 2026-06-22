@@ -28,6 +28,8 @@ func RegisterProductRoutes(r *gin.Engine, db *gorm.DB) {
 	admin.Use(middleware.AuthMiddleware())
 	admin.Use(middleware.RoleMiddleware("admin"))
 	{
+		admin.GET("/products", productHandler.GetAllAdmin)
+		admin.GET("/products/:id", productHandler.GetByIDAdmin)
 		admin.POST("/products", productHandler.Create)
 		admin.PUT("/products/:id", productHandler.Update)
 		admin.DELETE("/products/:id", productHandler.Delete)

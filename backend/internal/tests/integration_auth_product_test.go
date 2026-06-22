@@ -159,6 +159,14 @@ func (r *integrationProductRepository) FindByID(id uint) (*models.Product, error
 	return cloneProduct(product), nil
 }
 
+func (r *integrationProductRepository) FindByIDIncludingHidden(id uint) (*models.Product, error) {
+	return r.FindByID(id)
+}
+
+func (r *integrationProductRepository) GetRelationUsage(id uint) (*repositories.ProductRelationUsage, error) {
+	return &repositories.ProductRelationUsage{}, nil
+}
+
 func (r *integrationProductRepository) FindByFishType(fishType string) (*models.Product, error) {
 	return nil, nil
 }
@@ -280,7 +288,7 @@ func TestIntegrationAuthProductFlow(t *testing.T) {
 		"description": "Produk hasil integration test",
 		"price":       "35000",
 		"stock":       "12",
-		"category":    "ikan konsumsi",
+		"category":    "Nila",
 	}, "image", "nila-test.jpg", []byte("fake-image-content"), adminToken)
 	require.Equal(t, http.StatusCreated, createProductRecorder.Code)
 

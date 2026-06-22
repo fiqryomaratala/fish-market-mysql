@@ -9,18 +9,12 @@ import (
 )
 
 type ProductFilter struct {
-	Search      string
-	Category    string
-	Status      string
+	Search   string
+	Category string
+	Status   string
 	AllowHidden bool
-	Page        int
-	Limit       int
-}
-
-type ProductRelationUsage struct {
-	CartRefs      int64
-	OrderItemRefs int64
-	InventoryRefs int64
+	Page     int
+	Limit    int
 }
 
 type ProductRepository interface {
@@ -28,7 +22,6 @@ type ProductRepository interface {
 	FindAll(filter ProductFilter) ([]models.Product, int64, error)
 	FindByID(id uint) (*models.Product, error)
 	FindByIDIncludingHidden(id uint) (*models.Product, error)
-	GetRelationUsage(id uint) (*ProductRelationUsage, error)
 	FindByFishType(fishType string) (*models.Product, error)
 	Update(product *models.Product) error
 	Delete(product *models.Product) error
@@ -65,7 +58,7 @@ func (r *productRepository) FindAll(filter ProductFilter) ([]models.Product, int
 	}
 
 	if filter.Category != "" {
-		query = query.Where("LOWER(TRIM(category)) = LOWER(TRIM(?))", strings.TrimSpace(filter.Category))
+		query = query.Where("category = ?", strings.TrimSpace(filter.Category))
 	}
 
 	status := strings.TrimSpace(filter.Status)
@@ -115,30 +108,6 @@ func (r *productRepository) FindByIDIncludingHidden(id uint) (*models.Product, e
 	}
 
 	return &product, nil
-}
-
-func (r *productRepository) GetRelationUsage(id uint) (*ProductRelationUsage, error) {
-	usage := &ProductRelationUsage{}
-
-	if err := r.db.Model(&models.Cart{}).
-		Where("product_id = ? AND deleted_at IS NULL", id).
-		Count(&usage.CartRefs).Error; err != nil {
-		return nil, err
-	}
-
-	if err := r.db.Model(&models.OrderItem{}).
-		Where("product_id = ? AND deleted_at IS NULL", id).
-		Count(&usage.OrderItemRefs).Error; err != nil {
-		return nil, err
-	}
-
-	if err := r.db.Model(&models.Inventory{}).
-		Where("product_id = ? AND deleted_at IS NULL", id).
-		Count(&usage.InventoryRefs).Error; err != nil {
-		return nil, err
-	}
-
-	return usage, nil
 }
 
 func (r *productRepository) FindByFishType(fishType string) (*models.Product, error) {

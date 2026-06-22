@@ -173,6 +173,14 @@ func (r *storeProductRepository) FindByID(id uint) (*models.Product, error) {
 	return cloneProduct(product), nil
 }
 
+func (r *storeProductRepository) FindByIDIncludingHidden(id uint) (*models.Product, error) {
+	return r.FindByID(id)
+}
+
+func (r *storeProductRepository) GetRelationUsage(id uint) (*repositories.ProductRelationUsage, error) {
+	return &repositories.ProductRelationUsage{}, nil
+}
+
 func (r *storeProductRepository) FindByFishType(fishType string) (*models.Product, error) {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()

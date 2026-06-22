@@ -43,14 +43,13 @@ func (m *MockUserRepository) Update(user *models.User) error {
 }
 
 type MockProductRepository struct {
-	CreateFunc                  func(product *models.Product) error
-	FindAllFunc                 func(filter repositories.ProductFilter) ([]models.Product, int64, error)
-	FindByIDFunc                func(id uint) (*models.Product, error)
+	CreateFunc         func(product *models.Product) error
+	FindAllFunc        func(filter repositories.ProductFilter) ([]models.Product, int64, error)
+	FindByIDFunc       func(id uint) (*models.Product, error)
 	FindByIDIncludingHiddenFunc func(id uint) (*models.Product, error)
-	GetRelationUsageFunc        func(id uint) (*repositories.ProductRelationUsage, error)
-	FindByFishTypeFunc          func(fishType string) (*models.Product, error)
-	UpdateFunc                  func(product *models.Product) error
-	DeleteFunc                  func(product *models.Product) error
+	FindByFishTypeFunc func(fishType string) (*models.Product, error)
+	UpdateFunc         func(product *models.Product) error
+	DeleteFunc         func(product *models.Product) error
 }
 
 func (m *MockProductRepository) Create(product *models.Product) error {
@@ -82,13 +81,6 @@ func (m *MockProductRepository) FindByIDIncludingHidden(id uint) (*models.Produc
 		return m.FindByIDFunc(id)
 	}
 	return nil, nil
-}
-
-func (m *MockProductRepository) GetRelationUsage(id uint) (*repositories.ProductRelationUsage, error) {
-	if m.GetRelationUsageFunc != nil {
-		return m.GetRelationUsageFunc(id)
-	}
-	return &repositories.ProductRelationUsage{}, nil
 }
 
 func (m *MockProductRepository) FindByFishType(fishType string) (*models.Product, error) {

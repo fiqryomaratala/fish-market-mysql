@@ -26,7 +26,7 @@ func TestProductServiceCreate(t *testing.T) {
 		Description: " Segar ",
 		Price:       35000,
 		Stock:       10,
-		Category:    " Air Tawar ",
+		Category:    " nila ",
 	})
 
 	assert.NoError(t, err)
@@ -34,7 +34,7 @@ func TestProductServiceCreate(t *testing.T) {
 	assert.Equal(t, uint(1), product.ID)
 	assert.Equal(t, "Ikan Nila", product.Name)
 	assert.Equal(t, "Segar", product.Description)
-	assert.Equal(t, "Air Tawar", product.Category)
+	assert.Equal(t, "Nila", product.Category)
 	assert.Equal(t, "available", product.Status)
 }
 
@@ -57,7 +57,7 @@ func TestProductServiceUpdate(t *testing.T) {
 		Description: "Deskripsi Baru",
 		Price:       50000,
 		Stock:       20,
-		Category:    "Freshwater",
+		Category:    "Lele",
 	})
 
 	assert.NoError(t, err)
@@ -65,6 +65,7 @@ func TestProductServiceUpdate(t *testing.T) {
 	assert.Equal(t, "Ikan Baru", product.Name)
 	assert.Equal(t, float64(50000), product.Price)
 	assert.Equal(t, 20, product.Stock)
+	assert.Equal(t, "Lele", product.Category)
 }
 
 func TestProductServiceDelete(t *testing.T) {
@@ -74,6 +75,9 @@ func TestProductServiceDelete(t *testing.T) {
 	productRepo := &mocks.MockProductRepository{
 		FindByIDFunc: func(id uint) (*models.Product, error) {
 			return &models.Product{Model: models.Product{}.Model, Name: "Ikan Nila"}, nil
+		},
+		GetRelationUsageFunc: func(id uint) (*repositories.ProductRelationUsage, error) {
+			return &repositories.ProductRelationUsage{}, nil
 		},
 		DeleteFunc: func(product *models.Product) error {
 			deleted = true
@@ -86,6 +90,33 @@ func TestProductServiceDelete(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.True(t, deleted)
+}
+
+func TestProductServiceDeleteRejectedWhenProductHasRelations(t *testing.T) {
+	SetupTest(t)
+
+	deleted := false
+	productRepo := &mocks.MockProductRepository{
+		FindByIDIncludingHiddenFunc: func(id uint) (*models.Product, error) {
+			return &models.Product{Model: models.Product{}.Model, Name: "Ikan Lele"}, nil
+		},
+		GetRelationUsageFunc: func(id uint) (*repositories.ProductRelationUsage, error) {
+			return &repositories.ProductRelationUsage{
+				OrderItemRefs: 2,
+				InventoryRefs: 1,
+			}, nil
+		},
+		DeleteFunc: func(product *models.Product) error {
+			deleted = true
+			return nil
+		},
+	}
+
+	service := services.NewProductService(productRepo, "uploads/products")
+	err := service.Delete(1, nil)
+
+	assert.ErrorIs(t, err, services.ErrProductHasRelations)
+	assert.False(t, deleted)
 }
 
 func TestProductServiceGetByID(t *testing.T) {

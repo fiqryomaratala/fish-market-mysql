@@ -115,7 +115,21 @@ func (s *checkoutService) processCheckout(
 		logger.Error("failed to load cart items during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 		return "", err
 	}
-	if len(cartItems) == 0 {
+
+	activeCartItems := make([]models.Cart, 0, len(cartItems))
+	for _, item := range cartItems {
+		if item.Product.ID == 0 || item.Product.Status == "hidden" {
+			itemToDelete := item
+			if err := cartRepo.Delete(&itemToDelete); err != nil {
+				return "", err
+			}
+			continue
+		}
+
+		activeCartItems = append(activeCartItems, item)
+	}
+
+	if len(activeCartItems) == 0 {
 		return "", ErrCartEmpty
 	}
 
@@ -126,8 +140,8 @@ func (s *checkoutService) processCheckout(
 	}
 
 	totalPrice := 0.0
-	orderItems := make([]models.OrderItem, 0, len(cartItems))
-	for _, cartItem := range cartItems {
+	orderItems := make([]models.OrderItem, 0, len(activeCartItems))
+	for _, cartItem := range activeCartItems {
 		if err := inventoryService.DeductProductInventory(
 			cartItem.ProductID,
 			float64(cartItem.Quantity),

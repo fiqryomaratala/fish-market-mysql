@@ -31,13 +31,17 @@ func (r *cartRepository) Create(cart *models.Cart) error {
 
 func (r *cartRepository) FindByUserID(userID uint) ([]models.Cart, error) {
 	var items []models.Cart
-	err := r.db.Preload("Product").Where("user_id = ?", userID).Order("created_at DESC").Find(&items).Error
+	err := r.db.
+		Preload("Product", "status <> ?", "hidden").
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Find(&items).Error
 	return items, err
 }
 
 func (r *cartRepository) FindByID(id uint) (*models.Cart, error) {
 	var item models.Cart
-	err := r.db.Preload("Product").First(&item, id).Error
+	err := r.db.Preload("Product", "status <> ?", "hidden").First(&item, id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
