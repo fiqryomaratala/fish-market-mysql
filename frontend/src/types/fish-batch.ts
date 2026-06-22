@@ -115,6 +115,22 @@ export function getFishBatchStatusDot(status: FishBatchStatus) {
   return 'bg-slate-400'
 }
 
+export function getFishBatchStatusLabel(status: FishBatchStatus) {
+  if (status === 'Stocking') {
+    return 'Penebaran'
+  }
+
+  if (status === 'Growing') {
+    return 'Pertumbuhan'
+  }
+
+  if (status === 'Ready To Harvest') {
+    return 'Siap Panen'
+  }
+
+  return 'Dipanen'
+}
+
 export function getFishBatchStatusApiValue(status: FishBatchStatus) {
   if (status === 'Ready To Harvest') {
     return 'ready to harvest'

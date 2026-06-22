@@ -6,6 +6,7 @@ import type { Pond } from '@/types/pond'
 import {
   FISH_BATCH_STATUS_OPTIONS,
   FISH_TYPE_OPTIONS,
+  getFishBatchStatusLabel,
   type FishBatch,
   type FishBatchMutationInput,
 } from '@/types/fish-batch'
@@ -98,7 +99,7 @@ export function FishBatchFormModal({
       <div className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-300/40">
         <div className="flex flex-col gap-2 border-b border-slate-100 pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-600">
-            {mode === 'create' ? 'Tambah Batch' : 'Edit Batch'}
+            {mode === 'create' ? 'Tambah Batch' : 'Ubah Batch'}
           </p>
           <h3 className="text-2xl font-semibold text-slate-900">
             {mode === 'create'
@@ -113,7 +114,7 @@ export function FishBatchFormModal({
         <form className="mt-5 space-y-5" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-semibold text-slate-700">Batch Code</label>
+              <label className="text-sm font-semibold text-slate-700">Kode Batch</label>
               <input
                 {...register('batch_code')}
                 readOnly
@@ -124,7 +125,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Fish Type</label>
+              <label className="text-sm font-semibold text-slate-700">Jenis Ikan</label>
               <select
                 {...register('fish_type')}
                 className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -139,7 +140,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Pond</label>
+              <label className="text-sm font-semibold text-slate-700">Kolam</label>
               <select
                 {...register('pond_id', { valueAsNumber: true })}
                 className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
@@ -162,7 +163,7 @@ export function FishBatchFormModal({
               >
                 {FISH_BATCH_STATUS_OPTIONS.map((item) => (
                   <option key={item} value={item}>
-                    {item}
+                    {getFishBatchStatusLabel(item)}
                   </option>
                 ))}
               </select>
@@ -170,7 +171,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Initial Quantity</label>
+              <label className="text-sm font-semibold text-slate-700">Jumlah Awal</label>
               <input
                 type="number"
                 {...register('initial_quantity', { valueAsNumber: true })}
@@ -180,7 +181,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Current Quantity</label>
+              <label className="text-sm font-semibold text-slate-700">Jumlah Saat Ini</label>
               <input
                 type="number"
                 {...register('current_quantity', { valueAsNumber: true })}
@@ -190,7 +191,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Average Weight (kg)</label>
+              <label className="text-sm font-semibold text-slate-700">Bobot Rata-rata (kg)</label>
               <input
                 type="number"
                 step="0.01"
@@ -201,7 +202,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Stocking Date</label>
+              <label className="text-sm font-semibold text-slate-700">Tanggal Tebar</label>
               <input
                 type="date"
                 {...register('stocking_date')}
@@ -211,7 +212,7 @@ export function FishBatchFormModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700">Estimated Harvest Date</label>
+              <label className="text-sm font-semibold text-slate-700">Estimasi Tanggal Panen</label>
               <input
                 type="date"
                 {...register('estimated_harvest_date')}
@@ -221,7 +222,7 @@ export function FishBatchFormModal({
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-sm font-semibold text-slate-700">Notes</label>
+              <label className="text-sm font-semibold text-slate-700">Catatan</label>
               <textarea
                 {...register('notes')}
                 disabled

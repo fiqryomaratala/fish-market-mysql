@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import FeedingLogsManagementPage from '@/pages/admin/feeding-logs/FeedingLogsManagementPage'
 
 function FeedingPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Feeding"
-      description="Halaman untuk penjadwalan pakan, pencatatan konsumsi, serta monitoring efisiensi feeding per kolam atau batch."
-    />
-  )
+  return <FeedingLogsManagementPage />
 }
 
 export default FeedingPage

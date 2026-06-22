@@ -22,6 +22,7 @@ import {
   useUpdateFishBatch,
 } from '@/hooks'
 import type { FishBatch, FishBatchMutationInput, FishBatchStatus } from '@/types/fish-batch'
+import { getFishBatchStatusLabel } from '@/types/fish-batch'
 import { formatNumber } from '@/utils/format'
 
 const PAGE_SIZE = 10
@@ -189,7 +190,7 @@ function FishBatchesManagementPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-600">
-              Fish Batch Management
+              Manajemen Batch Ikan
             </p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-900">
               Kelola batch ikan secara terpusat dan responsif
@@ -215,21 +216,21 @@ function FishBatchesManagementPage() {
           tone="cyan"
         />
         <FishBatchSummaryCard
-          title="Growing Batch"
+          title="Batch Pertumbuhan"
           value={formatNumber(summary.growingBatch)}
           description="Batch yang sedang berada pada fase pertumbuhan aktif."
           icon={TrendingUp}
           tone="emerald"
         />
         <FishBatchSummaryCard
-          title="Ready To Harvest"
+          title="Siap Panen"
           value={formatNumber(summary.readyToHarvest)}
           description="Batch yang sudah mendekati atau siap masuk jadwal panen."
           icon={Fish}
           tone="orange"
         />
         <FishBatchSummaryCard
-          title="Harvested Batch"
+          title="Batch Dipanen"
           value={formatNumber(summary.harvestedBatch)}
           description="Batch yang sudah selesai dipanen dan tercatat dalam sistem."
           icon={Package}
@@ -260,6 +261,13 @@ function FishBatchesManagementPage() {
             Filter aktif:{' '}
             <span className="font-semibold text-cyan-700">
               {[debouncedSearch || null, status !== 'All' ? status : null, fishType !== 'All' ? fishType : null]
+                .map((item) => {
+                  if (item === 'Stocking' || item === 'Growing' || item === 'Ready To Harvest' || item === 'Harvested') {
+                    return getFishBatchStatusLabel(item)
+                  }
+
+                  return item
+                })
                 .filter(Boolean)
                 .join(' • ') || 'semua data'}
             </span>
@@ -284,7 +292,7 @@ function FishBatchesManagementPage() {
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
           >
             <RefreshCcw className={`size-4 ${fishBatchesQuery.isFetching ? 'animate-spin' : ''}`} />
-            Retry
+            Coba Lagi
           </button>
         </section>
       ) : null}
@@ -294,7 +302,7 @@ function FishBatchesManagementPage() {
           <div className="rounded-full bg-slate-100 p-4 text-slate-400">
             <Fish className="size-7" />
           </div>
-          <h2 className="mt-4 text-2xl font-semibold text-slate-900">No Fish Batch Found</h2>
+          <h2 className="mt-4 text-2xl font-semibold text-slate-900">Batch Ikan Tidak Ditemukan</h2>
           <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
             Belum ada batch ikan yang cocok dengan pencarian atau filter saat ini.
           </p>

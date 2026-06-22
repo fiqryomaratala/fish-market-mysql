@@ -2,6 +2,7 @@ import { Plus, RefreshCcw, Search } from 'lucide-react'
 import {
   FISH_BATCH_STATUS_OPTIONS,
   FISH_TYPE_OPTIONS,
+  getFishBatchStatusLabel,
   type FishBatchStatus,
 } from '@/types/fish-batch'
 
@@ -52,7 +53,7 @@ export function SearchFilter({
             <option value="All">Semua status</option>
             {FISH_BATCH_STATUS_OPTIONS.map((item) => (
               <option key={item} value={item}>
-                {item}
+                {getFishBatchStatusLabel(item)}
               </option>
             ))}
           </select>
@@ -76,7 +77,7 @@ export function SearchFilter({
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700"
           >
             <RefreshCcw className={`size-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            Muat Ulang
           </button>
 
           <button

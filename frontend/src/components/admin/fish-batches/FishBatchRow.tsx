@@ -1,6 +1,10 @@
 import { Eye, Pencil, Trash2 } from 'lucide-react'
 import type { FishBatch } from '@/types/fish-batch'
-import { getFishBatchStatusClasses, getFishBatchStatusDot } from '@/types/fish-batch'
+import {
+  getFishBatchStatusClasses,
+  getFishBatchStatusDot,
+  getFishBatchStatusLabel,
+} from '@/types/fish-batch'
 import { formatDate, formatNumber } from '@/utils/format'
 
 type FishBatchRowProps = {
@@ -34,7 +38,7 @@ export function FishBatchRow({
           </div>
           <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${statusClasses}`}>
             <span className={`size-2 rounded-full ${statusDot}`} />
-            {batch.status}
+            {getFishBatchStatusLabel(batch.status)}
           </span>
         </div>
 
@@ -102,7 +106,7 @@ export function FishBatchRow({
         <p className="text-sm text-slate-600">{formatDate(batch.estimated_harvest_date)}</p>
         <span className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${statusClasses}`}>
           <span className={`size-2 rounded-full ${statusDot}`} />
-          {batch.status}
+          {getFishBatchStatusLabel(batch.status)}
         </span>
         <div className="flex items-center gap-2">
           <button

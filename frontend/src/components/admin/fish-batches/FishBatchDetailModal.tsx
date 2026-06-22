@@ -6,6 +6,7 @@ import {
   calculateSurvivalRate,
   getFishBatchStatusClasses,
   getFishBatchStatusDot,
+  getFishBatchStatusLabel,
 } from '@/types/fish-batch'
 import { formatDate, formatNumber } from '@/utils/format'
 import { GrowthProgressCard } from './GrowthProgressCard'
@@ -79,7 +80,7 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
               onClick={() => void refetch()}
               className="mt-5 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700"
             >
-              {isFetching ? 'Memuat...' : 'Retry'}
+              {isFetching ? 'Memuat...' : 'Coba Lagi'}
             </button>
           </div>
         ) : (
@@ -89,7 +90,7 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                      Pond Information
+                      Informasi Kolam
                     </p>
                     <p className="mt-3 text-lg font-semibold text-slate-900">{batch.pond_name}</p>
                     <p className="mt-1 text-sm text-slate-500">{batch.fish_type}</p>
@@ -104,7 +105,7 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
               </article>
 
               <GrowthProgressCard
-                title="Capacity Usage"
+                title="Penggunaan Kapasitas"
                 value={`${formatNumber(batch.current_quantity)} ekor`}
                 description={`Sisa hidup sekitar ${survivalRate.toFixed(1)}% dari jumlah awal.`}
                 progress={survivalRate}
@@ -119,7 +120,7 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
                       className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${getFishBatchStatusClasses(batch.status)}`}
                     >
                       <span className={`size-2 rounded-full ${getFishBatchStatusDot(batch.status)}`} />
-                      {batch.status}
+                      {getFishBatchStatusLabel(batch.status)}
                     </span>
                     <p className="mt-3 text-sm text-slate-500">
                       Bobot rata-rata {formatNumber(batch.average_weight)} kg
@@ -134,21 +135,21 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
 
             <div className="grid gap-4 md:grid-cols-3">
               <GrowthProgressCard
-                title="Survival Rate"
+                title="Tingkat Kelangsungan Hidup"
                 value={`${survivalRate.toFixed(1)}%`}
                 description="Perbandingan jumlah ikan saat ini terhadap jumlah awal."
                 progress={survivalRate}
                 tone="emerald"
               />
               <GrowthProgressCard
-                title="Growth Progress"
+                title="Progress Pertumbuhan"
                 value={`${Math.round(growthProgress)}%`}
                 description="Progress visual berdasarkan rentang tanggal tebar sampai target panen."
                 progress={growthProgress}
                 tone="cyan"
               />
               <GrowthProgressCard
-                title="Days Remaining Until Harvest"
+                title="Sisa Hari Menuju Panen"
                 value={
                   daysRemaining === null
                     ? '-'
@@ -162,18 +163,18 @@ export function FishBatchDetailModal({ isOpen, batchId, onClose }: FishBatchDeta
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              <DetailField label="Batch Code" value={batch.batch_code} />
-              <DetailField label="Fish Type" value={batch.fish_type} />
-              <DetailField label="Pond" value={batch.pond_name} />
-              <DetailField label="Initial Quantity" value={formatNumber(batch.initial_quantity)} />
-              <DetailField label="Current Quantity" value={formatNumber(batch.current_quantity)} />
-              <DetailField label="Average Weight" value={`${formatNumber(batch.average_weight)} kg`} />
-              <DetailField label="Stocking Date" value={formatDate(batch.stocking_date)} />
-              <DetailField label="Estimated Harvest Date" value={formatDate(batch.estimated_harvest_date)} />
-              <DetailField label="Status" value={batch.status} />
-              <DetailField label="Notes" value={batch.notes || '-'} />
-              <DetailField label="Created At" value={formatDate(batch.created_at)} />
-              <DetailField label="Updated At" value={formatDate(batch.updated_at)} />
+              <DetailField label="Kode Batch" value={batch.batch_code} />
+              <DetailField label="Jenis Ikan" value={batch.fish_type} />
+              <DetailField label="Kolam" value={batch.pond_name} />
+              <DetailField label="Jumlah Awal" value={formatNumber(batch.initial_quantity)} />
+              <DetailField label="Jumlah Saat Ini" value={formatNumber(batch.current_quantity)} />
+              <DetailField label="Bobot Rata-rata" value={`${formatNumber(batch.average_weight)} kg`} />
+              <DetailField label="Tanggal Tebar" value={formatDate(batch.stocking_date)} />
+              <DetailField label="Estimasi Tanggal Panen" value={formatDate(batch.estimated_harvest_date)} />
+              <DetailField label="Status" value={getFishBatchStatusLabel(batch.status)} />
+              <DetailField label="Catatan" value={batch.notes || '-'} />
+              <DetailField label="Dibuat Pada" value={formatDate(batch.created_at)} />
+              <DetailField label="Diperbarui Pada" value={formatDate(batch.updated_at)} />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
