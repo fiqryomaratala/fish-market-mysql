@@ -1,13 +1,7 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import InventoryManagementPage from '@/pages/admin/inventory/InventoryManagementPage'
 
 function InventoryPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Inventory"
-      description="Pantau stok ikan, pakan, obat, dan item operasional lain dengan struktur yang siap dihubungkan ke REST API."
-    />
-  )
+  return <InventoryManagementPage />
 }
 
 export default InventoryPage

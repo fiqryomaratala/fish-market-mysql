@@ -34,8 +34,8 @@ export function HarvestChart({ data }: HarvestChartProps) {
         </div>
       </div>
 
-      <div className="mt-6 h-[260px] min-w-0 w-full">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <div className="mt-6 h-[260px] min-h-[260px] min-w-0 w-full">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={260}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#dcfce7" vertical={false} />
             <XAxis

@@ -32,8 +32,8 @@ export function SalesChart({ data }: SalesChartProps) {
         </div>
       </div>
 
-      <div className="mt-6 h-[280px] min-w-0 w-full">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+      <div className="mt-6 h-[280px] min-h-[280px] min-w-0 w-full">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={280}>
           <LineChart data={data}>
             <defs>
               <linearGradient id="salesStroke" x1="0" x2="1" y1="0" y2="0">
