@@ -1,6 +1,5 @@
 import { Calendar, Filter, RefreshCw, Search } from 'lucide-react'
 import { useState } from 'react'
-import type { OrderStatus } from '@/types/order-management'
 import { ORDER_STATUS_OPTIONS } from '@/types/order-management'
 
 interface SearchFilterProps {

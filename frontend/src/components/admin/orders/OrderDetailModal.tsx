@@ -1,5 +1,4 @@
 import { X, Package, Phone, Mail, MapPin, CreditCard, Calendar } from 'lucide-react'
-import type { OrderDetail } from '@/types/order-management'
 import { OrderStatusBadge } from './OrderStatusBadge'
 import { OrderTimeline } from './OrderTimeline'
 import { formatCompactCurrency } from '@/utils/format'

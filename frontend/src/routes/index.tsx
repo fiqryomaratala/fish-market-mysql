@@ -38,6 +38,7 @@ const ReportsPage = lazy(() => import('@/pages/admin/ReportsPage'))
 const AnalyticsPage = lazy(() => import('@/pages/admin/AnalyticsPage'))
 const NotificationsPage = lazy(() => import('@/pages/admin/NotificationsPage'))
 const ActivityLogsPage = lazy(() => import('@/pages/admin/ActivityLogsPage'))
+const UsersManagementPage = lazy(() => import('@/pages/admin/users/UsersManagementPage'))
 const UnauthorizedPage = lazy(() => import('@/pages/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
@@ -186,14 +187,7 @@ export const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { index: true, element: withSuspense(<AdminDashboardPage />) },
-              {
-                path: 'users',
-                element: placeholderPage(
-                  'Admin',
-                  'Users',
-                  'Kelola akun admin, staff, dan customer lengkap dengan pengaturan role dan status akses.',
-                ),
-              },
+              { path: 'users', element: withSuspense(<UsersManagementPage />) },
               { path: 'products', element: withSuspense(<AdminProductsPage />) },
               { path: 'inventory', element: withSuspense(<InventoryPage />) },
               { path: 'ponds', element: withSuspense(<PondsPage />) },

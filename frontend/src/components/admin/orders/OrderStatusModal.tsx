@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
-import type { OrderListItem, OrderStatus } from '@/types/order-management'
+import type { OrderListItem } from '@/types/order-management'
 import { ORDER_STATUS_OPTIONS } from '@/types/order-management'
 import { useUpdateOrderStatus } from '@/hooks/useOrderManagement'
 import { toast } from 'sonner'
