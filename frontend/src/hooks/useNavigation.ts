@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import {
   getDefaultPathByRole,
   getNavigationByRole,
+  getNotificationsPathByRole,
   getProfilePathByRole,
   getSettingsPathByRole,
 } from '@/config/navigation'
@@ -15,6 +16,7 @@ export function useNavigation() {
       role,
       items: getNavigationByRole(role),
       homePath: getDefaultPathByRole(role),
+      notificationsPath: getNotificationsPathByRole(role),
       profilePath: getProfilePathByRole(role),
       settingsPath: getSettingsPathByRole(role),
     }),

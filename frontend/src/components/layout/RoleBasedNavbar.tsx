@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-  Bell,
   ChevronDown,
   LogOut,
   Menu,
@@ -9,10 +8,10 @@ import {
   Settings,
   UserCircle2,
 } from 'lucide-react'
+import { NotificationBell } from '@/components/admin/notifications'
 import { getRoleLabel } from '@/config/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigation } from '@/hooks/useNavigation'
-import { useNotifications } from '@/hooks/useNotifications'
 
 type RoleBasedNavbarProps = {
   onOpenMobileMenu: () => void
@@ -33,10 +32,8 @@ function getInitials(name?: string) {
 export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
   const { user, role, logout } = useAuth()
   const { profilePath, settingsPath } = useNavigation()
-  const notificationsQuery = useNotifications({ page: 1, limit: 6 })
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
-  const unreadCount = (notificationsQuery.data?.items ?? []).filter((item) => !item.is_read).length
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -88,18 +85,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <NavLink
-            to="/admin/notifications"
-            className="relative rounded-[10px] border border-white/70 bg-white/85 p-2.5 text-slate-600 shadow-sm shadow-slate-200/40 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-            aria-label="Notifikasi"
-          >
-            <Bell className="size-5" />
-            {unreadCount > 0 ? (
-              <span className="absolute -right-1 -top-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                {unreadCount}
-              </span>
-            ) : null}
-          </NavLink>
+          <NotificationBell />
 
           <div className="relative" ref={dropdownRef}>
             <button

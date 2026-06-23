@@ -46,7 +46,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
               </span>
             ) : null}
           </div>
-          <p className="mt-1 text-sm leading-6 text-slate-500">{notification.description}</p>
+          <p className="mt-1 text-sm leading-6 text-slate-500">{notification.message}</p>
           <p className="mt-3 text-xs font-medium text-slate-400">
             {notification.created_at
               ? dateFormatter.format(new Date(notification.created_at))

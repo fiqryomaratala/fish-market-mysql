@@ -23,6 +23,11 @@ type NotificationListEnvelope = {
   message?: string
 }
 
+type NotificationDetailEnvelope = {
+  data?: NotificationApiItem | null
+  message?: string
+}
+
 function toNumber(value: unknown, fallback = 0) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : fallback
@@ -36,7 +41,7 @@ function mapNotification(item: NotificationApiItem, fallbackId: number): Notific
   return {
     id: toNumber(item.id, fallbackId),
     title: toStringValue(item.title, 'Notification'),
-    description: toStringValue(item.message),
+    message: toStringValue(item.message),
     type: toStringValue(item.type, 'GENERAL'),
     is_read: Boolean(item.is_read),
     created_at: toStringValue(item.created_at),
@@ -58,6 +63,10 @@ class NotificationService {
         page: toNumber(meta?.page, params.page ?? 1),
         limit: toNumber(meta?.limit, params.limit ?? 10),
         total: toNumber(meta?.total, items.length),
+        total_pages: Math.max(
+          1,
+          Math.ceil(toNumber(meta?.total, items.length) / Math.max(1, toNumber(meta?.limit, params.limit ?? 10))),
+        ),
       },
     }
   }
@@ -72,13 +81,18 @@ class NotificationService {
     }
   }
 
-  async getById(id: string) {
-    const { data } = await api.get<ApiResponse<NotificationItem>>(`/notifications/${id}`)
-    return data
+  async getNotification(id: number | string): Promise<NotificationItem> {
+    const { data } = await api.get<NotificationDetailEnvelope>(`/notifications/${id}`)
+
+    if (!data.data) {
+      throw new Error('Notification detail is empty')
+    }
+
+    return mapNotification(data.data, Number(id) || 0)
   }
 
-  async markAsRead(id: string) {
-    const { data } = await api.put<ApiResponse<NotificationItem>>(`/notifications/${id}/read`)
+  async markAsRead(id: number | string) {
+    const { data } = await api.put<ApiResponse<NotificationItem | null>>(`/notifications/${id}/read`)
     return data
   }
 
@@ -87,7 +101,7 @@ class NotificationService {
     return data
   }
 
-  async remove(id: string) {
+  async deleteNotification(id: number | string) {
     const { data } = await api.delete<ApiResponse<null>>(`/notifications/${id}`)
     return data
   }

@@ -1,7 +1,6 @@
 import {
   Activity,
   BarChart3,
-  Bell,
   Fish,
   LayoutDashboard,
   Package,
@@ -51,7 +50,6 @@ export const navigationItems: NavItem[] = [
   { title: 'Panen', path: '/admin/harvests', icon: Package, roles: 'admin' },
   { title: 'Pesanan', path: '/admin/orders', icon: ReceiptText, roles: 'admin' },
   { title: 'Laporan', path: '/admin/reports', icon: BarChart3, roles: 'admin' },
-  { title: 'Notifikasi', path: '/admin/notifications', icon: Bell, roles: 'admin' },
   { title: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: 'admin' },
   { title: 'Pengaturan', path: '/admin/settings', icon: Settings, roles: 'admin' },
 ]
@@ -98,6 +96,18 @@ export function getSettingsPathByRole(role: string | null | undefined) {
   }
 
   return '/customer/settings'
+}
+
+export function getNotificationsPathByRole(role: string | null | undefined) {
+  if (role === 'admin') {
+    return '/admin/notifications'
+  }
+
+  if (role === 'staff') {
+    return '/staff/notifications'
+  }
+
+  return '/customer/notifications'
 }
 
 export function getRoleLabel(role: UserRole | null) {

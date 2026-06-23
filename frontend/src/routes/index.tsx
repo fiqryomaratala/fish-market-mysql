@@ -152,6 +152,7 @@ export const router = createBrowserRouter([
               { path: 'harvest', element: <Navigate to="/staff/harvests" replace /> },
               { path: 'harvests', element: withSuspense(<HarvestPage />) },
               { path: 'inventory', element: withSuspense(<InventoryPage />) },
+              { path: 'notifications', element: withSuspense(<NotificationsPage />) },
               {
                 path: 'profile',
                 element: placeholderPage(

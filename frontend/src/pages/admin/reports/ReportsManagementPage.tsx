@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AxiosError } from 'axios'
 import {
   Activity,
   Boxes,
@@ -90,6 +91,23 @@ function getExportType(tab: ReportTabKey): ReportExportType | null {
   }
 
   return null
+}
+
+function getQueryErrorMessage(error: unknown) {
+  if (error instanceof AxiosError) {
+    return (
+      error.response?.data?.message ||
+      error.response?.data?.errors?.error ||
+      error.message ||
+      'Terjadi kendala saat mengambil data laporan dari backend.'
+    )
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return 'Terjadi kendala saat mengambil data laporan dari backend.'
 }
 
 export default function ReportsManagementPage() {
@@ -263,7 +281,7 @@ export default function ReportsManagementPage() {
           </div>
           <h2 className="mt-4 text-2xl font-semibold text-slate-900">Gagal memuat laporan</h2>
           <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500">
-            Terjadi kendala saat mengambil data laporan dari backend. Silakan coba lagi.
+            {getQueryErrorMessage(activeQuery.error)}
           </p>
           <button
             type="button"

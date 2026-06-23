@@ -1,13 +1,3 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import { NotificationsCenterPage } from '@/pages/admin/notifications/NotificationsCenterPage'
 
-function NotificationsPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Notifications"
-      description="Pusat notifikasi untuk alert stok, jadwal operasional, aktivitas user, dan pengumuman internal."
-    />
-  )
-}
-
-export default NotificationsPage
+export default NotificationsCenterPage
