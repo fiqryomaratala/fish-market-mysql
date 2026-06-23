@@ -70,6 +70,18 @@ func (r *integrationUserRepository) Create(user *models.User) error {
 	return nil
 }
 
+func (r *integrationUserRepository) FindAll(filter repositories.UserFilter) ([]models.User, int64, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	users := make([]models.User, 0, len(r.byID))
+	for _, user := range r.byID {
+		users = append(users, *cloneUser(user))
+	}
+
+	return users, int64(len(users)), nil
+}
+
 func (r *integrationUserRepository) FindByEmail(email string) (*models.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -106,6 +118,52 @@ func (r *integrationUserRepository) Update(user *models.User) error {
 	cloned := cloneUser(user)
 	r.byID[user.ID] = cloned
 	r.byEmail[user.Email] = cloned
+	return nil
+}
+
+func (r *integrationUserRepository) Delete(user *models.User) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	existing, ok := r.byID[user.ID]
+	if !ok {
+		return gorm.ErrRecordNotFound
+	}
+
+	delete(r.byID, user.ID)
+	delete(r.byEmail, existing.Email)
+	return nil
+}
+
+func (r *integrationUserRepository) UpdateRole(id uint, role string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	user, ok := r.byID[id]
+	if !ok {
+		return gorm.ErrRecordNotFound
+	}
+
+	user.Role = role
+	user.UpdatedAt = time.Now()
+	r.byID[id] = cloneUser(user)
+	r.byEmail[user.Email] = cloneUser(user)
+	return nil
+}
+
+func (r *integrationUserRepository) UpdateStatus(id uint, status string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	user, ok := r.byID[id]
+	if !ok {
+		return gorm.ErrRecordNotFound
+	}
+
+	user.Status = status
+	user.UpdatedAt = time.Now()
+	r.byID[id] = cloneUser(user)
+	r.byEmail[user.Email] = cloneUser(user)
 	return nil
 }
 

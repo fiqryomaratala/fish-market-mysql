@@ -8,13 +8,13 @@ import (
 )
 
 type MockUserRepository struct {
-	CreateFunc       func(user *models.User) error
-	FindAllFunc      func(filter repositories.UserFilter) ([]models.User, int64, error)
-	FindByEmailFunc  func(email string) (*models.User, error)
-	FindByIDFunc     func(id uint) (*models.User, error)
-	UpdateFunc       func(user *models.User) error
-	DeleteFunc       func(user *models.User) error
-	UpdateRoleFunc   func(id uint, role string) error
+	CreateFunc      func(user *models.User) error
+	FindAllFunc     func(filter repositories.UserFilter) ([]models.User, int64, error)
+	FindByEmailFunc func(email string) (*models.User, error)
+	FindByIDFunc    func(id uint) (*models.User, error)
+	UpdateFunc      func(user *models.User) error
+	DeleteFunc      func(user *models.User) error
+	UpdateRoleFunc  func(id uint, role string) error
 	UpdateStatusFunc func(id uint, status string) error
 }
 

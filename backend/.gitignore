@@ -2,4 +2,6 @@
 docker-compose.yml
 node_modules/
 postman/newman/
-.gocache
+.gocache/
+.gomodcache/
+.appdata/

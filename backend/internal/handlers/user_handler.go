@@ -24,6 +24,8 @@ type UserDetailResponse struct {
 	Phone     string    `json:"phone"`
 	Address   string    `json:"address"`
 	Avatar    string    `json:"avatar"`
+	AvatarURL string    `json:"avatar_url"`
+	PhotoURL  string    `json:"photo_url"`
 	Role      string    `json:"role"`
 	Status    string    `json:"status"`
 	LastLogin string    `json:"last_login"`
@@ -74,6 +76,8 @@ func mapUserToResponse(user *models.User) UserDetailResponse {
 		Phone:     user.Phone,
 		Address:   user.Address,
 		Avatar:    user.PhotoURL,
+		AvatarURL: user.PhotoURL,
+		PhotoURL:  user.PhotoURL,
 		Role:      user.Role,
 		Status:    user.Status,
 		LastLogin: lastLogin,

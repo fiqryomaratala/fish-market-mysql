@@ -1,6 +1,0 @@
-./auth_middleware.go
-./cors_middleware.go
-./error_handler.go
-./logger.go
-./recovery.go
-./role_middleware.go
