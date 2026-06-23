@@ -964,6 +964,92 @@ func TestIntegrationPondBatchHarvestInventoryFlow(t *testing.T) {
 	assert.Contains(t, summaryRecorder.Body.String(), `"total_harvests":1`)
 }
 
+func TestIntegrationStaffInventoryOperationalAccessFlow(t *testing.T) {
+	SetupTest(t)
+	gin.SetMode(gin.TestMode)
+
+	store, router := setupOperationsIntegrationRouter(t)
+	adminToken := loginAndExtractToken(t, router, "admin@fishmarket.com", "password123")
+	staffToken := loginAndExtractToken(t, router, "staff1@fishmarket.com", "password123")
+
+	pondRecorder := performJSONRequest(t, router, http.MethodPost, "/api/ponds", map[string]interface{}{
+		"name":        "Kolam Staff Inventory",
+		"location":    "Blok Barat",
+		"capacity":    2500,
+		"area":        80,
+		"water_type":  "freshwater",
+		"description": "Kolam untuk uji akses inventory staff",
+	}, adminToken)
+	require.Equal(t, http.StatusCreated, pondRecorder.Code)
+
+	var pondResponse apiResponseEnvelope
+	require.NoError(t, json.Unmarshal(pondRecorder.Body.Bytes(), &pondResponse))
+	pondID := uint(pondResponse.Data.(map[string]interface{})["id"].(float64))
+
+	batchRecorder := performJSONRequest(t, router, http.MethodPost, "/api/batches", map[string]interface{}{
+		"pond_id":          pondID,
+		"fish_type":        "Lele",
+		"seed_count":       1200,
+		"average_weight":   0.07,
+		"start_date":       "2026-07-01",
+		"expected_harvest": "2026-11-01",
+	}, adminToken)
+	require.Equal(t, http.StatusCreated, batchRecorder.Code)
+
+	var batchResponse apiResponseEnvelope
+	require.NoError(t, json.Unmarshal(batchRecorder.Body.Bytes(), &batchResponse))
+	batchID := uint(batchResponse.Data.(map[string]interface{})["id"].(float64))
+
+	product := store.addProduct(&models.Product{
+		Name:        "Produk Lele Operasional",
+		Description: "Produk untuk uji transaksi operasional staff",
+		Price:       38000,
+		Stock:       30,
+		Category:    "ikan konsumsi",
+		Status:      "active",
+	})
+	store.linkProductToBatch(product.ID, batchID)
+
+	harvestRecorder := performJSONRequest(t, router, http.MethodPost, "/api/harvests", map[string]interface{}{
+		"fish_batch_id":  batchID,
+		"harvest_date":   "2026-11-01",
+		"total_weight":   120,
+		"fish_count":     950,
+		"average_weight": 0.13,
+		"notes":          "Panen awal untuk stok operasional",
+	}, adminToken)
+	require.Equal(t, http.StatusCreated, harvestRecorder.Code)
+
+	inventoryRecorder := performJSONRequest(t, router, http.MethodGet, "/api/inventory", nil, staffToken)
+	require.Equal(t, http.StatusOK, inventoryRecorder.Code)
+	assert.Contains(t, inventoryRecorder.Body.String(), "Produk Lele Operasional")
+
+	txRecorder := performJSONRequest(t, router, http.MethodGet, "/api/inventory/transactions?type=IN", nil, staffToken)
+	require.Equal(t, http.StatusOK, txRecorder.Code)
+	assert.Contains(t, txRecorder.Body.String(), `"type":"IN"`)
+
+	operationalRecorder := performJSONRequest(t, router, http.MethodPost, "/api/inventory/transactions", map[string]interface{}{
+		"inventory_id": 1,
+		"type":         "OUT",
+		"quantity":     15,
+		"description":  "Distribusi stok operasional",
+		"reference":    "OPS-2026-0001",
+	}, staffToken)
+	require.Equal(t, http.StatusOK, operationalRecorder.Code)
+	assert.Contains(t, operationalRecorder.Body.String(), `"quantity":105`)
+
+	staffOutRecorder := performJSONRequest(t, router, http.MethodGet, "/api/inventory/transactions?type=OUT", nil, staffToken)
+	require.Equal(t, http.StatusOK, staffOutRecorder.Code)
+	assert.Contains(t, staffOutRecorder.Body.String(), `"reference":"OPS-2026-0001"`)
+
+	adjustmentRecorder := performJSONRequest(t, router, http.MethodPost, "/api/inventory/adjustment", map[string]interface{}{
+		"inventory_id": 1,
+		"quantity":     -5,
+		"description":  "Manual adjustment by staff",
+	}, staffToken)
+	require.Equal(t, http.StatusForbidden, adjustmentRecorder.Code)
+}
+
 func TestIntegrationCartCheckoutOrderFlow(t *testing.T) {
 	SetupTest(t)
 	gin.SetMode(gin.TestMode)
@@ -1183,7 +1269,8 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	inventory := router.Group("/api/inventory")
 	inventory.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("admin", "staff"))
 	inventory.GET("", inventoryHandler.GetAll)
-	inventory.GET("/transactions", middleware.RoleMiddleware("admin"), inventoryHandler.GetTransactions)
+	inventory.GET("/transactions", inventoryHandler.GetTransactions)
+	inventory.POST("/transactions", inventoryHandler.CreateOperationalTransaction)
 	inventory.POST("/adjustment", middleware.RoleMiddleware("admin"), inventoryHandler.Adjust)
 	inventory.GET("/:id", inventoryHandler.GetByID)
 

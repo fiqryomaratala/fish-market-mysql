@@ -15,6 +15,8 @@ import (
 )
 
 var ErrInventoryNotFound = errors.New("inventory not found")
+var ErrInvalidInventoryTransactionType = errors.New("inventory transaction type must be one of: IN, OUT")
+var ErrInvalidInventoryTransactionQuantity = errors.New("inventory transaction quantity must be greater than 0")
 
 type InventoryListParams struct {
 	Page      int
@@ -35,12 +37,22 @@ type InventoryAdjustmentInput struct {
 	Audit       *AuditContext
 }
 
+type InventoryOperationalTransactionInput struct {
+	InventoryID uint
+	Type        string
+	Quantity    float64
+	Description string
+	Reference   string
+	Audit       *AuditContext
+}
+
 type InventoryService interface {
 	GetAll(params InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error)
 	GetByID(id uint) (*dto.InventoryItem, error)
 	GetTransactions(params InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
 	CreateHarvestInventory(batch *models.FishBatch, totalWeight float64) error
 	Adjust(input InventoryAdjustmentInput) (*dto.InventoryItem, error)
+	RecordOperationalTransaction(input InventoryOperationalTransactionInput) (*dto.InventoryItem, error)
 	DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error
 }
 
@@ -136,7 +148,7 @@ func (s *inventoryService) CreateHarvestInventory(batch *models.FishBatch, total
 			FishBatchID: batch.ID,
 			Quantity:    totalWeight,
 			Unit:        "kg",
-			Status:      "available",
+			Status:      normalizeInventoryStatus(totalWeight),
 		}
 		if err := s.inventoryRepo.Create(inventory); err != nil {
 			logger.Error("failed to create inventory stock in", err, zap.String("module", "INVENTORY"), zap.Uint("product_id", product.ID))
@@ -144,7 +156,7 @@ func (s *inventoryService) CreateHarvestInventory(batch *models.FishBatch, total
 		}
 	} else {
 		inventory.Quantity += totalWeight
-		inventory.Status = "available"
+		inventory.Status = normalizeInventoryStatus(inventory.Quantity)
 		if err := s.inventoryRepo.Update(inventory); err != nil {
 			logger.Error("failed to update inventory stock in", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", inventory.ID))
 			return err
@@ -180,6 +192,7 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 	if item.Quantity < 0 {
 		item.Quantity = 0
 	}
+	item.Status = normalizeInventoryStatus(item.Quantity)
 
 	if err := s.inventoryRepo.Update(item); err != nil {
 		logger.Error("failed to update inventory adjustment", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
@@ -218,6 +231,92 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 	return &result, nil
 }
 
+func (s *inventoryService) RecordOperationalTransaction(input InventoryOperationalTransactionInput) (*dto.InventoryItem, error) {
+	item, err := s.inventoryRepo.FindByID(input.InventoryID)
+	if err != nil {
+		logger.Error("failed to find inventory before operational transaction", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", input.InventoryID))
+		return nil, err
+	}
+	if item == nil {
+		return nil, ErrInventoryNotFound
+	}
+
+	transactionType := strings.ToUpper(strings.TrimSpace(input.Type))
+	if transactionType != "IN" && transactionType != "OUT" {
+		return nil, ErrInvalidInventoryTransactionType
+	}
+
+	quantity := input.Quantity
+	if quantity <= 0 {
+		return nil, ErrInvalidInventoryTransactionQuantity
+	}
+
+	if transactionType == "OUT" && item.Quantity < quantity {
+		logger.Warn("inventory operational stock out exceeds available quantity", zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID), zap.Float64("requested", quantity), zap.Float64("available", item.Quantity))
+		return nil, ErrInsufficientInventory
+	}
+
+	if transactionType == "IN" {
+		item.Quantity += quantity
+	} else {
+		item.Quantity -= quantity
+	}
+	if item.Quantity < 0 {
+		item.Quantity = 0
+	}
+	item.Status = normalizeInventoryStatus(item.Quantity)
+
+	if err := s.inventoryRepo.Update(item); err != nil {
+		logger.Error("failed to update inventory during operational transaction", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
+		return nil, err
+	}
+
+	description := strings.TrimSpace(input.Description)
+	if description == "" {
+		if transactionType == "IN" {
+			description = "Operational stock in"
+		} else {
+			description = "Operational stock out"
+		}
+	}
+
+	reference := strings.TrimSpace(input.Reference)
+	if reference == "" {
+		reference = "OPERATIONAL-TRANSACTION"
+	}
+
+	if err := s.inventoryTransactionRepo.Create(&models.InventoryTransaction{
+		InventoryID: item.ID,
+		Type:        transactionType,
+		Quantity:    quantity,
+		Description: description,
+		Reference:   reference,
+	}); err != nil {
+		logger.Error("failed to create inventory operational transaction", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
+		return nil, err
+	}
+
+	updated, err := s.inventoryRepo.FindByID(item.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if input.Audit != nil && updated.Quantity <= 5 {
+		helpers.CreateNotification(
+			input.Audit.UserID,
+			"Low Stock",
+			fmt.Sprintf("Stok %s tinggal %.2f %s.", updated.Product.Name, updated.Quantity, updated.Unit),
+			"INVENTORY",
+			"INVENTORY",
+			updated.ID,
+		)
+	}
+
+	result := toInventoryDTO(updated)
+	logger.Info("inventory operational transaction recorded", zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID), zap.String("type", transactionType), zap.Float64("quantity", quantity))
+	return &result, nil
+}
+
 func (s *inventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error {
 	items, err := s.inventoryRepo.FindAvailableByProduct(productID)
 	if err != nil {
@@ -237,9 +336,7 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 		}
 
 		item.Quantity -= deducted
-		if item.Quantity == 0 {
-			item.Status = "empty"
-		}
+		item.Status = normalizeInventoryStatus(item.Quantity)
 
 		if err := s.inventoryRepo.Update(&item); err != nil {
 			logger.Error("failed to update inventory during stock out", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", item.ID))
@@ -305,4 +402,12 @@ func toInventoryTransactionDTO(item *models.InventoryTransaction) dto.InventoryT
 		BatchCode:   item.Inventory.FishBatch.BatchCode,
 		CreatedAt:   item.CreatedAt.UTC().Format(time.RFC3339),
 	}
+}
+
+func normalizeInventoryStatus(quantity float64) string {
+	if quantity <= 0 {
+		return "empty"
+	}
+
+	return "available"
 }

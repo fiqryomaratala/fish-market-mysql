@@ -135,6 +135,54 @@ func TestInventoryServiceStockAdjustment(t *testing.T) {
 	assert.Equal(t, float64(7), result.Quantity)
 }
 
+func TestInventoryServiceOperationalTransaction(t *testing.T) {
+	SetupTest(t)
+
+	inventory := &models.Inventory{
+		Model:       gorm.Model{ID: 1},
+		ProductID:   1,
+		FishBatchID: 1,
+		Quantity:    10,
+		Unit:        "kg",
+		Status:      "available",
+		Product:     models.Product{Name: "Nila"},
+		FishBatch:   models.FishBatch{BatchCode: "BTCH-2026-0001"},
+	}
+	createdTransaction := &models.InventoryTransaction{}
+	inventoryRepo := &mocks.MockInventoryRepository{
+		FindByIDFunc: func(id uint) (*models.Inventory, error) {
+			return inventory, nil
+		},
+		UpdateFunc: func(updated *models.Inventory) error {
+			inventory.Quantity = updated.Quantity
+			inventory.Status = updated.Status
+			return nil
+		},
+	}
+	transactionRepo := &mocks.MockInventoryTransactionRepository{
+		CreateFunc: func(transaction *models.InventoryTransaction) error {
+			*createdTransaction = *transaction
+			return nil
+		},
+	}
+
+	service := services.NewInventoryService(inventoryRepo, transactionRepo, &mocks.MockProductRepository{})
+	result, err := service.RecordOperationalTransaction(services.InventoryOperationalTransactionInput{
+		InventoryID: 1,
+		Type:        "OUT",
+		Quantity:    4,
+		Description: "Feeding preparation",
+		Reference:   "FEED-2026-0001",
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, float64(6), result.Quantity)
+	assert.Equal(t, "OUT", createdTransaction.Type)
+	assert.Equal(t, float64(4), createdTransaction.Quantity)
+	assert.Equal(t, "FEED-2026-0001", createdTransaction.Reference)
+}
+
 func TestInventoryServiceInventoryNotFound(t *testing.T) {
 	SetupTest(t)
 

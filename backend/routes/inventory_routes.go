@@ -23,7 +23,8 @@ func RegisterInventoryRoutes(r *gin.Engine, db *gorm.DB) {
 	inventory.Use(middleware.RoleMiddleware("admin", "staff"))
 	{
 		inventory.GET("", inventoryHandler.GetAll)
-		inventory.GET("/transactions", middleware.RoleMiddleware("admin"), inventoryHandler.GetTransactions)
+		inventory.GET("/transactions", inventoryHandler.GetTransactions)
+		inventory.POST("/transactions", inventoryHandler.CreateOperationalTransaction)
 		inventory.POST("/adjustment", middleware.RoleMiddleware("admin"), inventoryHandler.Adjust)
 		inventory.GET("/:id", inventoryHandler.GetByID)
 	}

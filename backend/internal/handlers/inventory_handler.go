@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/fiqryomaratala/backend/internal/middleware"
 	"github.com/fiqryomaratala/backend/internal/services"
@@ -18,6 +19,14 @@ type InventoryAdjustmentRequest struct {
 	InventoryID uint    `json:"inventory_id" validate:"required"`
 	Quantity    float64 `json:"quantity"`
 	Description string  `json:"description"`
+}
+
+type InventoryOperationalTransactionRequest struct {
+	InventoryID uint    `json:"inventory_id" validate:"required"`
+	Type        string  `json:"type" validate:"required"`
+	Quantity    float64 `json:"quantity" validate:"required,gt=0"`
+	Description string  `json:"description" validate:"required"`
+	Reference   string  `json:"reference"`
 }
 
 func NewInventoryHandler(inventoryService services.InventoryService) *InventoryHandler {
@@ -112,6 +121,54 @@ func (h *InventoryHandler) GetTransactions(c *gin.Context) {
 	}
 
 	utils.Success(c, "", items)
+}
+
+// CreateOperationalTransaction godoc
+// @Summary Create inventory operational transaction
+// @Description Create a limited operational inventory transaction for stock in or stock out
+// @Tags Inventory
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body InventoryOperationalTransactionRequest true "Operational inventory transaction payload"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /inventory/transactions [post]
+func (h *InventoryHandler) CreateOperationalTransaction(c *gin.Context) {
+	var req InventoryOperationalTransactionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ValidationError(c, appvalidator.FieldError("error", "invalid request body"))
+		return
+	}
+	if err := appvalidator.ValidateStruct(req); err != nil {
+		utils.ValidationError(c, appvalidator.FormatValidationErrors(err))
+		return
+	}
+
+	transactionType := strings.ToUpper(strings.TrimSpace(req.Type))
+	if transactionType != "IN" && transactionType != "OUT" {
+		utils.ValidationError(c, appvalidator.FieldError("type", "type must be one of: IN, OUT"))
+		return
+	}
+
+	item, err := h.inventoryService.RecordOperationalTransaction(services.InventoryOperationalTransactionInput{
+		InventoryID: req.InventoryID,
+		Type:        transactionType,
+		Quantity:    req.Quantity,
+		Description: req.Description,
+		Reference:   req.Reference,
+		Audit:       auditContextFromGin(c),
+	})
+	if err != nil {
+		middleware.HandleError(c, err)
+		return
+	}
+
+	utils.Success(c, "Inventory operational transaction recorded successfully", item)
 }
 
 // Adjust godoc

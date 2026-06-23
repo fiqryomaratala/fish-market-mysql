@@ -2544,3 +2544,16 @@
 {"level":"info","time":"2026-06-23T11:57:49.970+0700","caller":"logger/logger.go:66","msg":"product updated","module":"PRODUCT","product_id":0,"name":"Ikan Baru"}
 {"level":"info","time":"2026-06-23T11:57:49.970+0700","caller":"logger/logger.go:66","msg":"product updated","module":"PRODUCT","product_id":0,"name":"Produk Baru"}
 {"level":"info","time":"2026-06-23T11:57:49.970+0700","caller":"logger/logger.go:66","msg":"product deleted","module":"PRODUCT","product_id":0,"name":"Ikan Nila"}
+{"level":"info","time":"2026-06-24T00:40:39.657+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":10,"quantity":100}
+{"level":"info","time":"2026-06-24T00:40:39.658+0700","caller":"logger/logger.go:66","msg":"inventory stock out recorded","module":"INVENTORY","product_id":1,"quantity":10}
+{"level":"info","time":"2026-06-24T00:40:39.658+0700","caller":"logger/logger.go:66","msg":"inventory adjusted","module":"INVENTORY","inventory_id":1,"quantity":-3}
+{"level":"info","time":"2026-06-24T00:40:39.658+0700","caller":"logger/logger.go:66","msg":"inventory operational transaction recorded","module":"INVENTORY","inventory_id":1,"type":"OUT","quantity":4}
+{"level":"warn","time":"2026-06-24T00:40:39.658+0700","caller":"logger/logger.go:70","msg":"inventory stock out could not be fully deducted","module":"INVENTORY","product_id":1,"remaining":2}
+{"level":"info","time":"2026-06-24T00:40:39.781+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"admin@fishmarket.com"}
+{"level":"info","time":"2026-06-24T00:40:39.827+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":1,"role":"admin"}
+{"level":"info","time":"2026-06-24T00:40:39.827+0700","caller":"logger/logger.go:66","msg":"login attempt","module":"AUTH","email":"staff1@fishmarket.com"}
+{"level":"info","time":"2026-06-24T00:40:39.874+0700","caller":"logger/logger.go:66","msg":"login successful","module":"AUTH","user_id":2,"role":"staff"}
+{"level":"info","time":"2026-06-24T00:40:39.874+0700","caller":"logger/logger.go:66","msg":"fish batch created","module":"FISH_BATCH","batch_code":"BTCH-2026-0001","pond_id":1}
+{"level":"info","time":"2026-06-24T00:40:39.875+0700","caller":"logger/logger.go:66","msg":"inventory stock in recorded","module":"INVENTORY","inventory_id":1,"quantity":120}
+{"level":"info","time":"2026-06-24T00:40:39.875+0700","caller":"logger/logger.go:66","msg":"harvest created","module":"HARVEST","harvest_id":1,"batch_code":"BTCH-2026-0001"}
+{"level":"info","time":"2026-06-24T00:40:39.876+0700","caller":"logger/logger.go:66","msg":"inventory operational transaction recorded","module":"INVENTORY","inventory_id":1,"type":"OUT","quantity":15}

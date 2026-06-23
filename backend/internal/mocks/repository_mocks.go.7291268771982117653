@@ -486,13 +486,13 @@ func (m *MockCartRepository) DeleteByUserID(userID uint) error {
 }
 
 type MockInventoryService struct {
-	GetAllFunc                       func(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error)
-	GetByIDFunc                      func(id uint) (*dto.InventoryItem, error)
-	GetTransactionsFunc              func(params services.InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
-	CreateHarvestInventoryFunc       func(batch *models.FishBatch, totalWeight float64) error
-	AdjustFunc                       func(input services.InventoryAdjustmentInput) (*dto.InventoryItem, error)
+	GetAllFunc                 func(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error)
+	GetByIDFunc                func(id uint) (*dto.InventoryItem, error)
+	GetTransactionsFunc        func(params services.InventoryTransactionListParams) ([]dto.InventoryTransactionItem, error)
+	CreateHarvestInventoryFunc func(batch *models.FishBatch, totalWeight float64) error
+	AdjustFunc                 func(input services.InventoryAdjustmentInput) (*dto.InventoryItem, error)
 	RecordOperationalTransactionFunc func(input services.InventoryOperationalTransactionInput) (*dto.InventoryItem, error)
-	DeductProductInventoryFunc       func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error
+	DeductProductInventoryFunc func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error
 }
 
 func (m *MockInventoryService) GetAll(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error) {

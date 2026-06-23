@@ -56,6 +56,8 @@ func isValidationError(err error) bool {
 	case errors.Is(err, services.ErrInvalidOrderStatus),
 		errors.Is(err, services.ErrInvalidPaymentStatus),
 		errors.Is(err, services.ErrInvalidReportType),
+		errors.Is(err, services.ErrInvalidInventoryTransactionType),
+		errors.Is(err, services.ErrInvalidInventoryTransactionQuantity),
 		errors.Is(err, services.ErrInsufficientInventory),
 		errors.Is(err, services.ErrCartEmpty),
 		errors.Is(err, services.ErrPondInactive):
