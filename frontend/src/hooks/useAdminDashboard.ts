@@ -57,7 +57,7 @@ export function useInventoryAlert() {
   })
 }
 
-export function useActivityLog() {
+export function useDashboardActivityLog() {
   const { role } = useAuth()
 
   return useQuery({

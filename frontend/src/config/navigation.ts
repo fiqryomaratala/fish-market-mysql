@@ -12,7 +12,6 @@ import {
   Waves,
   Warehouse,
   ClipboardList,
-  ChartColumnIncreasing,
   ReceiptText,
 } from 'lucide-react'
 import type { NavItem } from '@/types/navigation'
@@ -52,7 +51,6 @@ export const navigationItems: NavItem[] = [
   { title: 'Panen', path: '/admin/harvests', icon: Package, roles: 'admin' },
   { title: 'Pesanan', path: '/admin/orders', icon: ReceiptText, roles: 'admin' },
   { title: 'Laporan', path: '/admin/reports', icon: BarChart3, roles: 'admin' },
-  { title: 'Analitik', path: '/admin/analytics', icon: ChartColumnIncreasing, roles: 'admin' },
   { title: 'Notifikasi', path: '/admin/notifications', icon: Bell, roles: 'admin' },
   { title: 'Log Aktivitas', path: '/admin/activity-logs', icon: Activity, roles: 'admin' },
   { title: 'Pengaturan', path: '/admin/settings', icon: Settings, roles: 'admin' },

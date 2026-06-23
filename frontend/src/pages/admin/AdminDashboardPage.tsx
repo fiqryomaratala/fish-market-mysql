@@ -19,8 +19,8 @@ import { RecentActivity } from '@/components/admin/dashboard/RecentActivity'
 import { SalesChart } from '@/components/admin/dashboard/SalesChart'
 import { TopSellingProduct } from '@/components/admin/dashboard/TopSellingProduct'
 import {
-  useActivityLog,
   useAuth,
+  useDashboardActivityLog,
   useDashboardSummary,
   useHarvestChart,
   useInventoryAlert,
@@ -36,7 +36,7 @@ function AdminDashboardPage() {
   const harvestQuery = useHarvestChart()
   const latestOrdersQuery = useLatestOrders()
   const inventoryAlertQuery = useInventoryAlert()
-  const activityLogQuery = useActivityLog()
+  const activityLogQuery = useDashboardActivityLog()
 
   const queries = [
     summaryQuery,

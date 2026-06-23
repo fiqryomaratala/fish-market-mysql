@@ -1,4 +1,4 @@
-export * from '@/services/activity.service'
+export * from '@/services/activity-log.service'
 export * from '@/services/auth.service'
 export * from '@/services/cart.service'
 export * from '@/services/checkout.service'

@@ -35,7 +35,6 @@ const FeedingPage = lazy(() => import('@/pages/admin/FeedingPage'))
 const HarvestPage = lazy(() => import('@/pages/admin/HarvestPage'))
 const OrdersPage = lazy(() => import('@/pages/admin/orders/OrderManagementPage').then((m) => ({ default: m.OrderManagementPage })))
 const ReportsPage = lazy(() => import('@/pages/admin/ReportsPage'))
-const AnalyticsPage = lazy(() => import('@/pages/admin/AnalyticsPage'))
 const NotificationsPage = lazy(() => import('@/pages/admin/NotificationsPage'))
 const ActivityLogsPage = lazy(() => import('@/pages/admin/ActivityLogsPage'))
 const UsersManagementPage = lazy(() => import('@/pages/admin/users/UsersManagementPage'))
@@ -198,7 +197,6 @@ export const router = createBrowserRouter([
               { path: 'harvests', element: withSuspense(<HarvestPage />) },
               { path: 'orders', element: withSuspense(<OrdersPage />) },
               { path: 'reports', element: withSuspense(<ReportsPage />) },
-              { path: 'analytics', element: withSuspense(<AnalyticsPage />) },
               { path: 'notifications', element: withSuspense(<NotificationsPage />) },
               { path: 'activity-logs', element: withSuspense(<ActivityLogsPage />) },
               {

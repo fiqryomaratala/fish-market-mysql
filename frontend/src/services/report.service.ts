@@ -6,7 +6,6 @@ import { inventoryService } from '@/services/inventory.service'
 import { orderManagementService } from '@/services/order-management.service'
 import { productService } from '@/services/product.service'
 import { userService } from '@/services/user.service'
-import type { Harvest } from '@/types/harvest'
 import {
   calculateSurvivalRate,
   type FishBatch,
