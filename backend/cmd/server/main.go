@@ -75,6 +75,7 @@ func main() {
 	routes.RegisterCheckoutRoutes(r, db)
 	routes.RegisterOrderRoutes(r, db)
 	routes.RegisterNotificationRoutes(r, db)
+	routes.RegisterUserRoutes(r, db)
 
 	if err := r.Run(":" + cfg.AppPort); err != nil {
 		logger.Error("failed to run server", err)
