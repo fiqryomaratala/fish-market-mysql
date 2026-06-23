@@ -3,13 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import type { Inventory, InventoryAdjustmentInput } from '@/types/inventory'
+import type { Inventory, InventoryStockTransactionInput } from '@/types/inventory'
 import { formatNumber } from '@/utils/format'
 
 const stockAdjustmentSchema = z.object({
   type: z.enum(['stock_in', 'stock_out']),
   quantity: z.coerce.number().gt(0, 'Quantity harus lebih besar dari 0'),
   reason: z.string().trim().min(1, 'Alasan wajib diisi'),
+  reference: z.string().trim().optional(),
 })
 
 type StockAdjustmentValues = z.infer<typeof stockAdjustmentSchema>
@@ -18,14 +19,16 @@ type StockAdjustmentInput = z.input<typeof stockAdjustmentSchema>
 type StockAdjustmentModalProps = {
   isOpen: boolean
   inventory?: Inventory | null
+  mode?: 'adjustment' | 'operational'
   isSubmitting?: boolean
   onClose: () => void
-  onSubmit: (payload: InventoryAdjustmentInput) => Promise<void>
+  onSubmit: (payload: InventoryStockTransactionInput) => Promise<void>
 }
 
 export function StockAdjustmentModal({
   isOpen,
   inventory,
+  mode = 'adjustment',
   isSubmitting,
   onClose,
   onSubmit,
@@ -42,6 +45,7 @@ export function StockAdjustmentModal({
       type: 'stock_in',
       quantity: 1,
       reason: '',
+      reference: '',
     },
   })
 
@@ -51,6 +55,7 @@ export function StockAdjustmentModal({
         type: 'stock_in',
         quantity: 1,
         reason: '',
+        reference: '',
       })
     }
   }, [isOpen, reset])
@@ -66,8 +71,10 @@ export function StockAdjustmentModal({
       type: values.type,
       quantity: values.quantity,
       reason: values.reason,
+      reference: values.reference,
     })
   })
+  const isOperationalMode = mode === 'operational'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm">
@@ -75,11 +82,13 @@ export function StockAdjustmentModal({
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">
-              Penyesuaian Stok
+              {isOperationalMode ? 'Transaksi Operasional' : 'Penyesuaian Stok'}
             </p>
             <h3 className="mt-2 text-2xl font-semibold text-slate-900">{inventory.name}</h3>
             <p className="mt-1 text-sm text-slate-500">
-              Stok saat ini {formatNumber(inventory.stock)} {inventory.unit}
+              {isOperationalMode
+                ? `Catat stok masuk atau keluar untuk operasional harian. Stok saat ini ${formatNumber(inventory.stock)} ${inventory.unit}`
+                : `Stok saat ini ${formatNumber(inventory.stock)} ${inventory.unit}`}
             </p>
           </div>
 
@@ -103,7 +112,9 @@ export function StockAdjustmentModal({
             >
               <input type="radio" value="stock_in" {...register('type')} className="sr-only" />
               <span className="text-sm font-semibold text-slate-900">Stock In</span>
-              <p className="mt-1 text-sm text-slate-500">Tambahkan stok ke inventaris.</p>
+              <p className="mt-1 text-sm text-slate-500">
+                {isOperationalMode ? 'Catat stok masuk dari aktivitas operasional.' : 'Tambahkan stok ke inventaris.'}
+              </p>
             </label>
 
             <label
@@ -115,11 +126,13 @@ export function StockAdjustmentModal({
             >
               <input type="radio" value="stock_out" {...register('type')} className="sr-only" />
               <span className="text-sm font-semibold text-slate-900">Stock Out</span>
-              <p className="mt-1 text-sm text-slate-500">Kurangi stok dari inventaris.</p>
+              <p className="mt-1 text-sm text-slate-500">
+                {isOperationalMode ? 'Catat stok keluar untuk kebutuhan operasional.' : 'Kurangi stok dari inventaris.'}
+              </p>
             </label>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className={`grid gap-4 ${isOperationalMode ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
             <label className="space-y-2">
               <span className="text-sm font-medium text-slate-700">Quantity</span>
               <input
@@ -137,13 +150,29 @@ export function StockAdjustmentModal({
               <span className="text-sm font-medium text-slate-700">Alasan</span>
               <input
                 {...register('reason')}
-                placeholder="Contoh: stok opname, barang masuk, barang rusak"
+                placeholder={
+                  isOperationalMode
+                    ? 'Contoh: distribusi pakan, penerimaan stok, kebutuhan kolam'
+                    : 'Contoh: stok opname, barang masuk, barang rusak'
+                }
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
               />
               {errors.reason ? (
                 <p className="text-xs text-red-600">{errors.reason.message}</p>
               ) : null}
             </label>
+
+            {isOperationalMode ? (
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-slate-700">Referensi</span>
+                <input
+                  {...register('reference')}
+                  placeholder="Contoh: OPS-2026-0001"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
+                />
+                <p className="text-xs text-slate-500">Opsional, untuk jejak transaksi operasional.</p>
+              </label>
+            ) : null}
           </div>
 
           <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
@@ -159,7 +188,11 @@ export function StockAdjustmentModal({
               disabled={isSubmitting}
               className="rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Penyesuaian'}
+              {isSubmitting
+                ? 'Menyimpan...'
+                : isOperationalMode
+                  ? 'Simpan Transaksi'
+                  : 'Simpan Penyesuaian'}
             </button>
           </div>
         </form>

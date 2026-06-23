@@ -30,6 +30,7 @@ import {
   useDeleteInventory,
   useInventories,
   useInventoryMovements,
+  useRecordOperationalTransaction,
   useUpdateInventory,
 } from '@/hooks'
 import {
@@ -37,6 +38,8 @@ import {
   type Inventory,
   type InventoryAdjustmentInput,
   type InventoryMutationInput,
+  type InventoryOperationalTransactionInput,
+  type InventoryStockTransactionInput,
 } from '@/types/inventory'
 import { formatNumber } from '@/utils/format'
 
@@ -61,7 +64,9 @@ function getErrorMessage(error: unknown) {
 
 function InventoryManagementPage() {
   const { role } = useAuth()
-  const canManage = role === 'admin'
+  const isAdmin = role === 'admin'
+  const canManage = isAdmin
+  const canOperate = role === 'admin' || role === 'staff'
   const [searchInput, setSearchInput] = useState('')
   const [category, setCategory] = useState('All')
   const [status, setStatus] = useState('All')
@@ -80,6 +85,7 @@ function InventoryManagementPage() {
   const updateInventoryMutation = useUpdateInventory()
   const deleteInventoryMutation = useDeleteInventory()
   const adjustStockMutation = useAdjustStock()
+  const operationalTransactionMutation = useRecordOperationalTransaction()
 
   const filteredInventories = useMemo(() => {
     return (inventoriesQuery.data?.items ?? []).filter((item) => {
@@ -150,8 +156,8 @@ function InventoryManagementPage() {
   }
 
   const handleOpenAdjust = (inventory: Inventory) => {
-    if (!canManage) {
-      toast.error('Aksi penyesuaian stok hanya tersedia untuk admin.')
+    if (!canOperate) {
+      toast.error('Anda tidak memiliki akses untuk transaksi stok.')
       return
     }
 
@@ -175,10 +181,15 @@ function InventoryManagementPage() {
     }
   }
 
-  const handleSubmitAdjustment = async (payload: InventoryAdjustmentInput) => {
+  const handleSubmitAdjustment = async (payload: InventoryStockTransactionInput) => {
     try {
-      await adjustStockMutation.mutateAsync(payload)
-      toast.success('Penyesuaian stok berhasil disimpan.')
+      if (isAdmin) {
+        await adjustStockMutation.mutateAsync(payload as InventoryAdjustmentInput)
+        toast.success('Penyesuaian stok berhasil disimpan.')
+      } else {
+        await operationalTransactionMutation.mutateAsync(payload as InventoryOperationalTransactionInput)
+        toast.success('Transaksi operasional berhasil disimpan.')
+      }
       setAdjustInventory(null)
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -209,7 +220,7 @@ function InventoryManagementPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/40">
+      <section className="admin-page-hero rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/40">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-600">
@@ -227,7 +238,7 @@ function InventoryManagementPage() {
           <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
             {canManage
               ? 'Mode admin aktif. Anda bisa menambah, mengedit, menyesuaikan, dan menghapus inventaris.'
-              : 'Mode staff aktif. Anda bisa memantau stok dan riwayat pergerakan inventaris.'}
+              : 'Mode staff aktif. Anda bisa memantau stok, melihat riwayat pergerakan, dan mencatat transaksi operasional.'}
           </div>
         </div>
       </section>
@@ -263,7 +274,12 @@ function InventoryManagementPage() {
         />
       </section>
 
-      <LowStockAlert items={lowStockItems} onOpenAdjust={handleOpenAdjust} canAdjust={canManage} />
+      <LowStockAlert
+        items={lowStockItems}
+        onOpenAdjust={handleOpenAdjust}
+        canAdjust={canOperate}
+        actionLabel={isAdmin ? 'Sesuaikan Stok' : 'Catat Transaksi'}
+      />
 
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/40">
         <div className="flex flex-col gap-4">
@@ -387,6 +403,8 @@ function InventoryManagementPage() {
           <InventoryTable
             inventories={paginatedInventories}
             canManage={canManage}
+            canAdjust={canOperate}
+            adjustLabel={isAdmin ? 'Sesuaikan' : 'Transaksi'}
             onView={(inventory) => setDetailInventoryId(inventory.id)}
             onEdit={handleOpenEdit}
             onAdjust={handleOpenAdjust}
@@ -433,7 +451,8 @@ function InventoryManagementPage() {
       <StockAdjustmentModal
         isOpen={Boolean(adjustInventory)}
         inventory={adjustInventory}
-        isSubmitting={adjustStockMutation.isPending}
+        mode={isAdmin ? 'adjustment' : 'operational'}
+        isSubmitting={adjustStockMutation.isPending || operationalTransactionMutation.isPending}
         onClose={() => setAdjustInventory(null)}
         onSubmit={handleSubmitAdjustment}
       />

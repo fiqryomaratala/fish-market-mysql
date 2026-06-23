@@ -14,9 +14,39 @@ const statusColorClasses: Record<string, string> = {
   red: 'bg-red-100 text-red-700 border-red-200',
 }
 
+function normalizeOrderStatus(status: string): OrderStatus | null {
+  const normalized = status.trim().toLowerCase()
+
+  if (normalized === 'pending') {
+    return 'Pending'
+  }
+
+  if (normalized === 'paid') {
+    return 'Paid'
+  }
+
+  if (normalized === 'processing') {
+    return 'Processing'
+  }
+
+  if (normalized === 'shipping') {
+    return 'Shipping'
+  }
+
+  if (normalized === 'completed') {
+    return 'Completed'
+  }
+
+  if (normalized === 'cancelled') {
+    return 'Cancelled'
+  }
+
+  return null
+}
+
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
-  const normalizedStatus = status as OrderStatus
-  const color = ORDER_STATUS_COLORS[normalizedStatus] || 'yellow'
+  const normalizedStatus = normalizeOrderStatus(status)
+  const color = normalizedStatus ? ORDER_STATUS_COLORS[normalizedStatus] : 'yellow'
   const colorClass = statusColorClasses[color] || statusColorClasses.yellow
 
   return (

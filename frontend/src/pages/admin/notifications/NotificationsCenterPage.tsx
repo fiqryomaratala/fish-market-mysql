@@ -173,7 +173,7 @@ export function NotificationsCenterPage() {
   if (isInitialLoading) {
     return (
       <div className="space-y-6">
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
+        <section className="admin-page-hero rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">
             Pusat Notifikasi
           </p>
@@ -190,7 +190,7 @@ export function NotificationsCenterPage() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
+        <section className="admin-page-hero rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">
             Pusat Notifikasi
           </p>
@@ -222,7 +222,7 @@ export function NotificationsCenterPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
+      <section className="admin-page-hero rounded-xl border border-slate-200 bg-white p-6 shadow-lg">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">
           Pusat Notifikasi
         </p>

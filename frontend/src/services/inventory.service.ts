@@ -12,6 +12,7 @@ import {
   type InventoryMovement,
   type InventoryMovementApiItem,
   type InventoryMutationInput,
+  type InventoryOperationalTransactionInput,
 } from '@/types/inventory'
 
 type InventoryListApiResponse = {
@@ -160,6 +161,18 @@ class InventoryService {
       inventory_id: payload.inventory_id,
       quantity: payload.type === 'stock_in' ? payload.quantity : payload.quantity * -1,
       description: payload.reason,
+    })
+
+    return normalizeInventory(data.data)
+  }
+
+  async recordOperationalTransaction(payload: InventoryOperationalTransactionInput): Promise<Inventory> {
+    const { data } = await api.post<InventoryItemApiResponse>('/inventory/transactions', {
+      inventory_id: payload.inventory_id,
+      type: payload.type === 'stock_in' ? 'IN' : 'OUT',
+      quantity: payload.quantity,
+      description: payload.reason,
+      reference: payload.reference,
     })
 
     return normalizeInventory(data.data)

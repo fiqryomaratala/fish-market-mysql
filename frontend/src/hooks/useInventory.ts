@@ -6,6 +6,7 @@ import type {
   InventoryListResult,
   InventoryMovement,
   InventoryMutationInput,
+  InventoryOperationalTransactionInput,
 } from '@/types/inventory'
 
 type UpdateInventoryVariables = {
@@ -282,6 +283,107 @@ export function useAdjustStock() {
             reason: payload.reason,
             created_by: 'Anda',
             reference: 'MANUAL-ADJUSTMENT',
+          },
+          ...previousMovements,
+        ])
+      }
+
+      return { previousInventories, previousInventory, previousMovements }
+    },
+    onError: (_error, variables, context) => {
+      for (const [queryKey, previousData] of context?.previousInventories ?? []) {
+        queryClient.setQueryData(queryKey, previousData)
+      }
+
+      if (context?.previousInventory) {
+        queryClient.setQueryData(['inventory', variables.inventory_id], context.previousInventory)
+      }
+
+      if (context?.previousMovements) {
+        queryClient.setQueryData(['inventory-movements'], context.previousMovements)
+      }
+    },
+    onSuccess: (updatedInventory, variables) => {
+      updateInventoryCaches(queryClient, (current) => ({
+        ...current,
+        items: current.items.map((item) => (item.id === updatedInventory.id ? updatedInventory : item)),
+      }))
+
+      queryClient.setQueryData(['inventory', updatedInventory.id], updatedInventory)
+      void queryClient.invalidateQueries({ queryKey: ['inventory-movements'] })
+      void queryClient.invalidateQueries({ queryKey: ['inventory', variables.inventory_id] })
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['inventories'] })
+      await queryClient.invalidateQueries({ queryKey: ['inventory-movements'] })
+    },
+  })
+}
+
+export function useRecordOperationalTransaction() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: InventoryOperationalTransactionInput) =>
+      inventoryService.recordOperationalTransaction(payload),
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: ['inventories'] })
+      await queryClient.cancelQueries({ queryKey: ['inventory', payload.inventory_id] })
+      await queryClient.cancelQueries({ queryKey: ['inventory-movements'] })
+
+      const previousInventory = queryClient.getQueryData<Inventory>(['inventory', payload.inventory_id])
+      const previousMovements = queryClient.getQueryData<InventoryMovement[]>(['inventory-movements'])
+      const delta = payload.type === 'stock_in' ? payload.quantity : payload.quantity * -1
+
+      const previousInventories = updateInventoryCaches(queryClient, (current) => ({
+        ...current,
+        items: current.items.map((item) => {
+          if (item.id !== payload.inventory_id) {
+            return item
+          }
+
+          const stock = Math.max(0, item.stock + delta)
+          return {
+            ...item,
+            stock,
+            status:
+              stock <= 0
+                ? 'out_of_stock'
+                : stock <= item.minimum_stock
+                  ? 'low_stock'
+                  : 'available',
+            updated_at: new Date().toISOString(),
+          }
+        }),
+      }))
+
+      if (previousInventory) {
+        const stock = Math.max(0, previousInventory.stock + delta)
+        queryClient.setQueryData<Inventory>(['inventory', payload.inventory_id], {
+          ...previousInventory,
+          stock,
+          status:
+            stock <= 0
+              ? 'out_of_stock'
+              : stock <= previousInventory.minimum_stock
+                ? 'low_stock'
+                : 'available',
+          updated_at: new Date().toISOString(),
+        })
+      }
+
+      if (previousMovements) {
+        queryClient.setQueryData<InventoryMovement[]>(['inventory-movements'], [
+          {
+            id: -Date.now(),
+            inventory_id: payload.inventory_id,
+            date: new Date().toISOString(),
+            item: previousInventory?.name || 'Inventaris',
+            movement_type: payload.type === 'stock_in' ? 'IN' : 'OUT',
+            quantity: payload.quantity,
+            reason: payload.reason,
+            created_by: 'Anda',
+            reference: payload.reference || 'OPERATIONAL-TRANSACTION',
           },
           ...previousMovements,
         ])

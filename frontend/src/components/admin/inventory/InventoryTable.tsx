@@ -4,6 +4,8 @@ import { InventoryRow } from './InventoryRow'
 type InventoryTableProps = {
   inventories: Inventory[]
   canManage?: boolean
+  canAdjust?: boolean
+  adjustLabel?: string
   onView: (inventory: Inventory) => void
   onEdit: (inventory: Inventory) => void
   onAdjust: (inventory: Inventory) => void
@@ -13,6 +15,8 @@ type InventoryTableProps = {
 export function InventoryTable({
   inventories,
   canManage = true,
+  canAdjust = true,
+  adjustLabel = 'Sesuaikan',
   onView,
   onEdit,
   onAdjust,
@@ -38,6 +42,8 @@ export function InventoryTable({
             key={inventory.id}
             inventory={inventory}
             canManage={canManage}
+            canAdjust={canAdjust}
+            adjustLabel={adjustLabel}
             onView={onView}
             onEdit={onEdit}
             onAdjust={onAdjust}

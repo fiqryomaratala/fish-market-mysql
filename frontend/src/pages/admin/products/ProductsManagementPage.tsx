@@ -162,7 +162,7 @@ function ProductsManagementPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[2rem] border border-cyan-100 bg-[radial-gradient(circle_at_top_left,_rgba(8,145,178,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.10),_transparent_22%),linear-gradient(135deg,_#f8fdff_0%,_#ffffff_45%,_#f0fdfa_100%)] p-6">
+      <section className="admin-page-hero rounded-[2rem] border border-cyan-100 bg-[radial-gradient(circle_at_top_left,_rgba(8,145,178,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.10),_transparent_22%),linear-gradient(135deg,_#f8fdff_0%,_#ffffff_45%,_#f0fdfa_100%)] p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.34em] text-cyan-700">

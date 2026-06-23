@@ -9,6 +9,8 @@ import { formatDate, formatNumber } from '@/utils/format'
 type InventoryRowProps = {
   inventory: Inventory
   canManage?: boolean
+  canAdjust?: boolean
+  adjustLabel?: string
   onView: (inventory: Inventory) => void
   onEdit: (inventory: Inventory) => void
   onAdjust: (inventory: Inventory) => void
@@ -18,6 +20,8 @@ type InventoryRowProps = {
 export function InventoryRow({
   inventory,
   canManage = true,
+  canAdjust = true,
+  adjustLabel = 'Sesuaikan',
   onView,
   onEdit,
   onAdjust,
@@ -86,11 +90,11 @@ export function InventoryRow({
           <button
             type="button"
             onClick={() => onAdjust(inventory)}
-            disabled={!canManage}
+            disabled={!canAdjust}
             className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <RefreshCcw className="size-4" />
-            Sesuaikan
+            {adjustLabel}
           </button>
           <button
             type="button"
@@ -137,8 +141,10 @@ export function InventoryRow({
           <button
             type="button"
             onClick={() => onAdjust(inventory)}
-            disabled={!canManage}
+            disabled={!canAdjust}
             className="rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-cyan-200 hover:text-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label={adjustLabel}
+            title={adjustLabel}
           >
             <RefreshCcw className="size-4" />
           </button>

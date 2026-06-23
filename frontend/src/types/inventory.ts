@@ -61,12 +61,16 @@ export interface InventoryMutationInput {
   minimum_stock: number
 }
 
-export interface InventoryAdjustmentInput {
+export interface InventoryStockTransactionInput {
   inventory_id: number
   type: 'stock_in' | 'stock_out'
   quantity: number
   reason: string
+  reference?: string
 }
+
+export type InventoryAdjustmentInput = InventoryStockTransactionInput
+export type InventoryOperationalTransactionInput = InventoryStockTransactionInput
 
 export interface InventoryApiItem {
   id: number

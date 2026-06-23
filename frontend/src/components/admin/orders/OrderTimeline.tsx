@@ -14,8 +14,10 @@ const timelineSteps: OrderStatus[] = [
 ]
 
 export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
-  const currentIndex = timelineSteps.indexOf(currentStatus as OrderStatus)
-  const isCancelled = currentStatus === 'Cancelled'
+  const normalizedStatus = currentStatus.trim().toLowerCase()
+  const currentIndex = timelineSteps.findIndex((step) => step.toLowerCase() === normalizedStatus)
+  const isCancelled = normalizedStatus === 'cancelled'
+  const isCompletedOrder = normalizedStatus === 'completed'
 
   if (isCancelled) {
     return (
@@ -38,16 +40,18 @@ export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
                 {index !== 0 && (
                   <div
                     className={`h-1 w-full ${
-                      isCompleted ? 'bg-blue-500' : 'bg-slate-200'
+                      isCompleted ? (isCompletedOrder ? 'bg-green-500' : 'bg-blue-500') : 'bg-slate-200'
                     }`}
                   />
                 )}
                 <div
                   className={`z-10 flex size-10 items-center justify-center rounded-full border-2 ${
                     isCompleted
-                      ? 'border-blue-500 bg-blue-500'
+                      ? isCompletedOrder
+                        ? 'border-green-500 bg-green-500'
+                        : 'border-blue-500 bg-blue-500'
                       : 'border-slate-300 bg-white'
-                  } ${isCurrent ? 'ring-4 ring-blue-100' : ''}`}
+                  } ${isCurrent ? (isCompletedOrder ? 'ring-4 ring-green-100' : 'ring-4 ring-blue-100') : ''}`}
                 >
                   {isCompleted && <Check className="size-5 text-white" />}
                 </div>
@@ -55,7 +59,9 @@ export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
                   <div
                     className={`h-1 w-full ${
                       isCompleted && index < currentIndex
-                        ? 'bg-blue-500'
+                        ? isCompletedOrder
+                          ? 'bg-green-500'
+                          : 'bg-blue-500'
                         : 'bg-slate-200'
                     }`}
                   />
@@ -63,7 +69,11 @@ export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
               </div>
               <p
                 className={`mt-2 text-xs font-medium ${
-                  isCompleted ? 'text-blue-600' : 'text-slate-500'
+                  isCompleted
+                    ? isCompletedOrder
+                      ? 'text-green-600'
+                      : 'text-blue-600'
+                    : 'text-slate-500'
                 }`}
               >
                 {step}

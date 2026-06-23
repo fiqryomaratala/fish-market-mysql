@@ -22,32 +22,61 @@ export function HarvestTable({
 }: HarvestTableProps) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-200/40">
-      <div className="hidden grid-cols-[130px_130px_1fr_1fr_140px_120px_140px_140px_140px_180px] gap-4 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:grid">
-        <span>Kode Panen</span>
-        <span>Kode Batch</span>
-        <span>Jenis Ikan</span>
-        <span>Kolam</span>
-        <span>Tanggal Panen</span>
-        <span>Quantity</span>
-        <span>Total Bobot</span>
-        <span>Survival Rate</span>
-        <span>Status</span>
-        <span>Aksi</span>
+      <div className="p-4 lg:hidden">
+        <div className="space-y-3">
+          {harvests.map((harvest) => (
+            <HarvestRow
+              key={harvest.id}
+              harvest={harvest}
+              canManage={canManage}
+              canDelete={canDelete}
+              onView={onView}
+              onEdit={onEdit}
+              onTransfer={onTransfer}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="space-y-3 p-4 lg:space-y-0 lg:p-0">
-        {harvests.map((harvest) => (
-          <HarvestRow
-            key={harvest.id}
-            harvest={harvest}
-            canManage={canManage}
-            canDelete={canDelete}
-            onView={onView}
-            onEdit={onEdit}
-            onTransfer={onTransfer}
-            onDelete={onDelete}
-          />
-        ))}
+      <div className="hidden lg:block">
+        <div className="scrollbar-soft overflow-x-auto">
+          <div className="min-w-[1320px]">
+            <div className="grid grid-cols-[140px_160px_150px_140px_140px_130px_140px_140px_170px_180px] gap-4 border-b border-slate-100 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <span>Kode Panen</span>
+              <span>Kode Batch</span>
+              <span>Jenis Ikan</span>
+              <span>Kolam</span>
+              <span>Tanggal Panen</span>
+              <span>Quantity</span>
+              <span>Total Bobot</span>
+              <span>Survival Rate</span>
+              <span>Status</span>
+              <span>Aksi</span>
+            </div>
+
+            <div>
+              {harvests.map((harvest) => (
+                <HarvestRow
+                  key={harvest.id}
+                  harvest={harvest}
+                  canManage={canManage}
+                  canDelete={canDelete}
+                  onView={onView}
+                  onEdit={onEdit}
+                  onTransfer={onTransfer}
+                  onDelete={onDelete}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-100 px-6 py-3">
+          <p className="text-xs text-slate-400">
+            Geser ke samping untuk melihat seluruh kolom tabel.
+          </p>
+        </div>
       </div>
     </div>
   )

@@ -6,9 +6,15 @@ type LowStockAlertProps = {
   items: Inventory[]
   onOpenAdjust: (inventory: Inventory) => void
   canAdjust?: boolean
+  actionLabel?: string
 }
 
-export function LowStockAlert({ items, onOpenAdjust, canAdjust = true }: LowStockAlertProps) {
+export function LowStockAlert({
+  items,
+  onOpenAdjust,
+  canAdjust = true,
+  actionLabel = 'Sesuaikan Stok',
+}: LowStockAlertProps) {
   if (items.length === 0) {
     return null
   }
@@ -50,7 +56,7 @@ export function LowStockAlert({ items, onOpenAdjust, canAdjust = true }: LowStoc
                 onClick={() => onOpenAdjust(item)}
                 className="mt-3 rounded-xl border border-amber-200 px-3 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
               >
-                Sesuaikan Stok
+                {actionLabel}
               </button>
             ) : null}
           </article>

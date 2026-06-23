@@ -37,6 +37,7 @@ const OrdersPage = lazy(() => import('@/pages/admin/orders/OrderManagementPage')
 const ReportsPage = lazy(() => import('@/pages/admin/ReportsPage'))
 const NotificationsPage = lazy(() => import('@/pages/admin/NotificationsPage'))
 const ActivityLogsPage = lazy(() => import('@/pages/admin/ActivityLogsPage'))
+const SettingsPage = lazy(() => import('@/pages/admin/settings/SettingsPage'))
 const UsersManagementPage = lazy(() => import('@/pages/admin/users/UsersManagementPage'))
 const UnauthorizedPage = lazy(() => import('@/pages/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
@@ -208,14 +209,7 @@ export const router = createBrowserRouter([
                   'Profil administrator untuk identitas akun, kontak, dan kendali akses pribadi.',
                 ),
               },
-              {
-                path: 'settings',
-                element: placeholderPage(
-                  'Admin',
-                  'Settings',
-                  'Pusat pengaturan sistem untuk preferensi aplikasi, keamanan, dan konfigurasi operasional.',
-                ),
-              },
+              { path: 'settings', element: withSuspense(<SettingsPage />) },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],
           },

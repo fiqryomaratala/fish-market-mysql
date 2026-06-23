@@ -48,7 +48,7 @@ export function HarvestRow({
 }: HarvestRowProps) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 transition duration-200 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-200/40 lg:rounded-none lg:border-0 lg:border-t lg:border-slate-100 lg:p-0 lg:hover:shadow-none">
-      <div className="grid gap-4 lg:grid-cols-[130px_130px_1fr_1fr_140px_120px_140px_140px_140px_180px] lg:px-6 lg:py-4">
+      <div className="grid gap-4 lg:grid-cols-[140px_160px_150px_140px_140px_130px_140px_140px_170px_180px] lg:px-6 lg:py-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Kode Panen</p>
           <p className="text-sm font-semibold text-slate-900">{harvest.harvest_code}</p>
@@ -71,20 +71,22 @@ export function HarvestRow({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Quantity</p>
-          <p className="text-sm text-slate-700">{formatNumber(harvest.total_quantity)} ekor</p>
+          <p className="whitespace-nowrap text-sm text-slate-700">
+            {formatNumber(harvest.total_quantity)} ekor
+          </p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Total Weight</p>
-          <p className="text-sm text-slate-700">{formatNumber(harvest.total_weight)} kg</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Total Bobot</p>
+          <p className="whitespace-nowrap text-sm text-slate-700">{formatNumber(harvest.total_weight)} kg</p>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Survival Rate</p>
-          <p className="text-sm text-slate-700">{harvest.survival_rate.toFixed(1)}%</p>
+          <p className="whitespace-nowrap text-sm text-slate-700">{harvest.survival_rate.toFixed(1)}%</p>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Status</p>
           <span
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${getHarvestStatusClasses(harvest.status)}`}
+            className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold ${getHarvestStatusClasses(harvest.status)}`}
           >
             <span className={`size-2 rounded-full ${getHarvestStatusDot(harvest.status)}`} />
             {harvest.status}
@@ -92,7 +94,7 @@ export function HarvestRow({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:hidden">Aksi</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-nowrap gap-2">
             <ActionButton label="Lihat" onClick={() => onView(harvest)}>
               <Eye className="size-4" />
             </ActionButton>
@@ -115,4 +117,3 @@ export function HarvestRow({
     </div>
   )
 }
-
