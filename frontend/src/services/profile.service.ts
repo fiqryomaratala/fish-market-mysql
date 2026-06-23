@@ -1,5 +1,4 @@
 import api from '@/api/axios'
-import { apiConfig } from '@/config/api'
 import type { ApiResponse } from '@/types/auth'
 import type {
   ChangePasswordPayload,
@@ -7,6 +6,7 @@ import type {
   UploadProfilePhotoResponse,
   UserProfile,
 } from '@/types/profile'
+import { resolveAssetUrl } from '@/utils/asset'
 
 type ProfileApiShape = Partial<UserProfile> & {
   avatar_url?: string
@@ -30,21 +30,6 @@ function toNumber(value: unknown, fallback = 0) {
 
 function toStringValue(value: unknown, fallback = '') {
   return typeof value === 'string' ? value : fallback
-}
-
-function resolveAssetUrl(value: unknown) {
-  const rawValue = toStringValue(value)
-
-  if (!rawValue) {
-    return ''
-  }
-
-  if (/^https?:\/\//i.test(rawValue)) {
-    return rawValue
-  }
-
-  const baseOrigin = new URL(apiConfig.baseUrl, window.location.origin).origin
-  return new URL(rawValue, baseOrigin).toString()
 }
 
 function normalizeProfile(profile?: ProfileApiShape): UserProfile {

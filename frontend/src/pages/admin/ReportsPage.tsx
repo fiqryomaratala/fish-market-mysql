@@ -1,13 +1,3 @@
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
+import ReportsManagementPage from '@/pages/admin/reports/ReportsManagementPage'
 
-function ReportsPage() {
-  return (
-    <PagePlaceholder
-      eyebrow="Admin"
-      title="Reports"
-      description="Tempat laporan operasional dan keuangan yang bisa dikembangkan menjadi export PDF, CSV, atau dashboard KPI."
-    />
-  )
-}
-
-export default ReportsPage
+export default ReportsManagementPage

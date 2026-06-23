@@ -1,5 +1,4 @@
 import api from '@/api/axios'
-import { apiConfig } from '@/config/api'
 import type {
   ApiResponse,
   AuthResponse,
@@ -9,6 +8,7 @@ import type {
   UserPermission,
 } from '@/types/auth'
 import { ACCESS_TOKEN_KEY } from '@/types/auth'
+import { resolveAssetUrl } from '@/utils/asset'
 
 type RegisterApiResponse = {
   id: number
@@ -21,19 +21,6 @@ type RegisterApiResponse = {
   permissions?: UserPermission[]
   created_at?: string
   updated_at?: string
-}
-
-function resolveAssetUrl(value: unknown) {
-  if (typeof value !== 'string' || !value) {
-    return ''
-  }
-
-  if (/^https?:\/\//i.test(value)) {
-    return value
-  }
-
-  const baseOrigin = new URL(apiConfig.baseUrl, window.location.origin).origin
-  return new URL(value, baseOrigin).toString()
 }
 
 function normalizeUser(

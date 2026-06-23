@@ -9,8 +9,12 @@ import type {
   UserRoleUpdateInput,
   UserStatusUpdateInput,
 } from '@/types/user'
+import { resolveAssetUrl } from '@/utils/asset'
 
-type UserApiRecord = Partial<User>
+type UserApiRecord = Partial<User> & {
+  avatar_url?: string
+  photo_url?: string
+}
 
 type UserListEnvelope = {
   data?: {
@@ -48,7 +52,9 @@ function mapUser(record: UserApiRecord, fallbackId = 0): User {
     email: toStringValue(record.email),
     phone: toStringValue(record.phone),
     address: toStringValue(record.address),
-    avatar: toStringValue(record.avatar),
+    avatar: resolveAssetUrl(record.avatar ?? record.avatar_url ?? record.photo_url),
+    avatar_url: toStringValue(record.avatar_url),
+    photo_url: toStringValue(record.photo_url),
     role: toStringValue(record.role, 'Customer'),
     status: toStringValue(record.status, 'Active'),
     last_login: toStringValue(record.last_login),

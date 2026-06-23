@@ -12,6 +12,8 @@ export interface User {
   phone: string
   address: string
   avatar: string
+  avatar_url?: string
+  photo_url?: string
   role: string
   status: string
   last_login: string
