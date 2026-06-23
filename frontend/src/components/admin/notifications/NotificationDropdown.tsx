@@ -39,7 +39,7 @@ export function NotificationDropdown({
         </Link>
       </div>
 
-      <div className="mt-3 max-h-[420px] space-y-2 overflow-y-auto">
+      <div className="mt-3 max-h-[420px] space-y-2 overflow-y-auto scrollbar-hidden">
         {isLoading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="animate-pulse rounded-xl border border-slate-200 p-3">
