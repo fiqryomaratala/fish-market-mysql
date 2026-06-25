@@ -34,7 +34,7 @@ export const navigationItems: NavItem[] = [
   { title: 'Marketplace', path: '/customer/marketplace', icon: Store, roles: 'customer' },
   { title: 'Cart', path: '/customer/cart', icon: ShoppingCart, roles: 'customer' },
   { title: 'Orders', path: '/orders', icon: ReceiptText, roles: 'customer' },
-  { title: 'Dashboard', path: '/staff', icon: LayoutDashboard, roles: 'staff' },
+  { title: 'Dashboard', path: '/staff/dashboard', icon: LayoutDashboard, roles: 'staff' },
   { title: 'Pond', path: '/staff/ponds', icon: Waves, roles: 'staff' },
   { title: 'Fish Batches', path: '/staff/fish-batches', icon: Fish, roles: 'staff' },
   { title: 'Feeding Logs', path: '/staff/feeding-logs', icon: ClipboardList, roles: 'staff' },
@@ -64,7 +64,7 @@ export function getDefaultPathByRole(role: string | null | undefined) {
   }
 
   if (role === 'staff') {
-    return '/staff'
+    return '/staff/dashboard'
   }
 
   if (role === 'customer') {

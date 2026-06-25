@@ -27,6 +27,9 @@ const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const CustomerDashboardPage = lazy(() => import('@/pages/customer/CustomerDashboardPage'))
 const CustomerProfilePage = lazy(() => import('@/pages/customer/CustomerProfilePage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
+const StaffDashboardPage = lazy(() => import('@/pages/staff/dashboard/StaffDashboardPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
 const AdminProductsPage = lazy(() => import('@/pages/admin/ProductsPage'))
 const InventoryPage = lazy(() => import('@/pages/admin/InventoryPage'))
 const PondsPage = lazy(() => import('@/pages/admin/PondsPage'))
@@ -138,14 +141,8 @@ export const router = createBrowserRouter([
           {
             element: <StaffLayout />,
             children: [
-              {
-                index: true,
-                element: placeholderPage(
-                  'Staff',
-                  'Dashboard',
-                  'Ringkasan operasional harian staff untuk pond, feeding, harvest, dan inventory.',
-                ),
-              },
+              { index: true, element: <Navigate to="/staff/dashboard" replace /> },
+              { path: 'dashboard', element: withSuspense(<StaffDashboardPage />) },
               { path: 'ponds', element: withSuspense(<PondsPage />) },
               { path: 'fish-batches', element: withSuspense(<FishBatchesPage />) },
               { path: 'feeding', element: <Navigate to="/staff/feeding-logs" replace /> },
@@ -154,22 +151,8 @@ export const router = createBrowserRouter([
               { path: 'harvests', element: withSuspense(<HarvestPage />) },
               { path: 'inventory', element: withSuspense(<InventoryPage />) },
               { path: 'notifications', element: withSuspense(<NotificationsPage />) },
-              {
-                path: 'profile',
-                element: placeholderPage(
-                  'Staff',
-                  'Profile',
-                  'Profil staff untuk melihat identitas akun dan detail akses operasional.',
-                ),
-              },
-              {
-                path: 'settings',
-                element: placeholderPage(
-                  'Staff',
-                  'Settings',
-                  'Pengaturan staff untuk notifikasi kerja, keamanan akun, dan preferensi aplikasi.',
-                ),
-              },
+              { path: 'profile', element: withSuspense(<StaffProfilePage />) },
+              { path: 'settings', element: withSuspense(<StaffSettingsPage />) },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],
           },
