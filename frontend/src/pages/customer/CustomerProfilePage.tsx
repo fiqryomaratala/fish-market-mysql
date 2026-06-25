@@ -1,29 +1,18 @@
 import { useRef, useState } from 'react'
-import { RefreshCcw, ShieldCheck, UserRound, Warehouse } from 'lucide-react'
+import { RefreshCcw } from 'lucide-react'
 import { toast } from 'sonner'
 import { AddressCard } from '@/components/customer/profile/AddressCard'
-import { ChangePasswordModal } from '@/components/customer/profile/ChangePasswordModal'
 import { EditProfileForm } from '@/components/customer/profile/EditProfileForm'
 import { LoadingSkeleton } from '@/components/customer/profile/LoadingSkeleton'
 import { ProfileCard } from '@/components/customer/profile/ProfileCard'
-import { SecurityCard } from '@/components/customer/profile/SecurityCard'
 import {
   useAuth,
-  useChangePassword,
   usePageTitle,
   useProfile,
   useUpdateProfile,
   useUploadProfilePhoto,
 } from '@/hooks'
-import type { ChangePasswordPayload, UpdateProfilePayload } from '@/types/profile'
-
-const sectionItems = [
-  { id: 'profile', label: 'Profil', icon: UserRound },
-  { id: 'security', label: 'Keamanan', icon: ShieldCheck },
-  { id: 'address', label: 'Alamat', icon: Warehouse },
-] as const
-
-type SectionId = (typeof sectionItems)[number]['id']
+import type { UpdateProfilePayload } from '@/types/profile'
 
 function getErrorMessage(error: unknown) {
   if (typeof error === 'object' && error !== null && 'response' in error) {
@@ -47,33 +36,13 @@ function CustomerProfilePage() {
   const profileQuery = useProfile()
   const updateProfileMutation = useUpdateProfile()
   const uploadProfilePhotoMutation = useUploadProfilePhoto()
-  const changePasswordMutation = useChangePassword()
   const [isEditingProfile, setIsEditingProfile] = useState(false)
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState<SectionId>('profile')
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const profileSectionRef = useRef<HTMLElement | null>(null)
-  const securitySectionRef = useRef<HTMLElement | null>(null)
   const addressSectionRef = useRef<HTMLElement | null>(null)
 
   const profile = profileQuery.data
   const currentPhotoUrl = photoUrl ?? profile?.avatar ?? ''
-
-  const scrollToSection = (sectionId: SectionId) => {
-    setActiveSection(sectionId)
-
-    const targetRef =
-      sectionId === 'profile'
-        ? profileSectionRef
-        : sectionId === 'security'
-          ? securitySectionRef
-          : addressSectionRef
-
-    targetRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-  }
 
   const handleUpdateProfile = async (values: UpdateProfilePayload) => {
     try {
@@ -81,16 +50,6 @@ function CustomerProfilePage() {
       await refreshUser()
       setIsEditingProfile(false)
       toast.success('Profil berhasil diperbarui.')
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-    }
-  }
-
-  const handleChangePassword = async (payload: ChangePasswordPayload) => {
-    try {
-      await changePasswordMutation.mutateAsync(payload)
-      setIsPasswordModalOpen(false)
-      toast.success('Password berhasil diperbarui.')
     } catch (error) {
       toast.error(getErrorMessage(error))
     }
@@ -134,91 +93,41 @@ function CustomerProfilePage() {
 
   return (
     <>
-      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="profile-card rounded-xl border border-slate-200 bg-white p-4">
-            <p className="px-3 text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">
-              Menu Pengaturan
-            </p>
-            <div className="mt-4 grid gap-2">
-              {sectionItems.map((item) => {
-                const Icon = item.icon
-                const isActive = activeSection === item.id
+      <div className="space-y-6">
+        <section ref={profileSectionRef} id="profile" className="scroll-mt-24 space-y-6">
+          <ProfileCard
+            profile={profile}
+            avatarUrl={currentPhotoUrl}
+            isUploadingPhoto={uploadProfilePhotoMutation.isPending}
+            onPhotoUpload={handlePhotoUpload}
+            onEdit={() => {
+              setIsEditingProfile(true)
+            }}
+          />
 
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => scrollToSection(item.id)}
-                    className={`flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition duration-200 ${
-                      isActive
-                        ? 'bg-gradient-to-r from-sky-600 to-emerald-500 text-white'
-                        : 'bg-slate-50 text-slate-700 hover:bg-cyan-50 hover:text-sky-700'
-                    }`}
-                  >
-                    <Icon className="size-4" />
-                    <span>{item.label}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </aside>
-
-        <div className="space-y-6">
-          <section ref={profileSectionRef} id="profile" className="scroll-mt-24 space-y-6">
-            <ProfileCard
+          {isEditingProfile ? (
+            <EditProfileForm
               profile={profile}
-              avatarUrl={currentPhotoUrl}
-              isUploadingPhoto={uploadProfilePhotoMutation.isPending}
-              onPhotoUpload={handlePhotoUpload}
-              onEdit={() => {
-                setActiveSection('profile')
-                setIsEditingProfile(true)
-              }}
+              isSubmitting={updateProfileMutation.isPending}
+              onCancel={() => setIsEditingProfile(false)}
+              onSubmit={(values) => void handleUpdateProfile(values)}
             />
+          ) : null}
+        </section>
 
-            {isEditingProfile ? (
-              <EditProfileForm
-                profile={profile}
-                isSubmitting={updateProfileMutation.isPending}
-                onCancel={() => setIsEditingProfile(false)}
-                onSubmit={(values) => void handleUpdateProfile(values)}
-              />
-            ) : null}
-          </section>
-
-          <section ref={securitySectionRef} id="security" className="scroll-mt-24">
-            <SecurityCard
-              onChangePassword={() => {
-                setActiveSection('security')
-                setIsPasswordModalOpen(true)
-              }}
-            />
-          </section>
-
-          <section ref={addressSectionRef} id="address" className="scroll-mt-24">
-            <AddressCard
-              address={profile.address}
-              onEditAddress={() => {
-                setActiveSection('address')
-                setIsEditingProfile(true)
-                profileSectionRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                })
-              }}
-            />
-          </section>
-        </div>
+        <section ref={addressSectionRef} id="address" className="scroll-mt-24">
+          <AddressCard
+            address={profile.address}
+            onEditAddress={() => {
+              setIsEditingProfile(true)
+              profileSectionRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              })
+            }}
+          />
+        </section>
       </div>
-
-      <ChangePasswordModal
-        isOpen={isPasswordModalOpen}
-        isSubmitting={changePasswordMutation.isPending}
-        onClose={() => setIsPasswordModalOpen(false)}
-        onSubmit={(values) => void handleChangePassword(values)}
-      />
     </>
   )
 }

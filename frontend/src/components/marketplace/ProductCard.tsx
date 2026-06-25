@@ -48,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={() => navigate(`/products/${product.id}`)}
-          className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
         >
           Lihat Detail
         </button>

@@ -26,6 +26,7 @@ const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const CustomerDashboardPage = lazy(() => import('@/pages/customer/CustomerDashboardPage'))
 const CustomerProfilePage = lazy(() => import('@/pages/customer/CustomerProfilePage'))
+const CustomerSettingsPage = lazy(() => import('@/pages/customer/CustomerSettingsPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const StaffDashboardPage = lazy(() => import('@/pages/staff/dashboard/StaffDashboardPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
@@ -118,11 +119,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'settings',
-                element: placeholderPage(
-                  'Customer',
-                  'Settings',
-                  'Pengaturan pelanggan untuk notifikasi, keamanan akun, dan preferensi tampilan.',
-                ),
+                element: withSuspense(<CustomerSettingsPage />),
               },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],
