@@ -22,17 +22,17 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="#home" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-green-600 text-white shadow-lg shadow-blue-200">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
             <Waves className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold tracking-[0.26em] text-blue-600 uppercase">
+            <p className="text-sm font-semibold tracking-[0.26em] text-blue-700 uppercase">
               Fish Market
             </p>
-            <p className="text-xs text-slate-500">Manajemen Budidaya</p>
+            <p className="text-xs text-slate-500">Manajemen Budidaya Modern</p>
           </div>
         </a>
 
@@ -41,7 +41,7 @@ export function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition duration-300 hover:bg-blue-50 hover:text-blue-600"
+              className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition duration-300 hover:bg-white hover:text-slate-900"
             >
               {item.label}
             </a>
@@ -51,13 +51,13 @@ export function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             to="/login"
-            className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition duration-300 hover:border-blue-200 hover:text-blue-700"
           >
             Masuk
           </Link>
           <Link
             to="/register"
-            className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition duration-300 hover:scale-[1.02] hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold !text-white transition duration-300 hover:bg-blue-700 hover:!text-white"
           >
             Daftar
           </Link>
@@ -74,13 +74,13 @@ export function Navbar() {
       </div>
 
       {isOpen ? (
-        <div className="border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur-xl lg:hidden">
+        <div className="border-t border-slate-200 bg-white px-4 py-4 lg:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-2">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-600"
+                className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-900"
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}
@@ -89,14 +89,14 @@ export function Navbar() {
             <div className="mt-2 grid grid-cols-2 gap-3">
               <Link
                 to="/login"
-                className="rounded-2xl border border-slate-200 px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-600"
+                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
                 onClick={() => setIsOpen(false)}
               >
                 Masuk
               </Link>
               <Link
                 to="/register"
-                className="rounded-2xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01] hover:bg-blue-700"
+                className="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-semibold !text-white transition hover:bg-blue-700 hover:!text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Daftar

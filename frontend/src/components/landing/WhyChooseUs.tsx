@@ -34,10 +34,10 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section className="px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl space-y-4">
-          <span className="inline-flex rounded-full border border-green-200 bg-green-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-green-700 uppercase">
+          <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
             Kenapa Memilih Kami
           </span>
           <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
@@ -49,9 +49,9 @@ export function WhyChooseUs() {
           {reasons.map(({ icon: Icon, title, description }) => (
             <article
               key={title}
-              className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-2 hover:border-blue-200 hover:bg-gradient-to-br hover:from-blue-50 hover:to-green-50"
+              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-blue-600 shadow-lg shadow-slate-100 transition duration-300 group-hover:scale-110 group-hover:bg-blue-50">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-green-50 text-green-700 transition duration-200 group-hover:bg-green-100">
                 <Icon className="h-6 w-6" />
               </div>
               <h3 className="mt-6 text-xl font-semibold text-slate-900">{title}</h3>

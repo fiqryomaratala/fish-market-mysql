@@ -20,29 +20,43 @@ const contacts = [
 
 export function ContactSection() {
   return (
-    <section id="contact" className="px-4 py-20 sm:px-6 lg:px-8">
+    <section id="contact" className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-6 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-lg shadow-slate-200/70">
+        <div className="space-y-6 rounded-xl border border-blue-100 bg-white p-8 shadow-sm">
           <div className="space-y-4">
-            <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-600 uppercase">
+            <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
               Kontak
             </span>
             <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
               Mari diskusikan kebutuhan pasokan ikan dan operasional farm Anda
             </h2>
+            <p className="max-w-xl text-base leading-8 text-slate-600">
+              Tim Fish Market siap membantu kebutuhan pasokan, distribusi, dan kolaborasi
+              operasional farm dengan respons yang cepat dan terstruktur.
+            </p>
           </div>
 
           <div className="space-y-4">
-            {contacts.map(({ icon: Icon, label, value }) => (
+            {contacts.map(({ icon: Icon, label, value }, index) => (
               <div
                 key={label}
-                className="flex items-start gap-4 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5"
+                className={`flex items-start gap-4 rounded-xl border p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 ${
+                  index === 0
+                    ? 'border-blue-100 bg-blue-50/60'
+                    : index === 1
+                      ? 'border-emerald-100 bg-emerald-50/60'
+                      : 'border-slate-200 bg-white'
+                }`}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-50 to-green-50 text-blue-600">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${
+                    index === 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'
+                  }`}
+                >
                   <Icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-400">{label}</p>
+                  <p className="text-sm text-slate-500">{label}</p>
                   <p className="mt-1 text-base font-medium text-slate-900">{value}</p>
                 </div>
               </div>
@@ -50,10 +64,14 @@ export function ContactSection() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/70">
-          <div className="flex h-full min-h-[360px] flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.14),_transparent_30%),linear-gradient(135deg,_rgba(249,250,251,1)_0%,_rgba(239,246,255,1)_100%)] p-8">
+        <div className="overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm">
+          <div className="flex h-full min-h-[360px] flex-col justify-between bg-blue-50/40 p-8">
             <div>
-              <p className="text-sm font-semibold tracking-[0.2em] text-blue-600 uppercase">
+              <div className="inline-flex items-center gap-2 rounded-lg border border-emerald-100 bg-white px-3 py-2 text-sm font-medium text-emerald-700">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                Area distribusi aktif
+              </div>
+              <p className="mt-6 text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
                 Placeholder Peta
               </p>
               <h3 className="mt-4 text-2xl font-semibold text-slate-900">
@@ -63,16 +81,31 @@ export function ContactSection() {
                 Area ini siap diganti dengan integrasi peta interaktif atau
                 embedded map ketika backend dan data lokasi sudah tersedia.
               </p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-slate-600">
+                  Hub utama
+                  <p className="mt-1 font-semibold text-slate-900">Bogor</p>
+                </div>
+                <div className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-600">
+                  Zona kirim
+                  <p className="mt-1 font-semibold text-slate-900">Jabodetabek</p>
+                </div>
+                <div className="rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-slate-600">
+                  Status
+                  <p className="mt-1 font-semibold text-emerald-700">Siap melayani</p>
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+              <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Cakupan</p>
                 <p className="mt-2 text-xl font-semibold text-slate-900">
                   Jabodetabek & Jawa Barat
                 </p>
               </div>
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+              <div className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Jam Operasional</p>
                 <p className="mt-2 text-xl font-semibold text-slate-900">
                   08:00 - 18:00 WIB

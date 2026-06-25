@@ -17,30 +17,30 @@ export function ProductCard({ product }: ProductCardProps) {
   const navigate = useNavigate()
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-2 hover:border-blue-200">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={product.image_url || FALLBACK_PLACEHOLDER_IMAGE}
           alt={product.name}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
         />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <div className="space-y-4">
-          <div className="min-h-[4rem]">
-            <h3 className="text-lg font-semibold leading-8 text-slate-900">
+        <div className="space-y-3">
+          <div className="min-h-[3.5rem]">
+            <h3 className="text-lg font-semibold leading-7 text-slate-900">
               {product.name}
             </h3>
           </div>
-          <p className="mt-1 text-sm font-semibold text-green-700">
+          <p className="text-base font-semibold text-blue-700">
             {currencyFormatter.format(product.price)}
           </p>
         </div>
 
         <div className="mt-4 grid gap-2 text-sm text-slate-500">
           <div className="flex items-center gap-2">
-            <Package2 className="size-4 text-blue-600" />
+            <Package2 className="size-4 text-green-600" />
             <span>Stok {product.stock}</span>
           </div>
         </div>
@@ -48,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={() => navigate(`/products/${product.id}`)}
-          className="mt-6 inline-flex w-full items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
           Lihat Detail
         </button>

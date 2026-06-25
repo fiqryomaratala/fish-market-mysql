@@ -36,10 +36,10 @@ const steps = [
 
 export function ProcessSection() {
   return (
-    <section className="px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl space-y-4">
-          <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-600 uppercase">
+          <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
             Proses Budidaya
           </span>
           <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
@@ -51,13 +51,13 @@ export function ProcessSection() {
           {steps.map(({ icon: Icon, title, description }, index) => (
             <article key={title} className="relative">
               {index < steps.length - 1 ? (
-                <div className="absolute left-7 top-16 hidden h-px w-[calc(100%-1rem)] bg-gradient-to-r from-blue-300 to-green-300 lg:block" />
+                <div className="absolute left-7 top-16 hidden h-px w-[calc(100%-1rem)] bg-blue-100 lg:block" />
               ) : null}
-              <div className="relative h-full rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-blue-200">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-50 to-green-50 text-blue-600">
+              <div className="relative h-full rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                   <Icon className="h-6 w-6" />
                 </div>
-                <p className="mt-5 text-sm font-semibold tracking-[0.2em] text-blue-600 uppercase">
+                <p className="mt-5 text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
                   Tahap {index + 1}
                 </p>
                 <h3 className="mt-3 text-xl font-semibold text-slate-900">{title}</h3>

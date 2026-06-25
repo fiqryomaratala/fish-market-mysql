@@ -7,12 +7,12 @@ const statistics = [
 
 export function StatisticsSection() {
   return (
-    <section className="px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 xl:grid-cols-4">
         {statistics.map((item) => (
           <article
             key={item.label}
-            className="rounded-[1.75rem] border border-slate-200 bg-white p-8 text-center shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-blue-200"
+            className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
           >
             <p className="text-4xl font-semibold text-slate-900 sm:text-5xl">
               {item.value}

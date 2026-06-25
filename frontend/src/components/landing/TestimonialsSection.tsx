@@ -23,10 +23,10 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl space-y-4">
-          <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-600 uppercase">
+          <span className="inline-flex rounded-lg border border-green-100 bg-green-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-green-700 uppercase">
             Testimoni
           </span>
           <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
@@ -38,11 +38,11 @@ export function TestimonialsSection() {
           {testimonials.map((testimonial, index) => (
             <article
               key={testimonial.name}
-              className="rounded-[1.75rem] border border-slate-200 bg-white p-7 shadow-lg shadow-slate-200/70 transition duration-300 hover:-translate-y-1 hover:border-blue-200"
+              className="rounded-xl border border-slate-200 bg-white p-7 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-green-600 text-lg font-semibold text-white">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 text-lg font-semibold text-white">
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
@@ -52,7 +52,7 @@ export function TestimonialsSection() {
                     <p className="text-sm text-slate-500">{testimonial.role}</p>
                   </div>
                 </div>
-                <Quote className="h-5 w-5 text-blue-300" />
+                <Quote className="h-5 w-5 text-slate-300" />
               </div>
               <div className="mt-6 flex gap-1 text-amber-400">
                 {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -62,7 +62,7 @@ export function TestimonialsSection() {
               <p className="mt-5 text-sm leading-7 text-slate-500">
                 {testimonial.review}
               </p>
-              <p className="mt-5 text-xs font-semibold tracking-[0.18em] text-blue-600 uppercase">
+              <p className="mt-5 text-xs font-semibold tracking-[0.18em] text-blue-700 uppercase">
                 Klien #{index + 1}
               </p>
             </article>

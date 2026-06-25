@@ -33,10 +33,10 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState(0)
 
   return (
-    <section className="px-4 py-20 sm:px-6 lg:px-8">
+    <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-600 uppercase">
+          <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
             FAQ
           </span>
           <h2 className="mt-4 text-3xl font-semibold text-slate-900 sm:text-4xl">
@@ -51,7 +51,7 @@ export function FAQSection() {
             return (
               <article
                 key={faq.question}
-                className="rounded-[1.5rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/70"
+                className="rounded-xl border border-slate-200 bg-white shadow-sm"
               >
                 <button
                   type="button"

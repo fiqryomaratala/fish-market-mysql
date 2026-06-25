@@ -16,7 +16,7 @@ function HomePage() {
   usePageTitle('Beranda')
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.10),_transparent_24%),linear-gradient(180deg,_#ffffff_0%,_#f9fafb_56%,_#f3f4f6_100%)] text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
       <HeroSection />
       <AboutSection />

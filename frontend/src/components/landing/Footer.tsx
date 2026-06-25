@@ -16,15 +16,15 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white/70 px-4 py-10 sm:px-6 lg:px-8">
+    <footer className="border-t border-slate-200 bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.8fr_0.8fr]">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-green-600 text-white shadow-lg shadow-blue-200">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
               <Waves className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-[0.26em] text-blue-600 uppercase">
+              <p className="text-sm font-semibold tracking-[0.26em] text-blue-700 uppercase">
                 Fish Market
               </p>
               <p className="text-xs text-slate-500">Manajemen Budidaya</p>
@@ -45,7 +45,7 @@ export function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                className="block text-sm text-slate-500 transition hover:text-blue-600"
+                className="block text-sm text-slate-500 transition hover:text-slate-900"
               >
                 {link.label}
               </a>
@@ -63,7 +63,7 @@ export function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition duration-300 hover:border-blue-200 hover:text-blue-600"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition duration-300 hover:border-slate-300 hover:text-slate-900"
               >
                 <Icon className="h-5 w-5" />
               </a>
