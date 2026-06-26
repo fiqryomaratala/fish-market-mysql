@@ -91,7 +91,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
             <button
               type="button"
               onClick={() => setDropdownOpen((current) => !current)}
-              className="flex items-center gap-3 rounded-[10px] border border-white/70 bg-white/85 px-2.5 py-2 text-left text-slate-700 shadow-sm shadow-slate-200/40 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+              className="flex cursor-pointer items-center gap-3 rounded-[10px] border border-white/70 bg-white/85 px-2.5 py-2 text-left text-slate-700 shadow-sm shadow-slate-200/40 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             >
               {user?.avatar ? (
                 <img

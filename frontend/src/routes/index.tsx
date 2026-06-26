@@ -25,6 +25,7 @@ const OrderDetailPage = lazy(() => import('@/pages/orders/OrderDetailPage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const CustomerDashboardPage = lazy(() => import('@/pages/customer/CustomerDashboardPage'))
+const CustomerNotificationsPage = lazy(() => import('@/pages/customer/CustomerNotificationsPage'))
 const CustomerProfilePage = lazy(() => import('@/pages/customer/CustomerProfilePage'))
 const CustomerSettingsPage = lazy(() => import('@/pages/customer/CustomerSettingsPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
@@ -107,11 +108,7 @@ export const router = createBrowserRouter([
               { path: 'orders', element: <Navigate to="/orders" replace /> },
               {
                 path: 'notifications',
-                element: placeholderPage(
-                  'Customer',
-                  'Notifications',
-                  'Halaman notifikasi pelanggan untuk melihat seluruh update order, pembayaran, dan aktivitas akun.',
-                ),
+                element: withSuspense(<CustomerNotificationsPage />),
               },
               {
                 path: 'profile',
