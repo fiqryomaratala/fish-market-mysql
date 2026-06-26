@@ -1,4 +1,5 @@
 import { Plus, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import {
   FISH_BATCH_STATUS_OPTIONS,
   FISH_TYPE_OPTIONS,
@@ -31,6 +32,18 @@ export function SearchFilter({
   onRefresh,
   onAdd,
 }: SearchFilterProps) {
+  const statusOptions = [
+    { label: 'Semua status', value: 'All' },
+    ...FISH_BATCH_STATUS_OPTIONS.map((item) => ({
+      value: item,
+      label: getFishBatchStatusLabel(item),
+    })),
+  ]
+  const fishTypeOptions = [
+    { label: 'Semua jenis ikan', value: 'All' },
+    ...FISH_TYPE_OPTIONS.map((item) => ({ label: item, value: item })),
+  ]
+
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/40">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -45,31 +58,21 @@ export function SearchFilter({
         </div>
 
         <div className="flex flex-col gap-3 md:flex-row">
-          <select
+          <DropdownSelect
             value={status}
-            onChange={(event) => onStatusChange(event.target.value as FishBatchStatus | 'All')}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua status</option>
-            {FISH_BATCH_STATUS_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {getFishBatchStatusLabel(item)}
-              </option>
-            ))}
-          </select>
+            options={statusOptions}
+            onChange={(value) => onStatusChange(value as FishBatchStatus | 'All')}
+            ariaLabel="Filter status batch"
+            className="min-w-[220px]"
+          />
 
-          <select
+          <DropdownSelect
             value={fishType}
-            onChange={(event) => onFishTypeChange(event.target.value)}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua jenis ikan</option>
-            {FISH_TYPE_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            options={fishTypeOptions}
+            onChange={onFishTypeChange}
+            ariaLabel="Filter jenis ikan"
+            className="min-w-[220px]"
+          />
 
           <button
             type="button"

@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { Pond } from '@/types/pond'
 import {
   FISH_BATCH_STATUS_OPTIONS,
@@ -75,6 +76,7 @@ export function FishBatchFormModal({
   onSubmit,
 }: FishBatchFormModalProps) {
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -126,47 +128,64 @@ export function FishBatchFormModal({
 
             <div>
               <label className="text-sm font-semibold text-slate-700">Jenis Ikan</label>
-              <select
-                {...register('fish_type')}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                {FISH_TYPE_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="fish_type"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={field.value}
+                    options={FISH_TYPE_OPTIONS.map((item) => ({ label: item, value: item }))}
+                    onChange={field.onChange}
+                    ariaLabel="Pilih jenis ikan"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.fish_type?.message} />
             </div>
 
             <div>
               <label className="text-sm font-semibold text-slate-700">Kolam</label>
-              <select
-                {...register('pond_id', { valueAsNumber: true })}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                <option value={0}>Pilih kolam</option>
-                {ponds.map((pond) => (
-                  <option key={pond.id} value={pond.id}>
-                    {pond.name} - {pond.code}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="pond_id"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={String(field.value)}
+                    options={[
+                      { label: 'Pilih kolam', value: '0' },
+                      ...ponds.map((pond) => ({
+                        label: `${pond.name} - ${pond.code}`,
+                        value: String(pond.id),
+                      })),
+                    ]}
+                    onChange={(value) => field.onChange(Number(value))}
+                    ariaLabel="Pilih kolam"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.pond_id?.message} />
             </div>
 
             <div>
               <label className="text-sm font-semibold text-slate-700">Status</label>
-              <select
-                {...register('status')}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                {FISH_BATCH_STATUS_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {getFishBatchStatusLabel(item)}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={field.value}
+                    options={FISH_BATCH_STATUS_OPTIONS.map((item) => ({
+                      label: getFishBatchStatusLabel(item),
+                      value: item,
+                    }))}
+                    onChange={field.onChange}
+                    ariaLabel="Pilih status batch"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.status?.message} />
             </div>
 

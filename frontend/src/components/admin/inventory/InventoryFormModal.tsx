@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import {
   INVENTORY_CATEGORIES,
   type Inventory,
@@ -56,6 +57,7 @@ export function InventoryFormModal({
   onSubmit,
 }: InventoryFormModalProps) {
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -125,16 +127,21 @@ export function InventoryFormModal({
 
             <label className="space-y-2">
               <span className="text-sm font-medium text-slate-700">Kategori</span>
-              <select
-                {...register('category')}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                {INVENTORY_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="category"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={field.value}
+                    options={INVENTORY_CATEGORIES.map((category) => ({
+                      label: category,
+                      value: category,
+                    }))}
+                    onChange={field.onChange}
+                    ariaLabel="Pilih kategori inventaris"
+                  />
+                )}
+              />
               {errors.category ? (
                 <p className="text-xs text-red-600">{errors.category.message}</p>
               ) : null}

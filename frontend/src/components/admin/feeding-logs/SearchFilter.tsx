@@ -1,4 +1,5 @@
 import { Plus, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { FeedingLog } from '@/types/feeding-log'
 
 type SearchFilterProps = {
@@ -34,6 +35,18 @@ export function SearchFilter({
   onRefresh,
   onAdd,
 }: SearchFilterProps) {
+  const batchSelectOptions = [
+    { label: 'Semua batch', value: 'All' },
+    ...batchOptions.map((item) => ({
+      label: item.batch_code,
+      value: String(item.fish_batch_id),
+    })),
+  ]
+  const feedSelectOptions = [
+    { label: 'Semua pakan', value: 'All' },
+    ...feedOptions.map((item) => ({ label: item, value: item })),
+  ]
+
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/40">
       <div className="flex flex-col gap-4">
@@ -71,31 +84,19 @@ export function SearchFilter({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          <select
+          <DropdownSelect
             value={batchFilter}
-            onChange={(event) => onBatchFilterChange(event.target.value)}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua batch</option>
-            {batchOptions.map((item) => (
-              <option key={item.fish_batch_id} value={String(item.fish_batch_id)}>
-                {item.batch_code}
-              </option>
-            ))}
-          </select>
+            options={batchSelectOptions}
+            onChange={onBatchFilterChange}
+            ariaLabel="Filter batch ikan"
+          />
 
-          <select
+          <DropdownSelect
             value={feedFilter}
-            onChange={(event) => onFeedFilterChange(event.target.value)}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua pakan</option>
-            {feedOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            options={feedSelectOptions}
+            onChange={onFeedFilterChange}
+            ariaLabel="Filter jenis pakan"
+          />
 
           <input
             type="date"

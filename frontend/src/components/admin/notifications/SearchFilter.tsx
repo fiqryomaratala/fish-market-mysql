@@ -1,4 +1,5 @@
 import { BellRing, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { NotificationStatusFilter, NotificationTypeFilter } from '@/types/notification'
 import { getNotificationTypeLabel, NOTIFICATION_TYPES } from '@/types/notification'
 
@@ -27,6 +28,19 @@ export function SearchFilter({
   onRefresh,
   onMarkAllAsRead,
 }: SearchFilterProps) {
+  const typeOptions = [
+    { label: 'Semua Tipe', value: 'all' },
+    ...NOTIFICATION_TYPES.map((type) => ({
+      value: type,
+      label: getNotificationTypeLabel(type),
+    })),
+  ]
+  const statusOptions = [
+    { label: 'Semua Status', value: 'all' },
+    { label: 'Sudah Dibaca', value: 'read' },
+    { label: 'Belum Dibaca', value: 'unread' },
+  ]
+
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg">
       <div className="flex flex-col gap-4">
@@ -42,28 +56,21 @@ export function SearchFilter({
             />
           </div>
 
-          <select
+          <DropdownSelect
             value={typeFilter}
-            onChange={(event) => onTypeChange(event.target.value as NotificationTypeFilter)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/15"
-          >
-            <option value="all">Semua Tipe</option>
-            {NOTIFICATION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {getNotificationTypeLabel(type)}
-              </option>
-            ))}
-          </select>
+            options={typeOptions}
+            onChange={(value) => onTypeChange(value as NotificationTypeFilter)}
+            ariaLabel="Filter tipe notifikasi"
+            className="xl:min-w-[220px]"
+          />
 
-          <select
+          <DropdownSelect
             value={statusFilter}
-            onChange={(event) => onStatusChange(event.target.value as NotificationStatusFilter)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/15"
-          >
-            <option value="all">Semua Status</option>
-            <option value="read">Sudah Dibaca</option>
-            <option value="unread">Belum Dibaca</option>
-          </select>
+            options={statusOptions}
+            onChange={(value) => onStatusChange(value as NotificationStatusFilter)}
+            ariaLabel="Filter status notifikasi"
+            className="xl:min-w-[220px]"
+          />
 
           <button
             type="button"

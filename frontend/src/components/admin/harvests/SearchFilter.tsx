@@ -1,4 +1,5 @@
 import { Plus, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { HarvestStatus } from '@/types/harvest'
 
 type SearchFilterProps = {
@@ -32,6 +33,17 @@ export function SearchFilter({
   onRefresh,
   onAdd,
 }: SearchFilterProps) {
+  const statusOptions = [
+    { label: 'Semua status', value: 'All' },
+    { label: 'Planned', value: 'Planned' },
+    { label: 'Harvested', value: 'Harvested' },
+    { label: 'Transferred To Inventory', value: 'Transferred To Inventory' },
+  ]
+  const fishTypeOptions = [
+    { label: 'Semua jenis ikan', value: 'All' },
+    ...fishTypes.map((item) => ({ label: item, value: item })),
+  ]
+
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/40">
       <div className="flex flex-col gap-4">
@@ -69,29 +81,19 @@ export function SearchFilter({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          <select
+          <DropdownSelect
             value={status}
-            onChange={(event) => onStatusChange(event.target.value as HarvestStatus | 'All')}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua status</option>
-            <option value="Planned">Planned</option>
-            <option value="Harvested">Harvested</option>
-            <option value="Transferred To Inventory">Transferred To Inventory</option>
-          </select>
+            options={statusOptions}
+            onChange={(value) => onStatusChange(value as HarvestStatus | 'All')}
+            ariaLabel="Filter status panen"
+          />
 
-          <select
+          <DropdownSelect
             value={fishType}
-            onChange={(event) => onFishTypeChange(event.target.value)}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua jenis ikan</option>
-            {fishTypes.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            options={fishTypeOptions}
+            onChange={onFishTypeChange}
+            ariaLabel="Filter jenis ikan panen"
+          />
 
           <input
             type="date"

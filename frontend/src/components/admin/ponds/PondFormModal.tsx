@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import { POND_STATUS_OPTIONS, type Pond, type PondMutationInput } from '@/types/pond'
 
 const pondFormSchema = z.object({
@@ -59,6 +60,7 @@ export function PondFormModal({
   onSubmit,
 }: PondFormModalProps) {
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -177,16 +179,19 @@ export function PondFormModal({
 
             <div>
               <label className="text-sm font-semibold text-slate-700">Status</label>
-              <select
-                {...register('status')}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                {POND_STATUS_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={field.value}
+                    options={POND_STATUS_OPTIONS.map((item) => ({ label: item, value: item }))}
+                    onChange={field.onChange}
+                    ariaLabel="Pilih status kolam"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.status?.message} />
             </div>
           </div>

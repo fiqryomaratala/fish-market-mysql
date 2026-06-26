@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { FishBatch } from '@/types/fish-batch'
 import type { FeedingLog, FeedingLogMutationInput } from '@/types/feeding-log'
 import type { Inventory } from '@/types/inventory'
@@ -107,6 +108,7 @@ export function FeedingLogFormModal({
   }, [feedInventories, log])
 
   const {
+    control,
     register,
     watch,
     handleSubmit,
@@ -173,33 +175,49 @@ export function FeedingLogFormModal({
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="text-sm font-semibold text-slate-700">Batch Ikan</label>
-              <select
-                {...register('fish_batch_id', { valueAsNumber: true })}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                <option value={0}>Pilih batch ikan</option>
-                {fishBatches.map((batch) => (
-                  <option key={batch.id} value={batch.id}>
-                    {batch.batch_code} - {batch.fish_type} - {batch.pond_name}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="fish_batch_id"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={String(field.value)}
+                    options={[
+                      { label: 'Pilih batch ikan', value: '0' },
+                      ...fishBatches.map((batch) => ({
+                        label: `${batch.batch_code} - ${batch.fish_type} - ${batch.pond_name}`,
+                        value: String(batch.id),
+                      })),
+                    ]}
+                    onChange={(value) => field.onChange(Number(value))}
+                    ariaLabel="Pilih batch ikan"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.fish_batch_id?.message} />
             </div>
 
             <div>
               <label className="text-sm font-semibold text-slate-700">Inventaris Pakan</label>
-              <select
-                {...register('feed_inventory_id', { valueAsNumber: true })}
-                className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                <option value={0}>Pilih inventaris pakan</option>
-                {inventoryOptions.map((inventory) => (
-                  <option key={inventory.id} value={inventory.id}>
-                    {inventory.name}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="feed_inventory_id"
+                render={({ field }) => (
+                  <DropdownSelect
+                    value={String(field.value)}
+                    options={[
+                      { label: 'Pilih inventaris pakan', value: '0' },
+                      ...inventoryOptions.map((inventory) => ({
+                        label: inventory.name,
+                        value: String(inventory.id),
+                      })),
+                    ]}
+                    onChange={(value) => field.onChange(Number(value))}
+                    ariaLabel="Pilih inventaris pakan"
+                    className="mt-2"
+                  />
+                )}
+              />
               <FieldError message={errors.feed_inventory_id?.message} />
             </div>
 

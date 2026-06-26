@@ -21,6 +21,7 @@ import {
   StockAdjustmentModal,
   SummaryCard,
 } from '@/components/admin/inventory'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import { Pagination } from '@/components/admin/products'
 import {
   useAdjustStock,
@@ -295,29 +296,29 @@ function InventoryManagementPage() {
             </div>
 
             <div className="flex flex-col gap-3 md:flex-row">
-              <select
+              <DropdownSelect
                 value={category}
-                onChange={(event) => setCategory(event.target.value)}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                <option value="All">Semua kategori</option>
-                {INVENTORY_CATEGORIES.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+                onChange={setCategory}
+                ariaLabel="Filter kategori inventaris"
+                className="min-w-[220px]"
+                options={[
+                  { label: 'Semua kategori', value: 'All' },
+                  ...INVENTORY_CATEGORIES.map((item) => ({ label: item, value: item })),
+                ]}
+              />
 
-              <select
+              <DropdownSelect
                 value={status}
-                onChange={(event) => setStatus(event.target.value)}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-              >
-                <option value="All">Semua status</option>
-                <option value="available">Available</option>
-                <option value="low_stock">Low Stock</option>
-                <option value="out_of_stock">Out Of Stock</option>
-              </select>
+                onChange={setStatus}
+                ariaLabel="Filter status inventaris"
+                className="min-w-[220px]"
+                options={[
+                  { label: 'Semua status', value: 'All' },
+                  { label: 'Available', value: 'available' },
+                  { label: 'Low Stock', value: 'low_stock' },
+                  { label: 'Out Of Stock', value: 'out_of_stock' },
+                ]}
+              />
 
               <button
                 type="button"

@@ -1,4 +1,5 @@
 import { Plus, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import { POND_STATUS_OPTIONS, type PondStatus } from '@/types/pond'
 
 type SearchFilterProps = {
@@ -11,6 +12,13 @@ type SearchFilterProps = {
   onRefresh: () => void
   onAdd: () => void
 }
+
+type StatusOption = PondStatus | 'All'
+
+const statusOptions: Array<{ label: string; value: StatusOption }> = [
+  { label: 'Semua status', value: 'All' },
+  ...POND_STATUS_OPTIONS.map((item) => ({ label: item, value: item })),
+]
 
 export function SearchFilter({
   search,
@@ -36,18 +44,13 @@ export function SearchFilter({
         </div>
 
         <div className="flex flex-col gap-3 md:flex-row">
-          <select
+          <DropdownSelect
             value={status}
-            onChange={(event) => onStatusChange(event.target.value as PondStatus | 'All')}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-          >
-            <option value="All">Semua status</option>
-            {POND_STATUS_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            options={statusOptions}
+            onChange={(value) => onStatusChange(value as PondStatus | 'All')}
+            ariaLabel="Filter status kolam"
+            className="min-w-[220px]"
+          />
 
           <button
             type="button"
