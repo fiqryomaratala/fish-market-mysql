@@ -1,7 +1,6 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LoadingScreen } from '@/components/common/LoadingScreen'
-import { PagePlaceholder } from '@/components/common/PagePlaceholder'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { CustomerLayout } from '@/layouts/CustomerLayout'
@@ -29,6 +28,7 @@ const CustomerNotificationsPage = lazy(() => import('@/pages/customer/CustomerNo
 const CustomerProfilePage = lazy(() => import('@/pages/customer/CustomerProfilePage'))
 const CustomerSettingsPage = lazy(() => import('@/pages/customer/CustomerSettingsPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
+const AdminProfilePage = lazy(() => import('@/pages/admin/AdminProfilePage'))
 const StaffDashboardPage = lazy(() => import('@/pages/staff/dashboard/StaffDashboardPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
@@ -49,10 +49,6 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<LoadingScreen />}>{element}</Suspense>
-}
-
-function placeholderPage(eyebrow: string, title: string, description: string) {
-  return <PagePlaceholder eyebrow={eyebrow} title={title} description={description} />
 }
 
 export const router = createBrowserRouter([
@@ -178,14 +174,7 @@ export const router = createBrowserRouter([
               { path: 'reports', element: withSuspense(<ReportsPage />) },
               { path: 'notifications', element: withSuspense(<NotificationsPage />) },
               { path: 'activity-logs', element: withSuspense(<ActivityLogsPage />) },
-              {
-                path: 'profile',
-                element: placeholderPage(
-                  'Admin',
-                  'Profile',
-                  'Profil administrator untuk identitas akun, kontak, dan kendali akses pribadi.',
-                ),
-              },
+              { path: 'profile', element: withSuspense(<AdminProfilePage />) },
               { path: 'settings', element: withSuspense(<SettingsPage />) },
               { path: '*', element: withSuspense(<NotFoundPage />) },
             ],

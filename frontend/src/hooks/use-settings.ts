@@ -121,6 +121,7 @@ export function useUpdateProfile() {
         description: response.message || 'Profil berhasil diperbarui'
       })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.profile })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.settings })
     }
   })
 }
