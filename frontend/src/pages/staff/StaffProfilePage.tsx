@@ -332,6 +332,40 @@ function StaffProfilePage() {
               </div>
             </section>
 
+            <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(148,163,184,0.14)]">
+              <SectionHeader
+                eyebrow="Activity Summary"
+                title="Performa operasional"
+                description="Rekap cepat untuk aktivitas kerja yang paling sering dipantau."
+              />
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <SummaryMetric
+                  icon={ClipboardList}
+                  label="Total Feeding Logs"
+                  value={formatNumber(profileInsights.totalFeedingLogs)}
+                  accent="sky"
+                />
+                <SummaryMetric
+                  icon={Fish}
+                  label="Total Harvest Records"
+                  value={formatNumber(profileInsights.totalHarvestRecords)}
+                  accent="emerald"
+                />
+                <SummaryMetric
+                  icon={Warehouse}
+                  label="Total Inventory Updates"
+                  value={formatNumber(profileInsights.totalInventoryUpdates)}
+                  accent="amber"
+                />
+                <SummaryMetric
+                  icon={Activity}
+                  label="Today's Activities"
+                  value={formatNumber(profileInsights.todaysActivities)}
+                  accent="slate"
+                />
+              </div>
+            </section>
           </div>
 
           <div className="space-y-6">
@@ -362,41 +396,6 @@ function StaffProfilePage() {
                   }
                 />
                 <SidebarInfoRow label="Shift" value={profileInsights.shift} />
-              </div>
-            </section>
-
-            <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(148,163,184,0.14)]">
-              <SectionHeader
-                eyebrow="Activity Summary"
-                title="Performa operasional"
-                description="Rekap cepat untuk aktivitas kerja yang paling sering dipantau."
-              />
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-                <SummaryMetric
-                  icon={ClipboardList}
-                  label="Total Feeding Logs"
-                  value={formatNumber(profileInsights.totalFeedingLogs)}
-                  accent="sky"
-                />
-                <SummaryMetric
-                  icon={Fish}
-                  label="Total Harvest Records"
-                  value={formatNumber(profileInsights.totalHarvestRecords)}
-                  accent="emerald"
-                />
-                <SummaryMetric
-                  icon={Warehouse}
-                  label="Total Inventory Updates"
-                  value={formatNumber(profileInsights.totalInventoryUpdates)}
-                  accent="amber"
-                />
-                <SummaryMetric
-                  icon={Activity}
-                  label="Today's Activities"
-                  value={formatNumber(profileInsights.todaysActivities)}
-                  accent="slate"
-                />
               </div>
             </section>
           </div>
