@@ -19,7 +19,7 @@ export function AddressCard({ address, onEditAddress }: AddressCardProps) {
         <button
           type="button"
           onClick={onEditAddress}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700"
         >
           <PencilLine className="size-4" />
           Edit Alamat
