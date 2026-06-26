@@ -108,9 +108,17 @@ export function AppHeader() {
                   : 'border-white/10 bg-white/5 text-slate-200 hover:border-cyan-300/40 hover:text-white'
               }`}
             >
-              <span className="flex size-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950">
-                {getInitials(user?.name)}
-              </span>
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="size-10 rounded-full object-cover"
+                />
+              ) : (
+                <span className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950">
+                  {getInitials(user?.name)}
+                </span>
+              )}
               <span className="hidden min-w-0 sm:block">
                 <span
                   className={`block truncate text-sm font-semibold ${
