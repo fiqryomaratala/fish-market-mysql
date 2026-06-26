@@ -126,6 +126,11 @@ select:-webkit-autofill:focus,
   cursor: pointer;
 }
 
+[data-role-surface='admin'] button:not(:disabled),
+[data-role-surface='admin'] [role='button']:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
 .profile-card {
   border-color: #e5e7eb;
   box-shadow:
