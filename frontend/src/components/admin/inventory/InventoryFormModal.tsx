@@ -105,7 +105,7 @@ export function InventoryFormModal({
           </button>
         </div>
 
-        <form onSubmit={submitHandler} className="space-y-6 overflow-y-auto px-6 py-6">
+        <form onSubmit={submitHandler} className="scrollbar-hidden space-y-6 overflow-y-auto px-6 py-6">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2">
               <span className="text-sm font-medium text-slate-700">Nama</span>
