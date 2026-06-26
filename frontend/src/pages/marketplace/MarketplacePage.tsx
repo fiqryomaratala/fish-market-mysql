@@ -7,14 +7,16 @@ import { ProductGrid } from '@/components/marketplace/ProductGrid'
 import { SearchBar } from '@/components/marketplace/SearchBar'
 import { SortDropdown } from '@/components/marketplace/SortDropdown'
 import { useProducts } from '@/hooks/useProducts'
-import type { Product } from '@/types/product'
+import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from '@/types/product'
 
-type MarketplaceCategory = 'All' | 'freshwater' | 'saltwater'
+type MarketplaceCategory = 'All' | ProductCategory
 
 const categoryOptions = [
   { label: 'Semua', value: 'All' },
-  { label: 'Ikan Air Tawar', value: 'freshwater' },
-  { label: 'Ikan Air Asin', value: 'saltwater' },
+  ...PRODUCT_CATEGORIES.map((category) => ({
+    label: category,
+    value: category,
+  })),
 ] as const
 const sortOptions = [
   { label: 'Terbaru', value: 'Newest' },
@@ -29,21 +31,15 @@ const initialFilters: MarketplaceFilters = {
   harvestStatus: 'All',
 }
 
-function resolveMarketplaceCategory(product: Product): Exclude<MarketplaceCategory, 'All'> | null {
+function resolveMarketplaceCategory(product: Product): ProductCategory | null {
   const rawCategory = product.category.trim().toLowerCase()
 
-  if (
-    ['freshwater', 'air_tawar', 'ikan air tawar', 'air tawar'].includes(rawCategory)
-  ) {
-    return 'freshwater'
-  }
+  const matchedCategory = PRODUCT_CATEGORIES.find(
+    (category) => category.toLowerCase() === rawCategory,
+  )
 
-  if (
-    ['saltwater', 'air_asin', 'ikan air asin', 'air asin', 'air_laut', 'air laut'].includes(
-      rawCategory,
-    )
-  ) {
-    return 'saltwater'
+  if (matchedCategory) {
+    return matchedCategory
   }
 
   return null
