@@ -148,7 +148,7 @@ export function ProductFormModal({
         </div>
 
         <form onSubmit={submitHandler} className="flex min-h-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-6">
+          <div className="scrollbar-hidden min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-6">
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)]">
               <section className="rounded-2xl border border-slate-200 bg-white p-5">
                 <div className="mb-5">
