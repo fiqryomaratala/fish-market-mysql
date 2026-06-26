@@ -85,7 +85,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
         <button
           type="button"
           onClick={() => onViewDetail(order.id)}
-          className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-emerald-600"
+          className="inline-flex cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
           Lihat Detail
         </button>
