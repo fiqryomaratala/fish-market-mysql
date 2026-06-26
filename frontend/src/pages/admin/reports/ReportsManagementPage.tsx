@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import {
   Activity,
@@ -26,6 +26,7 @@ import {
   SalesTable,
   SummaryCard,
 } from '@/components/admin/reports'
+import { Pagination } from '@/components/admin/products'
 import {
   useAuth,
   useCustomerReport,
@@ -115,6 +116,12 @@ export default function ReportsManagementPage() {
 
   const { role } = useAuth()
   const [activeTab, setActiveTab] = useState<ReportTabKey>('sales')
+  const [salesPage, setSalesPage] = useState(1)
+  const [harvestPage, setHarvestPage] = useState(1)
+  const [inventoryPage, setInventoryPage] = useState(1)
+  const [feedSummaryPage, setFeedSummaryPage] = useState(1)
+  const [fishBatchPage, setFishBatchPage] = useState(1)
+  const [customerPage, setCustomerPage] = useState(1)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [activeQuickFilter, setActiveQuickFilter] = useState<QuickFilterKey | null>(null)
@@ -180,6 +187,108 @@ export default function ReportsManagementPage() {
   const exportHelperText = canExport
     ? 'File akan diunduh langsung dari backend sesuai tab aktif dan rentang tanggal yang dipilih.'
     : 'Backend saat ini belum menyediakan endpoint export khusus untuk tab ini. Export aktif untuk Harvest Report, Feeding Report, dan Fish Batch Report.'
+
+  const salesTotalPages = Math.max(1, Math.ceil((salesQuery.data?.rows.length ?? 0) / 5))
+  const paginatedSalesRows = useMemo(() => {
+    const rows = salesQuery.data?.rows ?? []
+    const safePage = Math.min(salesPage, salesTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [salesPage, salesQuery.data?.rows, salesTotalPages])
+
+  const harvestTotalPages = Math.max(1, Math.ceil((harvestQuery.data?.rows.length ?? 0) / 5))
+  const paginatedHarvestRows = useMemo(() => {
+    const rows = harvestQuery.data?.rows ?? []
+    const safePage = Math.min(harvestPage, harvestTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [harvestPage, harvestQuery.data?.rows, harvestTotalPages])
+
+  const inventoryTotalPages = Math.max(1, Math.ceil((inventoryQuery.data?.rows.length ?? 0) / 5))
+  const paginatedInventoryRows = useMemo(() => {
+    const rows = inventoryQuery.data?.rows ?? []
+    const safePage = Math.min(inventoryPage, inventoryTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [inventoryPage, inventoryQuery.data?.rows, inventoryTotalPages])
+
+  const feedSummaryTotalPages = Math.max(
+    1,
+    Math.ceil((feedingQuery.data?.rows.length ?? 0) / 5),
+  )
+  const paginatedFeedSummaryRows = useMemo(() => {
+    const rows = feedingQuery.data?.rows ?? []
+    const safePage = Math.min(feedSummaryPage, feedSummaryTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [feedSummaryPage, feedSummaryTotalPages, feedingQuery.data?.rows])
+
+  const fishBatchTotalPages = Math.max(1, Math.ceil((fishBatchQuery.data?.rows.length ?? 0) / 5))
+  const paginatedFishBatchRows = useMemo(() => {
+    const rows = fishBatchQuery.data?.rows ?? []
+    const safePage = Math.min(fishBatchPage, fishBatchTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [fishBatchPage, fishBatchQuery.data?.rows, fishBatchTotalPages])
+
+  const customerTotalPages = Math.max(1, Math.ceil((customerQuery.data?.rows.length ?? 0) / 5))
+  const paginatedCustomerRows = useMemo(() => {
+    const rows = customerQuery.data?.rows ?? []
+    const safePage = Math.min(customerPage, customerTotalPages)
+    const start = (safePage - 1) * 5
+
+    return rows.slice(start, start + 5)
+  }, [customerPage, customerQuery.data?.rows, customerTotalPages])
+
+  useEffect(() => {
+    setSalesPage(1)
+    setHarvestPage(1)
+    setInventoryPage(1)
+    setFeedSummaryPage(1)
+    setFishBatchPage(1)
+    setCustomerPage(1)
+  }, [activeTab, submittedFilter.end_date, submittedFilter.start_date])
+
+  useEffect(() => {
+    if (salesPage > salesTotalPages) {
+      setSalesPage(salesTotalPages)
+    }
+  }, [salesPage, salesTotalPages])
+
+  useEffect(() => {
+    if (harvestPage > harvestTotalPages) {
+      setHarvestPage(harvestTotalPages)
+    }
+  }, [harvestPage, harvestTotalPages])
+
+  useEffect(() => {
+    if (inventoryPage > inventoryTotalPages) {
+      setInventoryPage(inventoryTotalPages)
+    }
+  }, [inventoryPage, inventoryTotalPages])
+
+  useEffect(() => {
+    if (feedSummaryPage > feedSummaryTotalPages) {
+      setFeedSummaryPage(feedSummaryTotalPages)
+    }
+  }, [feedSummaryPage, feedSummaryTotalPages])
+
+  useEffect(() => {
+    if (fishBatchPage > fishBatchTotalPages) {
+      setFishBatchPage(fishBatchTotalPages)
+    }
+  }, [fishBatchPage, fishBatchTotalPages])
+
+  useEffect(() => {
+    if (customerPage > customerTotalPages) {
+      setCustomerPage(customerTotalPages)
+    }
+  }, [customerPage, customerTotalPages])
 
   const handleExportPdf = async () => {
     if (!exportType) {
@@ -331,7 +440,14 @@ export default function ReportsManagementPage() {
           ) : (
             <>
               <SalesChart data={salesQuery.data.trend} />
-              <SalesTable rows={salesQuery.data.rows} />
+              <div className="space-y-4">
+                <SalesTable rows={paginatedSalesRows} />
+                <Pagination
+                  currentPage={Math.min(salesPage, salesTotalPages)}
+                  totalPages={salesTotalPages}
+                  onPageChange={setSalesPage}
+                />
+              </div>
             </>
           )}
         </div>
@@ -374,7 +490,14 @@ export default function ReportsManagementPage() {
           ) : (
             <>
               <HarvestChart data={harvestQuery.data.trend} />
-              <HarvestTable rows={harvestQuery.data.rows} />
+              <div className="space-y-4">
+                <HarvestTable rows={paginatedHarvestRows} />
+                <Pagination
+                  currentPage={Math.min(harvestPage, harvestTotalPages)}
+                  totalPages={harvestTotalPages}
+                  onPageChange={setHarvestPage}
+                />
+              </div>
             </>
           )}
         </div>
@@ -415,7 +538,14 @@ export default function ReportsManagementPage() {
           {inventoryQuery.data.rows.length === 0 ? (
             <EmptyReportState title="No Report Data Found" description="Belum ada data inventaris pada filter yang dipilih." />
           ) : (
-            <InventoryTable rows={inventoryQuery.data.rows} />
+            <div className="space-y-4">
+              <InventoryTable rows={paginatedInventoryRows} />
+              <Pagination
+                currentPage={Math.min(inventoryPage, inventoryTotalPages)}
+                totalPages={inventoryTotalPages}
+                onPageChange={setInventoryPage}
+              />
+            </div>
           )}
         </div>
       ) : null}
@@ -455,15 +585,16 @@ export default function ReportsManagementPage() {
           {feedingQuery.data.trend.length === 0 ? (
             <EmptyReportState title="No Report Data Found" description="Belum ada data log pakan pada filter yang dipilih." />
           ) : (
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_380px]">
+            <div className="space-y-6">
               <FeedingChart data={feedingQuery.data.trend} />
+
               <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/40">
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">
                   Ringkasan Jenis Pakan
                 </p>
                 <h3 className="mt-2 text-2xl font-semibold text-slate-900">Distribusi penggunaan</h3>
                 <div className="mt-6 space-y-3">
-                  {feedingQuery.data.rows.map((row) => (
+                  {paginatedFeedSummaryRows.map((row) => (
                     <div
                       key={`${row.batch_code}-${row.feed_type}`}
                       className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
@@ -479,6 +610,14 @@ export default function ReportsManagementPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-6">
+                  <Pagination
+                    currentPage={Math.min(feedSummaryPage, feedSummaryTotalPages)}
+                    totalPages={feedSummaryTotalPages}
+                    onPageChange={setFeedSummaryPage}
+                  />
                 </div>
               </section>
             </div>
@@ -521,7 +660,14 @@ export default function ReportsManagementPage() {
           {fishBatchQuery.data.rows.length === 0 ? (
             <EmptyReportState title="No Report Data Found" description="Belum ada data batch ikan pada filter yang dipilih." />
           ) : (
-            <FishBatchTable rows={fishBatchQuery.data.rows} />
+            <div className="space-y-4">
+              <FishBatchTable rows={paginatedFishBatchRows} />
+              <Pagination
+                currentPage={Math.min(fishBatchPage, fishBatchTotalPages)}
+                totalPages={fishBatchTotalPages}
+                onPageChange={setFishBatchPage}
+              />
+            </div>
           )}
         </div>
       ) : null}
@@ -561,7 +707,14 @@ export default function ReportsManagementPage() {
           {customerQuery.data.rows.length === 0 ? (
             <EmptyReportState title="No Report Data Found" description="Belum ada data pelanggan yang memiliki transaksi pada filter ini." />
           ) : (
-            <CustomerTable rows={customerQuery.data.rows} />
+            <div className="space-y-4">
+              <CustomerTable rows={paginatedCustomerRows} />
+              <Pagination
+                currentPage={Math.min(customerPage, customerTotalPages)}
+                totalPages={customerTotalPages}
+                onPageChange={setCustomerPage}
+              />
+            </div>
           )}
         </div>
       ) : null}
