@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { OrderListItem } from '@/types/order-management'
 import { ORDER_STATUS_OPTIONS } from '@/types/order-management'
 import { useUpdateOrderStatus } from '@/hooks/useOrderManagement'
@@ -63,17 +64,12 @@ export function OrderStatusModal({ order, onClose }: OrderStatusModalProps) {
             <label className="mb-2 block text-sm font-semibold text-slate-700">
               Status Pesanan
             </label>
-            <select
+            <DropdownSelect
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
-            >
-              {ORDER_STATUS_OPTIONS.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedStatus}
+              ariaLabel="Pilih status pesanan"
+              options={ORDER_STATUS_OPTIONS.map((status) => ({ label: status, value: status }))}
+            />
           </div>
 
           <div className="flex gap-3">

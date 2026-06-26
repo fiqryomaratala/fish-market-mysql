@@ -7,12 +7,14 @@ export function RoleBasedLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const isStaffRoute = location.pathname.startsWith('/staff')
   const isAdminRoute = location.pathname.startsWith('/admin')
   const isAdminDashboard = location.pathname === '/admin' || location.pathname === '/admin/'
   const adminSurface = isAdminRoute ? (isAdminDashboard ? 'dashboard' : 'management') : 'default'
 
   return (
     <div
+      data-role-surface={isStaffRoute ? 'staff' : isAdminRoute ? 'admin' : 'default'}
       data-admin-surface={adminSurface}
       className="flex h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.12),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.10),_transparent_20%),linear-gradient(180deg,_#ffffff_0%,_#f8fafc_58%,_#eff6ff_100%)] text-slate-900"
     >

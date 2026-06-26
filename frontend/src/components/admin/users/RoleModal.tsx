@@ -1,7 +1,8 @@
 import { Shield, X } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 
 const roleSchema = z.object({
   role: z.enum(['Admin', 'Staff', 'Customer'], { message: 'Role harus dipilih' }),
@@ -27,7 +28,7 @@ function RoleModal({
   onSubmit,
 }: RoleModalProps) {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -78,16 +79,23 @@ function RoleModal({
             <label htmlFor="role" className="mb-2 block text-sm font-medium text-slate-700">
               Role <span className="text-red-500">*</span>
             </label>
-            <select
-              id="role"
-              {...register('role')}
-              disabled={isSubmitting}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="Admin">Admin</option>
-              <option value="Staff">Staff</option>
-              <option value="Customer">Customer</option>
-            </select>
+            <Controller
+              control={control}
+              name="role"
+              render={({ field }) => (
+                <DropdownSelect
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isSubmitting}
+                  ariaLabel="Pilih role user"
+                  options={[
+                    { label: 'Admin', value: 'Admin' },
+                    { label: 'Staff', value: 'Staff' },
+                    { label: 'Customer', value: 'Customer' },
+                  ]}
+                />
+              )}
+            />
             {errors.role && (
               <p className="mt-1 text-xs text-red-600">{errors.role.message}</p>
             )}

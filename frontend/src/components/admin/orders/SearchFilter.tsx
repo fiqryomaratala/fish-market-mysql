@@ -1,5 +1,6 @@
 import { Calendar, Filter, RefreshCw, Search } from 'lucide-react'
 import { useState } from 'react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import { ORDER_STATUS_OPTIONS } from '@/types/order-management'
 
 interface SearchFilterProps {
@@ -68,18 +69,15 @@ export function SearchFilter({
             <label className="mb-2 block text-xs font-semibold text-slate-700">
               Status
             </label>
-            <select
+            <DropdownSelect
               value={statusFilter}
-              onChange={(e) => onStatusChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="">Semua Status</option>
-              {ORDER_STATUS_OPTIONS.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+              onChange={onStatusChange}
+              ariaLabel="Filter status pesanan"
+              options={[
+                { label: 'Semua Status', value: '' },
+                ...ORDER_STATUS_OPTIONS.map((status) => ({ label: status, value: status })),
+              ]}
+            />
           </div>
 
           <div>

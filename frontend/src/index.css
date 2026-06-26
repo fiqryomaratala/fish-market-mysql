@@ -120,6 +120,12 @@ select:-webkit-autofill:focus,
   background: #94a3b8;
 }
 
+[data-role-surface='staff'] button:not(:disabled),
+[data-role-surface='staff'] select:not(:disabled),
+[data-role-surface='staff'] [role='button']:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
 .profile-card {
   border-color: #e5e7eb;
   box-shadow:

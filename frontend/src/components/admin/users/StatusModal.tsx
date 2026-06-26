@@ -1,7 +1,8 @@
 import { UserCog, X } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 
 const statusSchema = z.object({
   status: z.enum(['Active', 'Inactive', 'Suspended'], { message: 'Status harus dipilih' }),
@@ -27,7 +28,7 @@ function StatusModal({
   onSubmit,
 }: StatusModalProps) {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -78,16 +79,23 @@ function StatusModal({
             <label htmlFor="status" className="mb-2 block text-sm font-medium text-slate-700">
               Status <span className="text-red-500">*</span>
             </label>
-            <select
-              id="status"
-              {...register('status')}
-              disabled={isSubmitting}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="Active">Aktif</option>
-              <option value="Inactive">Tidak Aktif</option>
-              <option value="Suspended">Ditangguhkan</option>
-            </select>
+            <Controller
+              control={control}
+              name="status"
+              render={({ field }) => (
+                <DropdownSelect
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isSubmitting}
+                  ariaLabel="Pilih status user"
+                  options={[
+                    { label: 'Aktif', value: 'Active' },
+                    { label: 'Tidak Aktif', value: 'Inactive' },
+                    { label: 'Ditangguhkan', value: 'Suspended' },
+                  ]}
+                />
+              )}
+            />
             {errors.status && (
               <p className="mt-1 text-xs text-red-600">{errors.status.message}</p>
             )}

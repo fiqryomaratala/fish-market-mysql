@@ -1,4 +1,5 @@
 import { Plus, RefreshCcw, Search } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 
 interface SearchFilterProps {
   searchValue: string
@@ -37,27 +38,31 @@ function SearchFilter({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <select
+        <DropdownSelect
           value={roleFilter}
-          onChange={(e) => onRoleChange(e.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
-        >
-          <option value="All">Semua Role</option>
-          <option value="Admin">Admin</option>
-          <option value="Staff">Staff</option>
-          <option value="Customer">Customer</option>
-        </select>
+          onChange={onRoleChange}
+          ariaLabel="Filter role user"
+          className="min-w-[220px]"
+          options={[
+            { label: 'Semua Role', value: 'All' },
+            { label: 'Admin', value: 'Admin' },
+            { label: 'Staff', value: 'Staff' },
+            { label: 'Customer', value: 'Customer' },
+          ]}
+        />
 
-        <select
+        <DropdownSelect
           value={statusFilter}
-          onChange={(e) => onStatusChange(e.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
-        >
-          <option value="All">Semua Status</option>
-          <option value="Active">Aktif</option>
-          <option value="Inactive">Tidak Aktif</option>
-          <option value="Suspended">Ditangguhkan</option>
-        </select>
+          onChange={onStatusChange}
+          ariaLabel="Filter status user"
+          className="min-w-[220px]"
+          options={[
+            { label: 'Semua Status', value: 'All' },
+            { label: 'Aktif', value: 'Active' },
+            { label: 'Tidak Aktif', value: 'Inactive' },
+            { label: 'Ditangguhkan', value: 'Suspended' },
+          ]}
+        />
 
         <button
           type="button"

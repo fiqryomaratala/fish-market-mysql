@@ -1,4 +1,5 @@
 import { Clock3, ListFilter, RefreshCcw, Search, TableProperties } from 'lucide-react'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { ActivityModuleFilter, ActivityRoleFilter, ActivityViewMode } from '@/types/activity-log'
 
 type SearchFilterProps = {
@@ -104,37 +105,33 @@ export function SearchFilter({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <label className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700">
-            <ListFilter className="size-4 text-slate-400" />
-            <select
+          <div className="relative">
+            <ListFilter className="pointer-events-none absolute left-4 top-1/2 z-10 size-4 -translate-y-1/2 text-slate-400" />
+            <DropdownSelect
               value={moduleFilter}
-              onChange={(event) => onModuleFilterChange(event.target.value as ActivityModuleFilter | 'all')}
-              className="w-full bg-transparent outline-none"
-            >
-              <option value="all">Semua modul</option>
-              {moduleOptions.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={(value) => onModuleFilterChange(value as ActivityModuleFilter | 'all')}
+              ariaLabel="Filter modul aktivitas"
+              className="pl-0"
+              options={[
+                { label: 'Semua modul', value: 'all' },
+                ...moduleOptions,
+              ]}
+            />
+          </div>
 
-          <select
+          <DropdownSelect
             value={roleFilter}
-            onChange={(event) => onRoleFilterChange(event.target.value as ActivityRoleFilter | 'all')}
+            onChange={(value) => onRoleFilterChange(value as ActivityRoleFilter | 'all')}
             disabled={!isRoleFilterAvailable}
-            className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-          >
-            <option value="all">
-              {isRoleFilterAvailable ? 'Semua role' : 'Role belum tersedia dari backend'}
-            </option>
-            {roleOptions.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+            ariaLabel="Filter role aktivitas"
+            options={[
+              {
+                label: isRoleFilterAvailable ? 'Semua role' : 'Role belum tersedia dari backend',
+                value: 'all',
+              },
+              ...roleOptions,
+            ]}
+          />
 
           <input
             type="date"

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChevronDown, ImagePlus, Upload, X } from 'lucide-react'
+import { ImagePlus, Upload, X } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { DropdownSelect } from '@/components/common/DropdownSelect'
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_STATUS_OPTIONS,
@@ -10,22 +11,7 @@ import {
   type ProductMutationInput,
   type ProductStatus,
 } from '@/types/product'
-import {
-  getProductStatusClasses,
-  getProductStatusLabel,
-} from './product-status'
-
-function getInactiveStatusOptionClass(status: ProductStatus) {
-  if (status === 'available') {
-    return 'border-emerald-100 text-emerald-700 hover:border-emerald-200 hover:bg-emerald-50/40'
-  }
-
-  if (status === 'out_of_stock') {
-    return 'border-amber-100 text-amber-700 hover:border-amber-200 hover:bg-amber-50/40'
-  }
-
-  return 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-}
+import { getProductStatusLabel } from './product-status'
 
 const productFormSchema = z.object({
   name: z.string().trim().min(1, 'Nama wajib diisi'),
@@ -77,10 +63,8 @@ export function ProductFormModal({
   onSubmit,
 }: ProductFormModalProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const statusMenuRef = useRef<HTMLDivElement | null>(null)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false)
   const {
     register,
     handleSubmit,
@@ -101,26 +85,8 @@ export function ProductFormModal({
       reset(getDefaultValues(product))
       setSelectedImage(null)
       setIsDragging(false)
-      setIsStatusMenuOpen(false)
     }
   }, [isOpen, product, reset])
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        statusMenuRef.current &&
-        !statusMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsStatusMenuOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   const previewUrl = useMemo(() => {
     if (selectedImage) {
@@ -206,17 +172,22 @@ export function ProductFormModal({
 
                     <label className="space-y-2">
                       <span className="text-sm font-medium text-slate-700">Kategori</span>
-                      <select
-                        {...register('category')}
-                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
-                      >
-                        <option value="">Pilih kategori</option>
-                        {PRODUCT_CATEGORIES.map((item) => (
-                          <option key={item} value={item}>
-                            {item}
-                          </option>
-                        ))}
-                      </select>
+                      <Controller
+                        control={control}
+                        name="category"
+                        render={({ field }) => (
+                          <DropdownSelect
+                            value={field.value}
+                            onChange={field.onChange}
+                            ariaLabel="Pilih kategori produk"
+                            placeholder="Pilih kategori"
+                            options={[
+                              { label: 'Pilih kategori', value: '' },
+                              ...PRODUCT_CATEGORIES.map((item) => ({ label: item, value: item })),
+                            ]}
+                          />
+                        )}
+                      />
                       {errors.category ? (
                         <p className="text-xs text-red-600">{errors.category.message}</p>
                       ) : null}
@@ -248,52 +219,15 @@ export function ProductFormModal({
                         control={control}
                         name="status"
                         render={({ field }) => (
-                          <div ref={statusMenuRef} className="relative">
-                            <button
-                              type="button"
-                              onClick={() => setIsStatusMenuOpen((current) => !current)}
-                              className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-sm font-semibold outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 ${getProductStatusClasses(field.value)}`}
-                            >
-                              <span>{getProductStatusLabel(field.value)}</span>
-                              <ChevronDown
-                                className={`size-3.5 transition ${isStatusMenuOpen ? 'rotate-180' : ''}`}
-                              />
-                            </button>
-
-                            <div
-                              className={`absolute left-0 right-0 z-30 mt-2 origin-top overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.14)] transition duration-200 ${
-                                isStatusMenuOpen
-                                  ? 'pointer-events-auto translate-y-0 opacity-100'
-                                  : 'pointer-events-none -translate-y-2 opacity-0'
-                              }`}
-                            >
-                              <div className="max-h-56 space-y-2 overflow-y-auto p-2.5">
-                                {PRODUCT_STATUS_OPTIONS.map((statusOption) => {
-                                  const isActive = field.value === statusOption
-
-                                  return (
-                                    <button
-                                      key={statusOption}
-                                      type="button"
-                                      onClick={() => {
-                                        field.onChange(statusOption)
-                                        setIsStatusMenuOpen(false)
-                                      }}
-                                      className={`flex min-h-9 w-full items-center rounded-xl border px-3 py-2 text-left text-[12px] font-semibold transition ${
-                                        isActive
-                                          ? `${getInactiveStatusOptionClass(statusOption)} border-current/20`
-                                          : `${getInactiveStatusOptionClass(statusOption)} hover:-translate-y-0.5`
-                                      }`}
-                                    >
-                                      <span className="whitespace-nowrap">
-                                        {getProductStatusLabel(statusOption)}
-                                      </span>
-                                    </button>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          </div>
+                          <DropdownSelect
+                            value={field.value}
+                            onChange={(value) => field.onChange(value as ProductStatus)}
+                            ariaLabel="Pilih status produk"
+                            options={PRODUCT_STATUS_OPTIONS.map((statusOption) => ({
+                              label: getProductStatusLabel(statusOption),
+                              value: statusOption,
+                            }))}
+                          />
                         )}
                       />
                     </label>
