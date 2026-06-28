@@ -11,6 +11,15 @@ const toneMap: Record<string, string> = {
   Cancelled: 'border-red-200 bg-red-50 text-red-700',
 }
 
+const labelMap: Record<string, string> = {
+  Pending: 'Menunggu',
+  Paid: 'Dibayar',
+  Processing: 'Diproses',
+  Shipping: 'Dikirim',
+  Completed: 'Selesai',
+  Cancelled: 'Dibatalkan',
+}
+
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
   return (
     <span
@@ -18,7 +27,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
         toneMap[status] ?? 'border-slate-200 bg-slate-100 text-slate-600'
       }`}
     >
-      {status}
+      {labelMap[status] ?? status}
     </span>
   )
 }

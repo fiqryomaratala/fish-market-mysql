@@ -16,7 +16,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
             Pesanan Terbaru
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Order Terbaru</h2>
+          <h2 className="mt-2 text-2xl font-semibold text-slate-900">Pesanan Terbaru</h2>
         </div>
         <Link
           to="/admin/orders"
@@ -31,11 +31,11 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
           <thead>
             <tr className="text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               <th className="px-4">Invoice</th>
-              <th className="px-4">Customer</th>
+              <th className="px-4">Pelanggan</th>
               <th className="px-4">Total</th>
               <th className="px-4">Status</th>
-              <th className="px-4">Date</th>
-              <th className="px-4">Action</th>
+              <th className="px-4">Tanggal</th>
+              <th className="px-4">Aksi</th>
             </tr>
           </thead>
           <tbody>

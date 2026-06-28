@@ -5,6 +5,32 @@ type RecentActivityProps = {
   items: ActivityLogItem[]
 }
 
+const moduleLabelMap: Record<string, string> = {
+  dashboard: 'Dashboard',
+  product: 'Produk',
+  products: 'Produk',
+  order: 'Pesanan',
+  orders: 'Pesanan',
+  inventory: 'Inventaris',
+  harvest: 'Panen',
+  pond: 'Kolam',
+  ponds: 'Kolam',
+  user: 'Pengguna',
+  users: 'Pengguna',
+  report: 'Laporan',
+  reports: 'Laporan',
+  notification: 'Notifikasi',
+  notifications: 'Notifikasi',
+  setting: 'Pengaturan',
+  settings: 'Pengaturan',
+  fish_batch: 'Batch Ikan',
+  fish_batches: 'Batch Ikan',
+  feeding_log: 'Log Pakan',
+  feeding_logs: 'Log Pakan',
+  activity_log: 'Log Aktivitas',
+  activity_logs: 'Log Aktivitas',
+}
+
 function getInitials(value: string) {
   return value
     .split(' ')
@@ -12,6 +38,14 @@ function getInitials(value: string) {
     .slice(0, 2)
     .map((segment) => segment[0]?.toUpperCase() ?? '')
     .join('')
+}
+
+function formatModuleLabel(module: string) {
+  if (!module) {
+    return '-'
+  }
+
+  return moduleLabelMap[module.toLowerCase()] ?? module
 }
 
 export function RecentActivity({ items }: RecentActivityProps) {
@@ -38,8 +72,11 @@ export function RecentActivity({ items }: RecentActivityProps) {
                 </span>
               </div>
               <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">
+              <p className="hidden">
                 {item.user} • {item.module}
+              </p>
+              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">
+                {item.user} - {formatModuleLabel(item.module)}
               </p>
             </div>
           </article>

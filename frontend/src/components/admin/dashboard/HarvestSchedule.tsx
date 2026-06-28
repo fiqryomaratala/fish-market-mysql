@@ -12,6 +12,12 @@ const statusClassMap: Record<string, string> = {
   Completed: 'bg-emerald-100 text-emerald-700',
 }
 
+const statusLabelMap: Record<string, string> = {
+  Active: 'Aktif',
+  Scheduled: 'Terjadwal',
+  Completed: 'Selesai',
+}
+
 export function HarvestSchedule({ items }: HarvestScheduleProps) {
   return (
     <section className="rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
@@ -40,7 +46,7 @@ export function HarvestSchedule({ items }: HarvestScheduleProps) {
                   statusClassMap[item.status] ?? 'bg-slate-200 text-slate-600'
                 }`}
               >
-                {item.status}
+                {statusLabelMap[item.status] ?? item.status}
               </span>
             </div>
             <p className="mt-3 text-sm text-slate-700">{formatDate(item.harvest_date)}</p>

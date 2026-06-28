@@ -65,10 +65,10 @@ function AdminDashboardPage() {
           <RefreshCcw className="size-8" />
         </div>
         <h1 className="mt-6 text-2xl font-semibold text-slate-900">
-          Gagal memuat admin dashboard
+          Gagal memuat dashboard admin
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500">
-          Ada kendala saat mengambil ringkasan penjualan, panen, order, inventori, atau aktivitas.
+          Ada kendala saat mengambil ringkasan penjualan, panen, pesanan, inventaris, atau aktivitas.
         </p>
         <button
           type="button"
@@ -105,7 +105,7 @@ function AdminDashboardPage() {
               Pusat Kendali Admin
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              ERP dashboard untuk operasional Fish Marketplace
+              Dashboard ERP untuk operasional Fish Marketplace
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-blue-50/78">
               Pantau pendapatan, pesanan, stok, jadwal panen, dan aktivitas tim dalam satu workspace

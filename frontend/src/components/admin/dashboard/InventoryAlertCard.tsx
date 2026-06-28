@@ -32,7 +32,7 @@ export function InventoryAlertCard({ items }: InventoryAlertCardProps) {
               <div>
                 <p className="text-sm font-semibold text-slate-900">{item.product}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-500">
-                  Batch {item.batch_code || 'N/A'}
+                  Batch {item.batch_code || '-'}
                 </p>
               </div>
               <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
