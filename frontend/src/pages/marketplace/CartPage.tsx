@@ -354,12 +354,12 @@ function CartPage() {
               <table className="min-w-full">
                 <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   <tr>
-                    {isEditMode ? <th className="px-6 py-4">Pilih</th> : null}
-                    <th className="px-6 py-4">Produk</th>
-                    <th className="px-4 py-4">Harga</th>
-                    <th className="px-4 py-4">Jumlah</th>
+                    {isEditMode ? <th className="px-6 py-4">Select</th> : null}
+                    <th className="px-6 py-4">Product</th>
+                    <th className="px-4 py-4">Price</th>
+                    <th className="px-4 py-4">Quantity</th>
                     <th className="px-4 py-4">Subtotal</th>
-                    <th className="px-6 py-4 text-right">Hapus</th>
+                    <th className="px-6 py-4 text-right">Remove</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

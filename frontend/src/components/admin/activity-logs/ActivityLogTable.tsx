@@ -13,7 +13,7 @@ export function ActivityLogTable({ logs, onView }: ActivityLogTableProps) {
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50/80">
             <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Tanggal
+              Date
             </th>
             <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               User
@@ -22,13 +22,13 @@ export function ActivityLogTable({ logs, onView }: ActivityLogTableProps) {
               Role
             </th>
             <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Modul
+              Module
             </th>
             <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Aksi
+              Action
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Deskripsi
+              Description
             </th>
             <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               IP Address

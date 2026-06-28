@@ -26,14 +26,14 @@ export function InventoryTable({
     <div className="rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-200/40">
       <div className="hidden grid-cols-[1fr_1.5fr_1fr_0.8fr_0.9fr_0.9fr_1fr_1fr_180px] gap-4 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:grid">
         <span>SKU</span>
-        <span>Nama</span>
-        <span>Kategori</span>
+        <span>Name</span>
+        <span>Category</span>
         <span>Unit</span>
-        <span>Stok Saat Ini</span>
-        <span>Stok Minimum</span>
+        <span>Current Stock</span>
+        <span>Minimum Stock</span>
         <span>Status</span>
-        <span>Diperbarui</span>
-        <span>Aksi</span>
+        <span>Updated</span>
+        <span>Action</span>
       </div>
 
       <div className="space-y-3 p-4 lg:space-y-0 lg:p-0">

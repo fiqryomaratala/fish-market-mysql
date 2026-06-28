@@ -23,12 +23,12 @@ export function InventoryMovementTable({ movements }: InventoryMovementTableProp
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-              <th className="px-5 py-4">Tanggal</th>
-              <th className="px-5 py-4">Item Inventaris</th>
-              <th className="px-5 py-4">Tipe Pergerakan</th>
-              <th className="px-5 py-4">Jumlah</th>
-              <th className="px-5 py-4">Alasan</th>
-              <th className="px-5 py-4">Dibuat Oleh</th>
+              <th className="px-5 py-4">Date</th>
+              <th className="px-5 py-4">Inventory Item</th>
+              <th className="px-5 py-4">Movement Type</th>
+              <th className="px-5 py-4">Quantity</th>
+              <th className="px-5 py-4">Reason</th>
+              <th className="px-5 py-4">Created By</th>
             </tr>
           </thead>
           <tbody>

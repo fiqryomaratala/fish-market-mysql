@@ -31,11 +31,11 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
           <thead>
             <tr className="text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               <th className="px-4">Invoice</th>
-              <th className="px-4">Pelanggan</th>
+              <th className="px-4">Customer</th>
               <th className="px-4">Total</th>
               <th className="px-4">Status</th>
-              <th className="px-4">Tanggal</th>
-              <th className="px-4">Aksi</th>
+              <th className="px-4">Date</th>
+              <th className="px-4">Action</th>
             </tr>
           </thead>
           <tbody>

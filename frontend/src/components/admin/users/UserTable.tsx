@@ -20,13 +20,13 @@ function UserTable({ users, onView, onEdit, onChangeRole, onChangeStatus, onDele
               Avatar
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Nama
+              Name
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Email
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Telepon
+              Phone
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
               Role
@@ -35,13 +35,13 @@ function UserTable({ users, onView, onEdit, onChangeRole, onChangeStatus, onDele
               Status
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Login Terakhir
+              Last Login
             </th>
             <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Dibuat
+              Created
             </th>
             <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Aksi
+              Action
             </th>
           </tr>
         </thead>

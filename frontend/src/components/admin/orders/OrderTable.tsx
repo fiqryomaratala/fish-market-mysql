@@ -39,25 +39,25 @@ export function OrderTable({
                 Invoice
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                Pelanggan
+                Customer
               </th>
               <th className="px-4 py-3 text-center text-xs font-semibold uppercase text-slate-700">
                 Total Item
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                Total Harga
+                Total Price
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                Metode Pembayaran
+                Payment Method
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                Dibuat
+                Created
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                Aksi
+                Action
               </th>
             </tr>
           </thead>

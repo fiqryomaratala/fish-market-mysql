@@ -140,19 +140,19 @@ export function OrderDetailModal({ orderId, onClose }: OrderDetailModalProps) {
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                      Produk
+                      Product
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
                       Batch Code
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                      Jenis Ikan
+                      Fish Type
                     </th>
                     <th className="px-4 py-3 text-center text-xs font-semibold uppercase text-slate-700">
                       Qty
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
-                      Harga
+                      Price
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-700">
                       Subtotal

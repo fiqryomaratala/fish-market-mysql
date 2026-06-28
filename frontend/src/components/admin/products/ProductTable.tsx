@@ -17,14 +17,14 @@ export function ProductTable({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white">
       <div className="hidden grid-cols-[90px_1.8fr_1fr_1fr_0.8fr_0.9fr_1fr_120px] gap-4 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 lg:grid">
-        <span>Gambar</span>
-        <span>Nama</span>
-        <span>Kategori</span>
-        <span>Harga</span>
-        <span>Stok</span>
+        <span>Image</span>
+        <span>Name</span>
+        <span>Category</span>
+        <span>Price</span>
+        <span>Stock</span>
         <span>Status</span>
-        <span>Tanggal Dibuat</span>
-        <span>Aksi</span>
+        <span>Created Date</span>
+        <span>Action</span>
       </div>
 
       <div className="space-y-3 p-4 lg:space-y-0 lg:p-0">
