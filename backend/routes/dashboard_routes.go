@@ -22,6 +22,7 @@ func RegisterDashboardRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		dashboard.GET("", dashboardHandler.GetSummary)
 		dashboard.GET("/summary", dashboardHandler.GetSummary)
+		dashboard.GET("/staff", dashboardHandler.GetStaffDashboard)
 		dashboard.GET("/sales", dashboardHandler.GetSales)
 		dashboard.GET("/harvest", dashboardHandler.GetHarvest)
 		dashboard.GET("/orders/latest", dashboardHandler.GetLatestOrders)

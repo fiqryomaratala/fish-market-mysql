@@ -113,3 +113,13 @@ func (h *DashboardHandler) GetRecentHarvest(c *gin.Context) {
 
 	utils.Success(c, "", data)
 }
+
+func (h *DashboardHandler) GetStaffDashboard(c *gin.Context) {
+	data, err := h.dashboardService.GetStaffDashboard()
+	if err != nil {
+		utils.InternalServerError(c)
+		return
+	}
+
+	utils.Success(c, "", data)
+}

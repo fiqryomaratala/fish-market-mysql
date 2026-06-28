@@ -19,6 +19,7 @@ type DashboardService interface {
 	GetFeedAnalytics() ([]dto.DashboardFeedItem, error)
 	GetBatchStatus() (*dto.DashboardBatchStatusResponse, error)
 	GetRecentHarvests() ([]dto.DashboardRecentHarvestItem, error)
+	GetStaffDashboard() (*dto.StaffDashboardResponse, error)
 }
 
 type dashboardService struct {
@@ -44,6 +45,22 @@ type inventoryAlertsRepository interface {
 
 type recentActivityRepository interface {
 	GetRecentActivity(limit int) ([]dto.DashboardActivityItem, error)
+}
+
+type staffDashboardRepository interface {
+	GetStaffTotalPonds() (int64, error)
+	GetStaffActivePonds() (int64, error)
+	GetStaffTotalBatches() (int64, error)
+	GetStaffGrowingBatches() (int64, error)
+	GetStaffReadyToHarvestCount(referenceDate time.Time) (int64, error)
+	GetStaffTodayFeedings(referenceDate time.Time) (int64, error)
+	GetStaffTodayHarvests(referenceDate time.Time) (int64, error)
+	GetStaffInventoryAlerts(limit int, threshold float64) ([]dto.StaffInventoryAlertItem, error)
+	GetStaffUpcomingHarvests(limit int, referenceDate time.Time) ([]dto.StaffUpcomingHarvestItem, error)
+	GetStaffRecentActivities(limit int) ([]dto.StaffDashboardActivityItem, error)
+	GetStaffHarvestSchedule(referenceDate time.Time, weeks int) ([]dto.StaffHarvestSchedulePoint, error)
+	GetStaffFeedUsageTrend(startDate time.Time) ([]dto.StaffFeedUsagePoint, error)
+	GetStaffFishBatchStatusBreakdown(referenceDate time.Time) ([]dto.StaffFishBatchStatusPoint, error)
 }
 
 func NewDashboardService(dashboardRepo repositories.DashboardRepository) DashboardService {
@@ -215,6 +232,132 @@ func (s *dashboardService) GetRecentActivity() ([]dto.DashboardActivityItem, err
 	return items, nil
 }
 
+func (s *dashboardService) GetStaffDashboard() (*dto.StaffDashboardResponse, error) {
+	repo, ok := s.dashboardRepo.(staffDashboardRepository)
+	if !ok {
+		return &dto.StaffDashboardResponse{}, nil
+	}
+
+	now := time.Now().UTC()
+	startOfTrend := now.AddDate(0, 0, -6)
+	const minimumStockThreshold = 5
+
+	totalPonds, err := repo.GetStaffTotalPonds()
+	if err != nil {
+		return nil, err
+	}
+
+	activePonds, err := repo.GetStaffActivePonds()
+	if err != nil {
+		return nil, err
+	}
+
+	totalBatches, err := repo.GetStaffTotalBatches()
+	if err != nil {
+		return nil, err
+	}
+
+	growingBatches, err := repo.GetStaffGrowingBatches()
+	if err != nil {
+		return nil, err
+	}
+
+	readyToHarvest, err := repo.GetStaffReadyToHarvestCount(now)
+	if err != nil {
+		return nil, err
+	}
+
+	todayFeedings, err := repo.GetStaffTodayFeedings(now)
+	if err != nil {
+		return nil, err
+	}
+
+	todayHarvests, err := repo.GetStaffTodayHarvests(now)
+	if err != nil {
+		return nil, err
+	}
+
+	inventoryAlerts, err := repo.GetStaffInventoryAlerts(6, minimumStockThreshold)
+	if err != nil {
+		return nil, err
+	}
+
+	upcomingHarvests, err := repo.GetStaffUpcomingHarvests(6, now)
+	if err != nil {
+		return nil, err
+	}
+
+	recentActivities, err := repo.GetStaffRecentActivities(6)
+	if err != nil {
+		return nil, err
+	}
+
+	harvestSchedule, err := repo.GetStaffHarvestSchedule(now, 6)
+	if err != nil {
+		return nil, err
+	}
+
+	feedUsageTrend, err := repo.GetStaffFeedUsageTrend(startOfTrend)
+	if err != nil {
+		return nil, err
+	}
+
+	statusBreakdown, err := repo.GetStaffFishBatchStatusBreakdown(now)
+	if err != nil {
+		return nil, err
+	}
+
+	feedUsageByDate := make(map[string]float64, len(feedUsageTrend))
+	for _, item := range feedUsageTrend {
+		feedUsageByDate[item.Date] = item.Amount
+	}
+
+	filledFeedTrend := make([]dto.StaffFeedUsagePoint, 0, 7)
+	for index := 0; index < 7; index++ {
+		dateValue := startOfTrend.AddDate(0, 0, index)
+		dateKey := dateValue.Format("2006-01-02")
+		filledFeedTrend = append(filledFeedTrend, dto.StaffFeedUsagePoint{
+			Date:   dateValue.Format("02 Jan"),
+			Amount: feedUsageByDate[dateKey],
+		})
+	}
+
+	statusByName := map[string]int64{
+		"Stocking":         0,
+		"Growing":          0,
+		"Ready To Harvest": 0,
+		"Harvested":        0,
+	}
+	for _, item := range statusBreakdown {
+		statusByName[item.Name] = item.Value
+	}
+
+	tasks := buildStaffTasks(todayFeedings, todayHarvests, activePonds, readyToHarvest, int64(len(inventoryAlerts)))
+
+	return &dto.StaffDashboardResponse{
+		TotalPonds:     totalPonds,
+		ActivePonds:    activePonds,
+		TotalBatches:   totalBatches,
+		GrowingBatches: growingBatches,
+		ReadyToHarvest: readyToHarvest,
+		TodayFeedings:  todayFeedings,
+		TodayHarvests:  todayHarvests,
+		LowStockFeeds:  int64(len(inventoryAlerts)),
+		RecentActivities: recentActivities,
+		UpcomingHarvests: upcomingHarvests,
+		InventoryAlerts:  inventoryAlerts,
+		HarvestSchedule:  harvestSchedule,
+		FeedUsageTrend:   filledFeedTrend,
+		FishBatchStatus: []dto.StaffFishBatchStatusPoint{
+			{Name: "Stocking", Value: statusByName["Stocking"]},
+			{Name: "Growing", Value: statusByName["Growing"]},
+			{Name: "Ready To Harvest", Value: statusByName["Ready To Harvest"]},
+			{Name: "Harvested", Value: statusByName["Harvested"]},
+		},
+		TodayTasks: tasks,
+	}, nil
+}
+
 func toDisplayStatus(value string) string {
 	trimmed := strings.TrimSpace(value)
 	if trimmed == "" {
@@ -233,4 +376,69 @@ func toDisplayStatus(value string) string {
 	}
 
 	return strings.Join(segments, " ")
+}
+
+func buildStaffTasks(todayFeedings, todayHarvests, activePonds, readyToHarvest, lowStockFeeds int64) []dto.StaffTaskItem {
+	feedingStatus := "Pending"
+	feedingPriority := "High"
+	if todayFeedings > 0 {
+		feedingStatus = "Completed"
+		feedingPriority = "Medium"
+	}
+
+	pondStatus := "Pending"
+	if activePonds > 0 {
+		pondStatus = "In Progress"
+	}
+
+	harvestStatus := "Pending"
+	harvestPriority := "Medium"
+	if todayHarvests > 0 {
+		harvestStatus = "Completed"
+	} else if readyToHarvest > 0 {
+		harvestStatus = "Attention"
+		harvestPriority = "Critical"
+	}
+
+	inventoryStatus := "Completed"
+	inventoryPriority := "Low"
+	if lowStockFeeds > 0 {
+		inventoryStatus = "Attention"
+		inventoryPriority = "High"
+	}
+
+	return []dto.StaffTaskItem{
+		{
+			ID:          "feeding",
+			Title:       "Input Feeding",
+			Description: "Pastikan log pemberian pakan harian sudah tercatat lengkap.",
+			Status:      feedingStatus,
+			Deadline:    "Hari ini",
+			Priority:    feedingPriority,
+		},
+		{
+			ID:          "pond-condition",
+			Title:       "Check Pond Condition",
+			Description: "Verifikasi kondisi kolam aktif dan indikator budidaya utama.",
+			Status:      pondStatus,
+			Deadline:    "Hari ini",
+			Priority:    "Medium",
+		},
+		{
+			ID:          "harvest",
+			Title:       "Record Harvest",
+			Description: "Catat panen untuk batch yang siap atau sudah diproses hari ini.",
+			Status:      harvestStatus,
+			Deadline:    "Hari ini",
+			Priority:    harvestPriority,
+		},
+		{
+			ID:          "inventory",
+			Title:       "Update Inventory",
+			Description: "Sinkronkan stok pakan dan tindak lanjuti item di bawah minimum.",
+			Status:      inventoryStatus,
+			Deadline:    "Hari ini",
+			Priority:    inventoryPriority,
+		},
+	}
 }

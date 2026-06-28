@@ -143,7 +143,7 @@ func (r *dashboardRepository) GetRecentActivity(limit int) ([]dto.DashboardActiv
 	var items []dto.DashboardActivityItem
 
 	err := r.db.Table("activity_logs").
-		Select("activity_logs.id as id, users.name as user, CONCAT(UPPER(activity_logs.action), ' ', UPPER(activity_logs.module)) as title, activity_logs.description as description, activity_logs.module as module, activity_logs.action as action, DATE_FORMAT(activity_logs.created_at, '%Y-%m-%dT%H:%i:%sZ') as created_at").
+		Select("activity_logs.id as id, users.name as user, users.photo_url as avatar, CONCAT(UPPER(activity_logs.action), ' ', UPPER(activity_logs.module)) as title, activity_logs.description as description, activity_logs.module as module, activity_logs.action as action, DATE_FORMAT(activity_logs.created_at, '%Y-%m-%dT%H:%i:%sZ') as created_at").
 		Joins("LEFT JOIN users ON users.id = activity_logs.user_id").
 		Order("activity_logs.created_at DESC").
 		Limit(limit).
@@ -206,4 +206,197 @@ func (r *dashboardRepository) GetRecentHarvests(limit int) ([]dto.DashboardRecen
 		Scan(&items).Error
 
 	return items, err
+}
+
+func (r *dashboardRepository) GetStaffTotalPonds() (int64, error) {
+	var total int64
+	err := r.db.Table("ponds").Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffActivePonds() (int64, error) {
+	var total int64
+	err := r.db.Table("ponds").Where("LOWER(status) = ?", "active").Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffTotalBatches() (int64, error) {
+	var total int64
+	err := r.db.Table("fish_batches").Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffGrowingBatches() (int64, error) {
+	var total int64
+	err := r.db.Table("fish_batches").
+		Where("LOWER(status) IN ?", []string{"active", "growing"}).
+		Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffReadyToHarvestCount(referenceDate time.Time) (int64, error) {
+	var total int64
+	err := r.db.Table("fish_batches").
+		Where(`
+			LOWER(status) IN ? OR (
+				LOWER(status) NOT IN ? AND DATE(expected_harvest) <= DATE(?)
+			)
+		`,
+			[]string{"ready_to_harvest", "ready to harvest"},
+			[]string{"harvested", "cancelled"},
+			referenceDate,
+		).
+		Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffTodayFeedings(referenceDate time.Time) (int64, error) {
+	var total int64
+	err := r.db.Table("feeding_logs").
+		Where("DATE(feed_time) = DATE(?)", referenceDate).
+		Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffTodayHarvests(referenceDate time.Time) (int64, error) {
+	var total int64
+	err := r.db.Table("harvests").
+		Where("DATE(harvest_date) = DATE(?)", referenceDate).
+		Count(&total).Error
+	return total, err
+}
+
+func (r *dashboardRepository) GetStaffInventoryAlerts(limit int, threshold float64) ([]dto.StaffInventoryAlertItem, error) {
+	var items []dto.StaffInventoryAlertItem
+
+	err := r.db.Table("inventories").
+		Select(`
+			inventories.id as id,
+			products.name as feed_name,
+			inventories.quantity as current_stock,
+			? as minimum_stock,
+			CASE
+				WHEN inventories.quantity <= 0 THEN 'Out Of Stock'
+				ELSE 'Low Stock'
+			END as status
+		`, threshold).
+		Joins("JOIN products ON products.id = inventories.product_id").
+		Where("inventories.quantity <= ?", threshold).
+		Order("inventories.quantity ASC, products.name ASC").
+		Limit(limit).
+		Scan(&items).Error
+
+	return items, err
+}
+
+func (r *dashboardRepository) GetStaffUpcomingHarvests(limit int, referenceDate time.Time) ([]dto.StaffUpcomingHarvestItem, error) {
+	var items []dto.StaffUpcomingHarvestItem
+
+	err := r.db.Table("fish_batches").
+		Select(`
+			fish_batches.id as id,
+			fish_batches.batch_code as batch_code,
+			fish_batches.fish_type as fish_type,
+			ponds.name as pond,
+			DATE_FORMAT(fish_batches.expected_harvest, '%Y-%m-%d') as harvest_date,
+			DATEDIFF(DATE(fish_batches.expected_harvest), DATE(?)) as days_remaining
+		`, referenceDate).
+		Joins("JOIN ponds ON ponds.id = fish_batches.pond_id").
+		Where("LOWER(fish_batches.status) NOT IN ?", []string{"harvested", "cancelled"}).
+		Order("fish_batches.expected_harvest ASC").
+		Limit(limit).
+		Scan(&items).Error
+
+	return items, err
+}
+
+func (r *dashboardRepository) GetStaffRecentActivities(limit int) ([]dto.StaffDashboardActivityItem, error) {
+	var items []dto.StaffDashboardActivityItem
+
+	err := r.db.Table("activity_logs").
+		Select(`
+			activity_logs.id as id,
+			COALESCE(users.name, 'System') as user,
+			activity_logs.action as action,
+			activity_logs.module as module,
+			DATE_FORMAT(activity_logs.created_at, '%Y-%m-%dT%H:%i:%sZ') as time
+		`).
+		Joins("LEFT JOIN users ON users.id = activity_logs.user_id").
+		Order("activity_logs.created_at DESC").
+		Limit(limit).
+		Scan(&items).Error
+
+	return items, err
+}
+
+func (r *dashboardRepository) GetStaffHarvestSchedule(referenceDate time.Time, weeks int) ([]dto.StaffHarvestSchedulePoint, error) {
+	var items []dto.StaffHarvestSchedulePoint
+
+	endDate := referenceDate.AddDate(0, 0, (weeks*7)-1)
+
+	err := r.db.Table("fish_batches").
+		Select(`
+			DATE_FORMAT(MIN(expected_harvest), 'W%v %b') as week,
+			COUNT(id) as total
+		`).
+		Where("DATE(expected_harvest) BETWEEN DATE(?) AND DATE(?)", referenceDate, endDate).
+		Where("LOWER(status) NOT IN ?", []string{"harvested", "cancelled"}).
+		Group("YEAR(expected_harvest), WEEK(expected_harvest, 1)").
+		Order("MIN(expected_harvest) ASC").
+		Scan(&items).Error
+
+	return items, err
+}
+
+func (r *dashboardRepository) GetStaffFeedUsageTrend(startDate time.Time) ([]dto.StaffFeedUsagePoint, error) {
+	var items []dto.StaffFeedUsagePoint
+
+	err := r.db.Table("feeding_logs").
+		Select("DATE_FORMAT(MIN(feed_time), '%Y-%m-%d') as date, COALESCE(SUM(feed_amount), 0) as amount").
+		Where("DATE(feed_time) >= DATE(?)", startDate).
+		Group("DATE(feed_time)").
+		Order("DATE(feed_time) ASC").
+		Scan(&items).Error
+
+	return items, err
+}
+
+func (r *dashboardRepository) GetStaffFishBatchStatusBreakdown(referenceDate time.Time) ([]dto.StaffFishBatchStatusPoint, error) {
+	counts := make([]dto.StaffFishBatchStatusPoint, 0, 4)
+
+	var stocking int64
+	if err := r.db.Table("fish_batches").Where("LOWER(status) = ?", "stocking").Count(&stocking).Error; err != nil {
+		return nil, err
+	}
+	counts = append(counts, dto.StaffFishBatchStatusPoint{Name: "Stocking", Value: stocking})
+
+	var growing int64
+	if err := r.db.Table("fish_batches").Where("LOWER(status) IN ?", []string{"active", "growing"}).Count(&growing).Error; err != nil {
+		return nil, err
+	}
+	counts = append(counts, dto.StaffFishBatchStatusPoint{Name: "Growing", Value: growing})
+
+	var ready int64
+	if err := r.db.Table("fish_batches").
+		Where(`
+			LOWER(status) IN ? OR (
+				LOWER(status) NOT IN ? AND DATE(expected_harvest) <= DATE(?)
+			)
+		`,
+			[]string{"ready_to_harvest", "ready to harvest"},
+			[]string{"harvested", "cancelled"},
+			referenceDate,
+		).
+		Count(&ready).Error; err != nil {
+		return nil, err
+	}
+	counts = append(counts, dto.StaffFishBatchStatusPoint{Name: "Ready To Harvest", Value: ready})
+
+	var harvested int64
+	if err := r.db.Table("fish_batches").Where("LOWER(status) = ?", "harvested").Count(&harvested).Error; err != nil {
+		return nil, err
+	}
+	counts = append(counts, dto.StaffFishBatchStatusPoint{Name: "Harvested", Value: harvested})
+
+	return counts, nil
 }
