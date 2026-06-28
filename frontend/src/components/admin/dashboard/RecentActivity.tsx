@@ -61,9 +61,17 @@ export function RecentActivity({ items }: RecentActivityProps) {
       <div className="mt-6 space-y-4">
         {items.map((item) => (
           <article key={item.id} className="flex gap-4 rounded-xl bg-slate-50/90 p-4">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-emerald-500 text-sm font-semibold text-white">
-              {getInitials(item.user || 'SY')}
-            </div>
+            {item.avatar ? (
+              <img
+                src={item.avatar}
+                alt={item.user || 'User'}
+                className="size-11 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+                {getInitials(item.user || 'SY')}
+              </div>
+            )}
             <div className="min-w-0">
               <div className="flex items-center justify-between gap-3">
                 <p className="truncate text-sm font-semibold text-slate-900">{item.title}</p>

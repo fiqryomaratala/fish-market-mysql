@@ -48,7 +48,7 @@ function UserRow({ user, onView, onEdit, onChangeRole, onChangeStatus, onDelete 
               className="size-10 rounded-full object-cover"
             />
           ) : (
-            <div className="flex size-10 items-center justify-center rounded-full bg-cyan-100 text-sm font-semibold text-cyan-700">
+            <div className="flex size-10 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
               {user.name.charAt(0).toUpperCase()}
             </div>
           )}

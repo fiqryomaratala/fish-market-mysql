@@ -23,6 +23,8 @@ export function useUpdateProfile() {
     mutationFn: (payload: UpdateProfilePayload) => profileService.updateProfile(payload),
     onSuccess: (data) => {
       queryClient.setQueryData<UserProfile>(PROFILE_QUERY_KEY, data)
+      void queryClient.invalidateQueries({ queryKey: ['admin-dashboard', 'activity'] })
+      void queryClient.invalidateQueries({ queryKey: ['activity-logs'] })
     },
   })
 }
@@ -47,6 +49,8 @@ export function useUploadProfilePhoto() {
             }
           : currentProfile,
       )
+      void queryClient.invalidateQueries({ queryKey: ['admin-dashboard', 'activity'] })
+      void queryClient.invalidateQueries({ queryKey: ['activity-logs'] })
     },
   })
 }

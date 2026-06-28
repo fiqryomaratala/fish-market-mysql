@@ -25,7 +25,7 @@ export function ProfileCard({ user, phone, address }: ProfileCardProps) {
         Profile Summary
       </p>
       <div className="mt-5 flex items-center gap-4">
-        <div className="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-xl font-bold text-slate-950">
+        <div className="flex size-16 items-center justify-center rounded-full bg-blue-600 text-xl font-bold text-white">
           {getInitials(user.name)}
         </div>
         <div>

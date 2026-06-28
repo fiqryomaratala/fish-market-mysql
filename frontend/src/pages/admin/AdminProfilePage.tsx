@@ -177,9 +177,9 @@ function AdminProfilePage() {
     <>
       <div className="space-y-6">
         <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(14,116,144,0.14)]">
-          <div className="relative isolate overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.24),_transparent_30%),linear-gradient(135deg,_#0f172a_0%,_#0f766e_46%,_#155e75_100%)] px-6 py-8 text-white sm:px-8 lg:px-10">
+          <div className="relative isolate overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.28),_transparent_30%),linear-gradient(135deg,_#0f172a_0%,_#1d4ed8_52%,_#0369a1_100%)] px-6 py-8 text-white sm:px-8 lg:px-10">
             <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl" />
+            <div className="absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-sky-300/20 blur-3xl" />
             <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.7fr)_340px]">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <ProfileAvatarUpload

@@ -78,6 +78,7 @@ export interface InventoryAlertItem {
 export interface ActivityLogItem {
   id: number
   user: string
+  avatar: string
   title: string
   description: string
   module: string

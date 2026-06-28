@@ -115,7 +115,7 @@ export function AppHeader() {
                   className="size-10 rounded-full object-cover"
                 />
               ) : (
-                <span className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-300 via-sky-400 to-emerald-300 text-sm font-bold text-slate-950">
+                <span className="flex size-10 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                   {getInitials(user?.name)}
                 </span>
               )}

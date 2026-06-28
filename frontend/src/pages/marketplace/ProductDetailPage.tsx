@@ -3,7 +3,6 @@ import { AlertCircle, Heart, ShoppingCart, Wallet } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ActionButton } from '@/components/product-detail/ActionButton'
-import { BatchInfoCard } from '@/components/product-detail/BatchInfoCard'
 import { LoadingSkeleton } from '@/components/product-detail/LoadingSkeleton'
 import { ProductGallery } from '@/components/product-detail/ProductGallery'
 import { ProductInfo } from '@/components/product-detail/ProductInfo'
@@ -226,9 +225,8 @@ function ProductDetailPage() {
         </div>
       </section>
 
-      <section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <section className="w-full">
         <ProductTabs product={product} formattedHarvestDate={formattedHarvestDate} />
-        <BatchInfoCard product={product} formattedHarvestDate={formattedHarvestDate} />
       </section>
 
       <TrackingCard batchCode={product.batch_code} />

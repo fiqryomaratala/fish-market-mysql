@@ -64,6 +64,9 @@ export function useDashboardActivityLog() {
     queryKey: ['admin-dashboard', 'activity'],
     queryFn: async () => dashboardService.getActivityLog(),
     enabled: role === 'admin' || role === 'staff',
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
     retry: false,
   })
 }

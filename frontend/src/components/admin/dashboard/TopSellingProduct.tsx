@@ -50,7 +50,7 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
 
   return (
     <section className="overflow-hidden rounded-xl border border-white/60 bg-white/72 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
-      <div className="bg-linear-to-br from-blue-600 via-cyan-500 to-emerald-500 p-6 text-white">
+      <div className="bg-blue-600 p-6 text-white">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
           Produk Terlaris
         </p>

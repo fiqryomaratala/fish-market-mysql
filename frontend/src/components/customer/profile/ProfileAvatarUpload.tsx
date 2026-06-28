@@ -80,11 +80,11 @@ export function ProfileAvatarUpload({
         onChange={(event) => void handleFileChange(event)}
       />
 
-      <div className="profile-subcard relative mx-auto flex size-24 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+      <div className="profile-subcard relative mx-auto flex size-24 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-50">
         {photoUrl ? (
           <img src={photoUrl} alt={name} className="size-full object-cover" />
         ) : (
-          <div className="flex size-full items-center justify-center bg-gradient-to-br from-sky-500 to-emerald-500 text-xl font-semibold text-white">
+          <div className="flex size-full items-center justify-center rounded-full bg-blue-600 text-xl font-semibold text-white">
             {name.trim() ? getInitials(name) : <UserRound className="size-9" />}
           </div>
         )}

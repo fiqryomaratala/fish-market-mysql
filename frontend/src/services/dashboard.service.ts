@@ -10,6 +10,7 @@ import type {
   SalesChartResponse,
 } from '@/types/dashboard'
 import type { Order } from '@/types/order'
+import { resolveAssetUrl } from '@/utils/asset'
 
 type OrderApiItem = {
   id?: number
@@ -36,6 +37,19 @@ function toNumber(value: unknown, fallback = 0) {
 
 function toStringValue(value: unknown, fallback = '') {
   return typeof value === 'string' ? value : fallback
+}
+
+function mapActivityLog(record: Partial<ActivityLogItem>, fallbackId: number): ActivityLogItem {
+  return {
+    id: toNumber(record.id, fallbackId),
+    user: toStringValue(record.user, 'System'),
+    avatar: resolveAssetUrl(record.avatar),
+    title: toStringValue(record.title),
+    description: toStringValue(record.description),
+    module: toStringValue(record.module),
+    action: toStringValue(record.action),
+    created_at: toStringValue(record.created_at),
+  }
 }
 
 function normalizeStatus(status: string, paymentStatus: string) {
@@ -123,7 +137,8 @@ class DashboardService {
 
   async getActivityLog() {
     const { data } = await api.get<ApiResponse<ActivityLogItem[]>>('/dashboard/activity')
-    return data.data
+    const items = Array.isArray(data.data) ? data.data : []
+    return items.map((item, index) => mapActivityLog(item, index + 1))
   }
 }
 

@@ -68,7 +68,7 @@ function UserDetailModal({ isOpen, userId, onClose }: UserDetailModalProps) {
                     className="size-20 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex size-20 items-center justify-center rounded-full bg-cyan-100 text-2xl font-semibold text-cyan-700">
+                  <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-2xl font-semibold text-white">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                 )}
