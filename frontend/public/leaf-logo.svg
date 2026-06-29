@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="leaf-logo-title">
+  <title id="leaf-logo-title">Fish Market leaf logo</title>
+  <g fill="#74a53f">
+    <path d="M58 16C39 33 26 58 30 82c3 17 15 31 29 40c-6-14-6-30-3-46c3-17 10-32 8-50c8 16 11 35 8 53c-3 17-2 33 6 45c20-12 34-34 35-58c2-21-9-39-23-50C80 8 67 9 58 16Z"/>
+    <path d="M79 70c-10 8-19 21-22 35c13 0 27-2 38-10c12-8 20-20 28-31c-8-4-17-5-25-3c-7 2-13 5-19 9Z"/>
+  </g>
+  <g fill="#fff">
+    <path d="M56 39c-6 15-10 30-8 46c1 9 4 18 9 25c-11-7-19-18-21-31c-3-19 5-37 20-51Z"/>
+    <path d="M90 79c-7 11-16 18-29 22c4-8 10-15 17-20c4-3 8-5 12-6Z"/>
+  </g>
+</svg>

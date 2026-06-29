@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { useNavigation } from '@/hooks/useNavigation'
 
 type RoleBasedSidebarProps = {
@@ -55,9 +56,10 @@ function SidebarContent({
           </div>
         ) : (
           <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0 flex-1 overflow-hidden">
+            <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+              <Logo className="shrink-0" imageClassName="h-11 w-11" />
               <div className="min-w-0 text-left">
-                <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
+                <p className="truncate text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">
                   Fish Market
                 </p>
                 <p className="truncate text-xs text-slate-500">Navigation for {role ?? 'guest'}</p>

@@ -1,10 +1,9 @@
-import { KeyRound, RefreshCcw, Settings, ShieldCheck } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { KeyRound, RefreshCcw, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { ChangePasswordModal } from '@/components/customer/profile/ChangePasswordModal'
-import { useAuth, useChangePassword, usePageTitle, useProfile } from '@/hooks'
+import { useChangePassword, usePageTitle, useProfile } from '@/hooks'
 import type { ChangePasswordPayload } from '@/types/profile'
-import { decodeJwt } from '@/utils/jwt'
 
 function getErrorMessage(error: unknown) {
   if (typeof error === 'object' && error !== null && 'response' in error) {
@@ -21,37 +20,12 @@ function getErrorMessage(error: unknown) {
   return 'Terjadi kesalahan. Silakan coba lagi.'
 }
 
-function formatDateTime(value: string) {
-  if (!value) {
-    return '-'
-  }
-
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return value
-  }
-
-  return new Intl.DateTimeFormat('id-ID', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
-}
-
 function CustomerSettingsPage() {
   usePageTitle('Pengaturan Pelanggan')
 
-  const { token } = useAuth()
   const profileQuery = useProfile()
   const changePasswordMutation = useChangePassword()
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
-
-  const lastLogin = useMemo(() => {
-    const issuedAt = token ? decodeJwt(token)?.iat : undefined
-    return typeof issuedAt === 'number' ? new Date(issuedAt * 1000).toISOString() : ''
-  }, [token])
 
   const handleChangePassword = async (payload: ChangePasswordPayload) => {
     try {
@@ -109,65 +83,36 @@ function CustomerSettingsPage() {
           </div>
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-600">
-                Keamanan
-              </p>
-              <h2 className="mt-2 text-xl font-semibold text-slate-950">Ubah kata sandi</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Perbarui kata sandi secara berkala untuk menjaga keamanan akun pelanggan.
-              </p>
-            </div>
-
-            <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-5">
-              <div className="flex items-start gap-4">
-                <div className="rounded-xl bg-sky-100 p-3 text-sky-700">
-                  <ShieldCheck className="size-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-base font-semibold text-slate-900">Kontrol akses akun</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Gunakan kata sandi yang unik, minimal 8 karakter, dan jangan dipakai ulang di akun lain.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setIsPasswordModalOpen(true)}
-                    className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                  >
-                    <KeyRound className="size-4" />
-                    Ubah Kata Sandi
-                  </button>
-                </div>
-              </div>
-            </div>
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-600">
+              Keamanan
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-slate-950">Ubah kata sandi</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Perbarui kata sandi secara berkala untuk menjaga keamanan akun pelanggan.
+            </p>
           </div>
 
-          <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-slate-100 p-3 text-slate-700">
-                <Settings className="size-5" />
+          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div className="flex items-start gap-4">
+              <div className="rounded-xl bg-sky-100 p-3 text-sky-700">
+                <ShieldCheck className="size-5" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Ringkasan akun</p>
-                <p className="text-sm text-slate-500">Informasi akses terbaru</p>
+              <div className="flex-1">
+                <p className="text-base font-semibold text-slate-900">Kontrol akses akun</p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Gunakan kata sandi yang unik, minimal 8 karakter, dan jangan dipakai ulang di akun lain.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                  <KeyRound className="size-4" />
+                  Ubah Kata Sandi
+                </button>
               </div>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Email
-              </p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">{profileQuery.data.email}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Login Terakhir
-              </p>
-              <p className="mt-2 text-sm font-semibold text-slate-800">
-                {lastLogin ? formatDateTime(lastLogin) : 'Belum tersedia'}
-              </p>
             </div>
           </div>
         </section>

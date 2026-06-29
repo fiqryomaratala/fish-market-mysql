@@ -176,10 +176,8 @@ function AdminProfilePage() {
   return (
     <>
       <div className="space-y-6">
-        <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(14,116,144,0.14)]">
-          <div className="relative isolate overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.28),_transparent_30%),linear-gradient(135deg,_#0f172a_0%,_#1d4ed8_52%,_#0369a1_100%)] px-6 py-8 text-white sm:px-8 lg:px-10">
-            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-sky-300/20 blur-3xl" />
+        <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(148,163,184,0.14)]">
+          <div className="relative isolate overflow-hidden bg-white px-6 py-8 sm:px-8 lg:px-10">
             <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.7fr)_340px]">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <ProfileAvatarUpload
@@ -190,13 +188,13 @@ function AdminProfilePage() {
                 />
 
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-100/90">
+                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-600">
                     Admin Control Center
                   </p>
-                  <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
                     {profile.name}
                   </h1>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 text-cyan-50/85 sm:text-base">
+                  <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
                     Ringkasan identitas admin dan kendali operasional lintas modul dalam satu
                     dashboard profil.
                   </p>
@@ -216,7 +214,7 @@ function AdminProfilePage() {
                 </div>
               </div>
 
-              <div className="grid gap-3 rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur-xl">
+              <div className="grid gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5">
                 <InfoPanelItem label="Admin ID" value={adminInsights.adminId} />
                 <InfoPanelItem label="Role" value={toTitleCase(profile.role)} />
                 <InfoPanelItem
@@ -405,8 +403,8 @@ function SectionHeader({ eyebrow, title, description }: SectionHeaderProps) {
 
 function HeroChip({ icon: Icon, label }: { icon: typeof ShieldCheck; label: string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm font-medium text-white/90 backdrop-blur-sm">
-      <Icon className="size-4" />
+    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">
+      <Icon className="size-4 text-sky-600" />
       {label}
     </span>
   )
@@ -414,9 +412,9 @@ function HeroChip({ icon: Icon, label }: { icon: typeof ShieldCheck; label: stri
 
 function InfoPanelItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-100/75">{label}</p>
-      <p className="mt-2 text-sm font-semibold text-white">{value}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{label}</p>
+      <p className="mt-2 text-sm font-semibold text-slate-900">{value}</p>
     </div>
   )
 }

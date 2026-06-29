@@ -31,7 +31,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="relative cursor-pointer rounded-[10px] border border-white/70 bg-white/85 p-2.5 text-slate-600 shadow-sm shadow-slate-200/40 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700"
+        className="relative cursor-pointer rounded-[14px] border border-slate-300 bg-slate-50 p-2.5 text-slate-600 shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700"
         aria-label="Notifikasi"
       >
         <Bell className="size-5" />

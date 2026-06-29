@@ -10,12 +10,21 @@ import {
 } from 'lucide-react'
 import { NotificationBell } from '@/components/admin/notifications'
 import { LogoutConfirmModal } from '@/components/common/LogoutConfirmModal'
+import { Logo } from '@/components/ui/Logo'
 import { getRoleLabel } from '@/config/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigation } from '@/hooks/useNavigation'
 
 type RoleBasedNavbarProps = {
   onOpenMobileMenu: () => void
+}
+
+function getBrandDescription(role: string | null | undefined) {
+  if (role === 'customer') {
+    return 'Pesanan, notifikasi, dan marketplace'
+  }
+
+  return 'Ruang kerja ERP'
 }
 
 function getInitials(name?: string) {
@@ -62,7 +71,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-[0_10px_30px_rgba(15,23,42,0.05)] backdrop-blur-xl">
         <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <button
@@ -75,20 +84,18 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
             </button>
 
             <NavLink to="/" className="flex items-center gap-3 px-1 py-1 transition hover:text-blue-600">
-              <span className="flex size-12 items-center justify-center rounded-[10px] bg-linear-to-br from-cyan-300 via-sky-400 to-emerald-300 text-lg font-black text-slate-950">
-                FM
-              </span>
+              <Logo className="shrink-0" imageClassName="h-12 w-12" />
               <div className="hidden sm:block">
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700">
                   Fish Market
                 </p>
-                <p className="text-xs text-slate-500">Ruang kerja ERP</p>
+                <p className="text-xs text-slate-500">{getBrandDescription(role)}</p>
               </div>
             </NavLink>
           </div>
 
           <div className="order-3 w-full md:order-none md:max-w-md md:flex-1">
-            <label className="flex items-center gap-3 rounded-xl border border-white/70 bg-white/85 px-4 py-3 shadow-sm shadow-slate-200/40">
+            <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
               <Search className="size-4 text-slate-400" />
               <input
                 type="search"
@@ -105,7 +112,7 @@ export function RoleBasedNavbar({ onOpenMobileMenu }: RoleBasedNavbarProps) {
               <button
                 type="button"
                 onClick={() => setDropdownOpen((current) => !current)}
-                className="flex cursor-pointer items-center gap-3 rounded-[10px] border border-white/70 bg-white/85 px-2.5 py-2 text-left text-slate-700 shadow-sm shadow-slate-200/40 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                className="flex cursor-pointer items-center gap-3 rounded-[14px] border border-slate-300 bg-slate-50 px-2.5 py-2 text-left text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
               >
                 {user?.avatar ? (
                   <img

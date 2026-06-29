@@ -1,6 +1,7 @@
-import { Menu, Waves, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Logo } from '@/components/ui/Logo'
 
 const navItems = [
   { label: 'Beranda', href: '#home' },
@@ -25,11 +26,9 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="#home" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
-            <Waves className="h-5 w-5" />
-          </div>
+          <Logo />
           <div>
-            <p className="text-sm font-semibold tracking-[0.26em] text-blue-700 uppercase">
+            <p className="text-sm font-semibold tracking-[0.26em] text-emerald-700 uppercase">
               Fish Market
             </p>
             <p className="text-xs text-slate-500">Manajemen Budidaya Modern</p>
