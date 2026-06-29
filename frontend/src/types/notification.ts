@@ -47,34 +47,34 @@ export function getNotificationTypeLabel(value: string) {
   const normalized = normalizeNotificationType(value)
 
   if (normalized === 'ORDER') {
-    return 'Order'
+    return 'Pesanan'
   }
 
   if (normalized === 'INVENTORY') {
-    return 'Inventory'
+    return 'Inventaris'
   }
 
   if (normalized === 'HARVEST') {
-    return 'Harvest'
+    return 'Panen'
   }
 
   if (normalized === 'BATCH') {
-    return 'Fish Batch'
+    return 'Batch Ikan'
   }
 
   if (normalized === 'FEEDING') {
-    return 'Feeding'
+    return 'Pemberian Pakan'
   }
 
   if (normalized === 'SYSTEM') {
-    return 'System'
+    return 'Sistem'
   }
 
   if (normalized === 'USER') {
-    return 'User'
+    return 'Pengguna'
   }
 
-  return value || 'System'
+  return value || 'Sistem'
 }
 
 export function getNotificationTypeQueryValue(value: NotificationTypeFilter) {

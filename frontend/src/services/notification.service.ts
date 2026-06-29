@@ -37,12 +37,122 @@ function toStringValue(value: unknown, fallback = '') {
   return typeof value === 'string' ? value : fallback
 }
 
+function buildNotificationTitle(type: string) {
+  const normalized = type.trim().toUpperCase().replace(/\s+/g, '_')
+
+  if (normalized === 'ORDER') {
+    return 'Pesanan'
+  }
+
+  if (normalized === 'INVENTORY') {
+    return 'Inventaris'
+  }
+
+  if (normalized === 'HARVEST') {
+    return 'Panen'
+  }
+
+  if (normalized === 'BATCH' || normalized === 'FISH_BATCH' || normalized === 'FISHBATCH') {
+    return 'Batch Ikan'
+  }
+
+  if (normalized === 'FEEDING') {
+    return 'Pemberian Pakan'
+  }
+
+  return 'Notifikasi'
+}
+
+function buildNotificationMessage(type: string, title: string) {
+  const normalized = type.trim().toUpperCase().replace(/\s+/g, '_')
+
+  if (normalized === 'ORDER') {
+    return 'Ada pembaruan pada pesanan Anda. Silakan buka detail notifikasi untuk melihat informasi terbaru.'
+  }
+
+  if (normalized === 'INVENTORY') {
+    return 'Ada pembaruan pada data inventaris. Silakan periksa detail notifikasi untuk informasi lebih lanjut.'
+  }
+
+  if (normalized === 'HARVEST') {
+    return 'Ada pembaruan terkait proses panen. Silakan cek detail notifikasi untuk informasi lengkap.'
+  }
+
+  if (normalized === 'BATCH' || normalized === 'FISH_BATCH' || normalized === 'FISHBATCH') {
+    return 'Ada pembaruan pada batch ikan. Silakan lihat detail notifikasi untuk informasi terbaru.'
+  }
+
+  if (normalized === 'FEEDING') {
+    return 'Ada pembaruan jadwal atau aktivitas pemberian pakan. Silakan cek detail notifikasi.'
+  }
+
+  return `Ada informasi terbaru pada ${title.toLowerCase()}.`
+}
+
+function normalizeNotificationTitle(type: string, rawTitle: string) {
+  const title = rawTitle.trim()
+  const normalized = title.toLowerCase()
+
+  if (!title || normalized === 'notification') {
+    return buildNotificationTitle(type)
+  }
+
+  if (normalized === 'order') {
+    return 'Pesanan'
+  }
+
+  if (normalized === 'inventory') {
+    return 'Inventaris'
+  }
+
+  if (normalized === 'harvest') {
+    return 'Panen'
+  }
+
+  if (normalized === 'batch' || normalized === 'fish batch') {
+    return 'Batch Ikan'
+  }
+
+  if (normalized === 'low stock') {
+    return 'Stok Hampir Habis'
+  }
+
+  if (normalized === 'order created') {
+    return 'Pesanan Berhasil Dibuat'
+  }
+
+  if (normalized === 'harvest completed') {
+    return 'Panen Berhasil Dicatat'
+  }
+
+  return title
+}
+
+function normalizeNotificationMessage(type: string, rawMessage: string, title: string) {
+  const message = rawMessage.trim()
+  const lowerMessage = message.toLowerCase()
+
+  if (
+    !message ||
+    lowerMessage.includes('at the shrimp') ||
+    lowerMessage.includes('whomever kiss quickly murder the work') ||
+    lowerMessage.includes('talk enthusiastically')
+  ) {
+    return buildNotificationMessage(type, title)
+  }
+
+  return message
+}
+
 function mapNotification(item: NotificationApiItem, fallbackId: number): NotificationItem {
+  const type = toStringValue(item.type, 'GENERAL')
+  const title = normalizeNotificationTitle(type, toStringValue(item.title, 'Notification'))
+
   return {
     id: toNumber(item.id, fallbackId),
-    title: toStringValue(item.title, 'Notification'),
-    message: toStringValue(item.message),
-    type: toStringValue(item.type, 'GENERAL'),
+    title,
+    message: normalizeNotificationMessage(type, toStringValue(item.message), title),
+    type,
     is_read: Boolean(item.is_read),
     created_at: toStringValue(item.created_at),
   }

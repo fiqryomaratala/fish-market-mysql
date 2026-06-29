@@ -63,7 +63,7 @@ function MarketplacePage() {
     return () => window.clearTimeout(timeout)
   }, [searchInput])
 
-  const { data, isLoading, error, refetch } = useProducts()
+  const { data, isLoading, error, refetch } = useProducts({ page: 1, limit: 1000 })
 
   const filteredProducts = useMemo(() => {
     const items = data?.items ?? []

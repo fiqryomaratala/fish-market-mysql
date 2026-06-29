@@ -1,10 +1,15 @@
 import { Mail, MapPin, Phone } from 'lucide-react'
 
+const farmAddress = 'Jl. Danau Farm No. 8, Bogor, Jawa Barat'
+const embeddedMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(
+  farmAddress,
+)}&z=15&output=embed`
+
 const contacts = [
   {
     icon: MapPin,
     label: 'Alamat',
-    value: 'Jl. Danau Farm No. 8, Bogor, Jawa Barat',
+    value: farmAddress,
   },
   {
     icon: Mail,
@@ -72,33 +77,25 @@ export function ContactSection() {
                 Area distribusi aktif
               </div>
               <p className="mt-6 text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
-                Placeholder Peta
+                Lokasi Farm
               </p>
               <h3 className="mt-4 text-2xl font-semibold text-slate-900">
                 Lokasi Farm Air Tawar & Titik Distribusi
               </h3>
-              <p className="mt-4 max-w-lg text-sm leading-7 text-slate-500">
-                Area ini siap diganti dengan integrasi peta interaktif atau
-                embedded map ketika backend dan data lokasi sudah tersedia.
-              </p>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-slate-600">
-                  Hub utama
-                  <p className="mt-1 font-semibold text-slate-900">Bogor</p>
-                </div>
-                <div className="rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-600">
-                  Zona kirim
-                  <p className="mt-1 font-semibold text-slate-900">Jabodetabek</p>
-                </div>
-                <div className="rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-slate-600">
-                  Status
-                  <p className="mt-1 font-semibold text-emerald-700">Siap melayani</p>
-                </div>
+              <div className="mt-6 overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm">
+                <iframe
+                  title="Peta lokasi farm Fish Market"
+                  src={embeddedMapUrl}
+                  className="h-[320px] w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
+
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-blue-100 bg-white p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Cakupan</p>
                 <p className="mt-2 text-xl font-semibold text-slate-900">

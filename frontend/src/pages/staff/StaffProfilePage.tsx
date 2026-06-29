@@ -234,9 +234,9 @@ function StaffProfilePage() {
     <>
       <div className="space-y-6">
         <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(14,116,144,0.14)]">
-          <div className="relative isolate overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.24),_transparent_32%),linear-gradient(135deg,_#0f172a_0%,_#155e75_52%,_#0f766e_100%)] px-6 py-8 text-white sm:px-8 lg:px-10">
+          <div className="relative isolate overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.28),_transparent_30%),linear-gradient(135deg,_#0f172a_0%,_#1d4ed8_52%,_#0369a1_100%)] px-6 py-8 text-white sm:px-8 lg:px-10">
             <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl" />
+            <div className="absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-sky-300/20 blur-3xl" />
             <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.7fr)_340px]">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <ProfileAvatarUpload
@@ -334,43 +334,6 @@ function StaffProfilePage() {
 
             <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(148,163,184,0.14)]">
               <SectionHeader
-                eyebrow="Activity Summary"
-                title="Performa operasional"
-                description="Rekap cepat untuk aktivitas kerja yang paling sering dipantau."
-              />
-
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <SummaryMetric
-                  icon={ClipboardList}
-                  label="Total Feeding Logs"
-                  value={formatNumber(profileInsights.totalFeedingLogs)}
-                  accent="sky"
-                />
-                <SummaryMetric
-                  icon={Fish}
-                  label="Total Harvest Records"
-                  value={formatNumber(profileInsights.totalHarvestRecords)}
-                  accent="emerald"
-                />
-                <SummaryMetric
-                  icon={Warehouse}
-                  label="Total Inventory Updates"
-                  value={formatNumber(profileInsights.totalInventoryUpdates)}
-                  accent="amber"
-                />
-                <SummaryMetric
-                  icon={Activity}
-                  label="Today's Activities"
-                  value={formatNumber(profileInsights.todaysActivities)}
-                  accent="slate"
-                />
-              </div>
-            </section>
-          </div>
-
-          <div className="space-y-6">
-            <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(148,163,184,0.14)]">
-              <SectionHeader
                 eyebrow="Work Information"
                 title="Ringkasan assignment kerja"
                 description="Assignment operasional yang diturunkan dari data aktivitas dan dashboard."
@@ -396,6 +359,44 @@ function StaffProfilePage() {
                   }
                 />
                 <SidebarInfoRow label="Shift" value={profileInsights.shift} />
+              </div>
+            </section>
+
+          </div>
+
+          <div className="space-y-6">
+            <section className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(148,163,184,0.14)]">
+              <SectionHeader
+                eyebrow="Activity Summary"
+                title="Performa operasional"
+                description="Rekap cepat untuk aktivitas kerja yang paling sering dipantau."
+              />
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+                <SummaryMetric
+                  icon={ClipboardList}
+                  label="Total Feeding Logs"
+                  value={formatNumber(profileInsights.totalFeedingLogs)}
+                  accent="sky"
+                />
+                <SummaryMetric
+                  icon={Fish}
+                  label="Total Harvest Records"
+                  value={formatNumber(profileInsights.totalHarvestRecords)}
+                  accent="emerald"
+                />
+                <SummaryMetric
+                  icon={Warehouse}
+                  label="Total Inventory Updates"
+                  value={formatNumber(profileInsights.totalInventoryUpdates)}
+                  accent="amber"
+                />
+                <SummaryMetric
+                  icon={Activity}
+                  label="Today's Activities"
+                  value={formatNumber(profileInsights.todaysActivities)}
+                  accent="slate"
+                />
               </div>
             </section>
           </div>
