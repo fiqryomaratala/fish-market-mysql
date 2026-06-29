@@ -89,10 +89,7 @@ function LoginPage() {
   })
 
   return (
-    <AuthFormShell
-      title="Login"
-      description="Masuk untuk mengelola operasional pasar ikan, stok produk, dan akses dashboard sesuai role Anda."
-    >
+    <AuthFormShell title="Login">
       <form className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label
@@ -101,7 +98,7 @@ function LoginPage() {
           >
             Email
           </label>
-          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+          <div className="flex items-center gap-3 rounded-10 border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
             <Mail className="h-4 w-4 text-blue-500/70" />
             <input
               id="email"
@@ -123,7 +120,7 @@ function LoginPage() {
           >
             Password
           </label>
-          <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
+          <div className="flex items-center gap-3 rounded-10 border border-slate-200 bg-white px-4 py-3.5 shadow-sm shadow-slate-200/70 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-within:border-blue-200 focus-within:ring-4 focus-within:ring-blue-100">
             <LockKeyhole className="h-4 w-4 text-blue-500/70" />
             <input
               id="password"
@@ -147,17 +144,17 @@ function LoginPage() {
           ) : null}
         </div>
 
-        <label className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-600 shadow-sm shadow-slate-200/60 transition hover:border-blue-200">
+        <label className="flex items-center justify-between gap-3 rounded-10 border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-600 shadow-sm shadow-slate-200/60 transition hover:border-blue-200">
           <span className="font-medium text-slate-700">Remember Me</span>
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600"
+            className="h-4 w-4 rounded-10 border-slate-300 bg-white text-blue-600"
             {...register('rememberMe')}
           />
         </label>
 
         {Object.keys(errors).length > 0 ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm shadow-rose-100/80">
+          <div className="flex items-start gap-3 rounded-10 border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm shadow-rose-100/80">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>Periksa kembali form login Anda sebelum melanjutkan.</span>
           </div>

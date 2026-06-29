@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --radius-10: 10px;
+}
+
 :root {
   color-scheme: dark;
   font-family:
