@@ -28,7 +28,11 @@ export function RoleBasedLayout() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <RoleBasedNavbar onOpenMobileMenu={() => setMobileOpen(true)} />
 
-        <div className="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
+        <div
+          className={`min-h-0 flex-1 overflow-y-auto ${
+            isAdminDashboard ? 'scrollbar-admin-dashboard' : 'scrollbar-hidden'
+          }`}
+        >
           <div className="mx-auto max-w-[1600px] px-4 pb-6 pt-4 sm:px-6 sm:pb-8 sm:pt-4">
             <main className="min-h-full min-w-0 rounded-[1.75rem] border border-slate-200/90 bg-white/92 p-4 shadow-[0_24px_70px_rgba(148,163,184,0.16)] backdrop-blur-xl transition sm:p-6">
               <Outlet />

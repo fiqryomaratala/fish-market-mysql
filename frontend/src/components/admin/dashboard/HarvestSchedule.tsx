@@ -20,7 +20,7 @@ const statusLabelMap: Record<string, string> = {
 
 export function HarvestSchedule({ items }: HarvestScheduleProps) {
   return (
-    <section className="rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-600">
@@ -35,7 +35,10 @@ export function HarvestSchedule({ items }: HarvestScheduleProps) {
 
       <div className="mt-6 space-y-3">
         {items.map((item) => (
-          <article key={`${item.batch_code}-${item.harvest_date}`} className="rounded-xl bg-slate-50/90 p-4">
+          <article
+            key={`${item.batch_code}-${item.harvest_date}`}
+            className="admin-dashboard-subpanel rounded-xl bg-slate-50/90 p-4"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-slate-900">{item.batch_code}</p>

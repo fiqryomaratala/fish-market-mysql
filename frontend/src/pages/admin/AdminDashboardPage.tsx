@@ -97,7 +97,7 @@ function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="admin-dashboard-page space-y-6">
       <section className="overflow-hidden rounded-xl border border-white/60 bg-linear-to-br from-slate-950 via-blue-950 to-sky-950 p-6 text-white shadow-lg shadow-slate-300/35">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>

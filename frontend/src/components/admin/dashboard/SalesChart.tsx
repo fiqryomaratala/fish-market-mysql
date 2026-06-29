@@ -45,7 +45,7 @@ export function SalesChart({ data }: SalesChartProps) {
   }, [])
 
   return (
-    <section className="min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
@@ -53,7 +53,7 @@ export function SalesChart({ data }: SalesChartProps) {
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Penjualan 30 Hari Terakhir</h2>
         </div>
-        <div className="rounded-xl border border-cyan-100 bg-cyan-50/80 px-4 py-2 text-right">
+        <div className="admin-dashboard-subpanel rounded-xl border border-cyan-100 bg-cyan-50/80 px-4 py-2 text-right">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-cyan-700">Total</p>
           <p className="mt-1 text-sm font-semibold text-slate-900">
             {formatCompactCurrency(data.reduce((total, item) => total + item.revenue, 0))}

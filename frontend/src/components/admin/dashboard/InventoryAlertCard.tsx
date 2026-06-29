@@ -9,7 +9,7 @@ type InventoryAlertCardProps = {
 
 export function InventoryAlertCard({ items }: InventoryAlertCardProps) {
   return (
-    <section className="rounded-xl border border-amber-100 bg-linear-to-br from-white/80 via-amber-50/70 to-white/80 p-6 shadow-lg shadow-amber-100/40 backdrop-blur-xl">
+    <section className="admin-dashboard-panel rounded-xl border border-amber-100 bg-linear-to-br from-white/80 via-amber-50/70 to-white/80 p-6 shadow-lg shadow-amber-100/40 backdrop-blur-xl">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">
@@ -26,7 +26,7 @@ export function InventoryAlertCard({ items }: InventoryAlertCardProps) {
         {items.map((item) => (
           <article
             key={item.id}
-            className="rounded-xl border border-white/80 bg-white/75 p-4 transition hover:-translate-y-0.5"
+            className="admin-dashboard-subpanel rounded-xl border border-white/80 bg-white/75 p-4 transition hover:-translate-y-0.5"
           >
             <div className="flex items-start justify-between gap-4">
               <div>

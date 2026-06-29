@@ -50,7 +50,7 @@ function formatModuleLabel(module: string) {
 
 export function RecentActivity({ items }: RecentActivityProps) {
   return (
-    <section className="rounded-xl border border-white/60 bg-white/75 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel rounded-xl border border-white/60 bg-white/75 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
           Aktivitas Terkini
@@ -60,7 +60,7 @@ export function RecentActivity({ items }: RecentActivityProps) {
 
       <div className="mt-6 space-y-4">
         {items.map((item) => (
-          <article key={item.id} className="flex gap-4 rounded-xl bg-slate-50/90 p-4">
+          <article key={item.id} className="admin-dashboard-subpanel flex gap-4 rounded-xl bg-slate-50/90 p-4">
             {item.avatar ? (
               <img
                 src={item.avatar}

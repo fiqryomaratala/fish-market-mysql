@@ -178,7 +178,7 @@ function ProductsManagementPage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 shadow-sm shadow-cyan-100/40 ring-1 ring-cyan-100/60">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Total Produk
               </p>
@@ -186,7 +186,7 @@ function ProductsManagementPage() {
                 {data?.items.length ?? 0}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 shadow-sm shadow-cyan-100/40 ring-1 ring-cyan-100/60">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Tersedia
               </p>
@@ -194,7 +194,7 @@ function ProductsManagementPage() {
                 {data?.items.filter((item) => item.status === 'available').length ?? 0}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3">
+            <div className="rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 shadow-sm shadow-cyan-100/40 ring-1 ring-cyan-100/60">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Stok Habis
               </p>

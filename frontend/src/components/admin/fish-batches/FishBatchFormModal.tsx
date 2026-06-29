@@ -265,9 +265,9 @@ export function FishBatchFormModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? 'Menyimpan...' : mode === 'create' ? 'Simpan Batch' : 'Simpan Perubahan'}
+              {isSubmitting ? 'Menyimpan...' : mode === 'create' ? 'Tambah Batch' : 'Simpan Perubahan'}
             </button>
           </div>
         </form>

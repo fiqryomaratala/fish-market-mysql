@@ -32,7 +32,7 @@ function resolveImageUrl(imageUrl: string) {
 export function TopSellingProduct({ product }: TopSellingProductProps) {
   if (!product) {
     return (
-      <section className="rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+      <section className="admin-dashboard-panel rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <span className="flex size-12 items-center justify-center rounded-xl bg-emerald-600 text-white">
             <ShoppingBag className="size-5" />
@@ -49,7 +49,7 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-white/60 bg-white/72 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel overflow-hidden rounded-xl border border-white/60 bg-white/72 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="bg-blue-600 p-6 text-white">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
           Produk Terlaris
@@ -58,7 +58,7 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
       </div>
 
       <div className="p-6">
-        <div className="overflow-hidden rounded-xl bg-slate-100">
+        <div className="admin-dashboard-subpanel overflow-hidden rounded-xl bg-slate-100">
           <img
             src={resolveImageUrl(product.image_url)}
             alt={product.product_name}
@@ -69,13 +69,13 @@ export function TopSellingProduct({ product }: TopSellingProductProps) {
         <div className="mt-5">
           <h3 className="text-xl font-semibold text-slate-900">{product.product_name}</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-slate-50 p-4">
+            <div className="admin-dashboard-subpanel rounded-xl bg-slate-50 p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Terjual</p>
               <p className="mt-2 text-lg font-semibold text-slate-900">
                 {formatNumber(product.sold)}
               </p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-4">
+            <div className="admin-dashboard-subpanel rounded-xl bg-slate-50 p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Pendapatan</p>
               <p className="mt-2 text-lg font-semibold text-slate-900">
                 {formatCurrency(product.revenue)}

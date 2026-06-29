@@ -165,7 +165,7 @@ export function FilterBar({
           <button
             type="button"
             onClick={onAdd}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:from-cyan-700 hover:to-emerald-700 sm:min-w-[168px]"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700 sm:min-w-[168px]"
           >
             <Plus className="size-4" />
             Tambah Produk

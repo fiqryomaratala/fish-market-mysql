@@ -35,15 +35,17 @@ export function ReportTabs({ activeTab, onChange }: ReportTabsProps) {
               key={tab.key}
               type="button"
               onClick={() => onChange(tab.key)}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
+              className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-200'
-                  : 'bg-slate-50 text-slate-600 hover:-translate-y-0.5 hover:bg-cyan-50 hover:text-cyan-700'
+                  ? 'border-emerald-700/70 bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-1 ring-emerald-200'
+                  : 'border-slate-200 bg-slate-50 text-slate-600 shadow-sm shadow-slate-200/40 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 hover:ring-1 hover:ring-cyan-100'
               }`}
             >
               <span
                 className={`rounded-lg p-2 ${
-                  isActive ? 'bg-white/15 text-white' : 'bg-white text-cyan-600'
+                  isActive
+                    ? 'border border-white/15 bg-white/15 text-white'
+                    : 'border border-slate-200 bg-white text-cyan-600'
                 }`}
               >
                 <Icon className="size-4" />

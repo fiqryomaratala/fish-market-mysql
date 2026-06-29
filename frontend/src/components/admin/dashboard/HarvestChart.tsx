@@ -45,7 +45,7 @@ export function HarvestChart({ data }: HarvestChartProps) {
   }, [])
 
   return (
-    <section className="min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel min-w-0 rounded-xl border border-white/60 bg-white/72 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600">
@@ -53,7 +53,7 @@ export function HarvestChart({ data }: HarvestChartProps) {
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">Panen Per Bulan</h2>
         </div>
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50/80 px-4 py-2 text-right">
+        <div className="admin-dashboard-subpanel rounded-xl border border-emerald-100 bg-emerald-50/80 px-4 py-2 text-right">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-emerald-700">
             Total
           </p>

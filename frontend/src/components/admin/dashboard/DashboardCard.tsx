@@ -43,7 +43,7 @@ export function DashboardCard({
 
   return (
     <article
-      className={`group rounded-xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/50 backdrop-blur-xl transition duration-300 hover:-translate-y-1 ${palette.ring}`}
+      className={`admin-dashboard-panel group rounded-xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/50 backdrop-blur-xl transition duration-300 hover:-translate-y-1 ${palette.ring}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>

@@ -10,7 +10,7 @@ type LatestOrderTableProps = {
 
 export function LatestOrderTable({ orders }: LatestOrderTableProps) {
   return (
-    <section className="rounded-xl border border-white/60 bg-white/75 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
+    <section className="admin-dashboard-panel rounded-xl border border-white/60 bg-white/75 p-6 shadow-lg shadow-slate-200/45 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">
@@ -20,7 +20,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
         </div>
         <Link
           to="/admin/orders"
-          className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+          className="admin-dashboard-subpanel rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
         >
           Lihat Semua
         </Link>
@@ -40,7 +40,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="rounded-xl bg-slate-50/80 text-sm text-slate-700">
+              <tr key={order.id} className="admin-dashboard-subpanel rounded-xl bg-slate-50/80 text-sm text-slate-700">
                 <td className="rounded-l-xl px-4 py-4 font-semibold text-slate-900">{order.invoice}</td>
                 <td className="px-4 py-4">{order.customer}</td>
                 <td className="px-4 py-4 font-medium text-slate-900">{formatCurrency(order.total)}</td>
@@ -51,7 +51,7 @@ export function LatestOrderTable({ orders }: LatestOrderTableProps) {
                 <td className="rounded-r-xl px-4 py-4">
                   <Link
                     to={`/orders/${order.id}`}
-                    className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                    className="admin-dashboard-subpanel inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
                   >
                     Lihat Detail
                     <ArrowUpRight className="size-3.5" />

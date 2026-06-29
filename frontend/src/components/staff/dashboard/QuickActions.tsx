@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 const actions = [
   {
-    label: 'Add Feeding Log',
+    label: 'Tambah Log Pakan',
     description: 'Catat pemberian pakan harian',
     icon: ClipboardPlus,
     path: '/staff/feeding-logs',
   },
   {
-    label: 'Add Harvest',
+    label: 'Tambah Panen',
     description: 'Input hasil panen terbaru',
     icon: PackagePlus,
     path: '/staff/harvests',
