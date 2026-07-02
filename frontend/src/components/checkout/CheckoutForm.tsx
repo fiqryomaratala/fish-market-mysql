@@ -11,6 +11,7 @@ type CheckoutFormProps = {
   form: UseFormReturn<CheckoutFormValues>
   isSubmitting: boolean
   isRefreshingCart: boolean
+  isOnlinePaymentUnavailable: boolean
   submitError?: string | null
   onSubmit: (values: CheckoutFormValues) => void | Promise<void>
   onRetry: () => void
@@ -21,6 +22,7 @@ export function CheckoutForm({
   form,
   isSubmitting,
   isRefreshingCart,
+  isOnlinePaymentUnavailable,
   submitError,
   onSubmit,
   onRetry,
@@ -33,7 +35,7 @@ export function CheckoutForm({
       >
         <div className="space-y-6">
           <ShippingForm />
-          <PaymentMethod />
+          <PaymentMethod isOnlinePaymentUnavailable={isOnlinePaymentUnavailable} />
 
           <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/60">
             <div className="flex items-start gap-3">
@@ -80,6 +82,7 @@ export function CheckoutForm({
           shippingFee={CHECKOUT_SHIPPING_FEE}
           isSubmitting={isSubmitting}
           isRefreshing={isRefreshingCart}
+          isOnlinePaymentUnavailable={isOnlinePaymentUnavailable}
           submitError={submitError}
           onRetry={onRetry}
         />

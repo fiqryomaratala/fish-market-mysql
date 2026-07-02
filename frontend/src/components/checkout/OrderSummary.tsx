@@ -15,6 +15,7 @@ type OrderSummaryProps = {
   shippingFee: number
   isSubmitting: boolean
   isRefreshing: boolean
+  isOnlinePaymentUnavailable?: boolean
   submitError?: string | null
   onRetry: () => void
 }
@@ -26,6 +27,7 @@ export function OrderSummary({
   shippingFee,
   isSubmitting,
   isRefreshing,
+  isOnlinePaymentUnavailable = false,
   submitError,
   onRetry,
 }: OrderSummaryProps) {
@@ -102,7 +104,9 @@ export function OrderSummary({
 
         {submitError ? (
           <div className="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-            <p className="font-semibold">Checkout gagal</p>
+            <p className="font-semibold">
+              {isOnlinePaymentUnavailable ? 'Pembayaran online belum tersedia' : 'Checkout gagal'}
+            </p>
             <p className="mt-1 leading-6">{submitError}</p>
             <button
               type="button"

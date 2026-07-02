@@ -107,7 +107,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const auth = await authService.login(payload)
         applyAuthState(auth, setToken, setUser)
         if (auth.user.role === 'customer') {
-          await cartService.syncGuestCartToServer()
+          try {
+            await cartService.syncGuestCartToServer()
+          } catch {
+            // Keep login successful even if some guest cart items can no longer be synced.
+          }
           await queryClient.invalidateQueries({ queryKey: ['cart'] })
         }
         return auth.user
@@ -116,7 +120,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const auth = await authService.register(payload)
         applyAuthState(auth, setToken, setUser)
         if (auth.user.role === 'customer') {
-          await cartService.syncGuestCartToServer()
+          try {
+            await cartService.syncGuestCartToServer()
+          } catch {
+            // Keep register flow successful even if guest cart sync hits stale items.
+          }
           await queryClient.invalidateQueries({ queryKey: ['cart'] })
         }
         return auth.user

@@ -8,24 +8,14 @@ import type {
 } from '@/types/checkout'
 
 type CheckoutApiResponse = {
+  order_id?: number
   invoice?: string
-}
-
-type OrderListRecord = {
-  id?: number
-  invoice_number?: string
-}
-
-type OrderListEnvelope = {
-  data?: {
-    items?: OrderListRecord[]
-    meta?: {
-      page?: number
-      limit?: number
-      total?: number
-    }
-  }
-  message?: string
+  total?: number
+  status?: string
+  payment_status?: string
+  payment_method?: string
+  payment_url?: string
+  created_at?: string
 }
 
 type OrderDetailApiRecord = {
@@ -35,6 +25,8 @@ type OrderDetailApiRecord = {
   total_price?: number
   status?: string
   payment_status?: string
+  payment_method?: string
+  payment_url?: string
   shipping_address?: string
   created_at?: string
   items?: OrderDetailApiItem[]
@@ -92,41 +84,28 @@ function mapOrderDetail(record?: OrderDetailApiRecord): CheckoutOrderDetail {
     total_price: toNumber(record?.total_price),
     status: toStringValue(record?.status, 'pending'),
     payment_status: toStringValue(record?.payment_status, 'unpaid'),
+    payment_method: toStringValue(record?.payment_method, 'bank_transfer'),
+    payment_url: toStringValue(record?.payment_url),
     shipping_address: toStringValue(record?.shipping_address),
     created_at: toStringValue(record?.created_at),
     items,
   }
 }
 
-function mapCheckoutResponse(order: CheckoutOrderDetail): CheckoutResponse {
+function mapCheckoutResponse(payload: CheckoutApiResponse): CheckoutResponse {
   return {
-    order_id: order.id,
-    invoice_number: order.invoice_number,
-    total: order.total_price,
-    status: order.status,
-    created_at: order.created_at,
+    order_id: toNumber(payload.order_id),
+    invoice_number: toStringValue(payload.invoice),
+    total: toNumber(payload.total),
+    status: toStringValue(payload.status, 'pending'),
+    payment_status: toStringValue(payload.payment_status, 'unpaid'),
+    payment_method: toStringValue(payload.payment_method, 'bank_transfer'),
+    payment_url: toStringValue(payload.payment_url),
+    created_at: toStringValue(payload.created_at),
   }
 }
 
 class CheckoutService {
-  private async resolveOrderIdByInvoice(invoiceNumber: string) {
-    const { data } = await api.get<OrderListEnvelope>('/orders', {
-      params: {
-        page: 1,
-        limit: 10,
-      },
-    })
-
-    const items = Array.isArray(data.data?.items) ? data.data.items : []
-    const matchedOrder = items.find((item) => toStringValue(item.invoice_number) === invoiceNumber)
-
-    if (!matchedOrder?.id) {
-      throw new Error('Order berhasil dibuat, tetapi detail order terbaru belum ditemukan.')
-    }
-
-    return matchedOrder.id
-  }
-
   async getOrderById(id: number | string): Promise<CheckoutOrderDetail> {
     const { data } = await api.get<ApiResponse<OrderDetailApiRecord>>(`/orders/${id}`)
     return mapOrderDetail(data.data)
@@ -139,16 +118,13 @@ class CheckoutService {
     }
 
     const { data } = await api.post<ApiResponse<CheckoutApiResponse>>('/checkout', requestBody)
-    const invoiceNumber = toStringValue(data.data?.invoice)
+    const checkoutResult = mapCheckoutResponse(data.data ?? {})
 
-    if (!invoiceNumber) {
-      throw new Error('Checkout berhasil, tetapi invoice order tidak ditemukan.')
+    if (!checkoutResult.invoice_number || !checkoutResult.order_id) {
+      throw new Error('Checkout berhasil, tetapi respons order belum lengkap.')
     }
 
-    const orderId = await this.resolveOrderIdByInvoice(invoiceNumber)
-    const order = await this.getOrderById(orderId)
-
-    return mapCheckoutResponse(order)
+    return checkoutResult
   }
 }
 

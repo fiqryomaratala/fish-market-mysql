@@ -1,4 +1,5 @@
 import api from '@/api/axios'
+import { getPaymentMethodLabel } from '@/types/checkout'
 import type {
   OrderItem,
   OrderDetail,
@@ -23,6 +24,7 @@ type OrderApiRecord = {
   total_price?: number
   status?: string
   payment_status?: string
+  payment_method?: string
   shipping_address?: string
   created_at?: string
   items?: OrderItemApiRecord[]
@@ -63,7 +65,7 @@ function normalizeOrder(record: OrderApiRecord, fallbackId = 0): OrderListItem {
     customer_email: '',
     phone: '',
     shipping_address: record.shipping_address ?? '-',
-    payment_method: record.payment_status ?? '-',
+    payment_method: getPaymentMethodLabel(record.payment_method ?? '-'),
     status: record.status ?? 'pending',
     total_amount: Number(record.total_price ?? 0),
     total_items: Array.isArray(record.items)

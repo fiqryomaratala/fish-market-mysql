@@ -118,13 +118,14 @@ function CartErrorState({
 
 function CartPage() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, role } = useAuth()
   const { data, isLoading, error, refetch, isFetching } = useCart()
   const updateCartMutation = useUpdateCart()
   const deleteCartMutation = useDeleteCart()
   const clearCartMutation = useClearCart()
   const [isEditMode, setIsEditMode] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const canUseServerCart = isAuthenticated && role === 'customer'
 
   const items = data?.items ?? []
   const totalItems = data?.total_items ?? 0
@@ -135,16 +136,16 @@ function CartPage() {
   useEffect(() => {
     setSelectedItems((current) =>
       current.filter((id) =>
-        items.some((item) => (isAuthenticated ? item.id : item.product_id) === id),
+        items.some((item) => (canUseServerCart ? item.id : item.product_id) === id),
       ),
     )
 
     if (items.length === 0) {
       setIsEditMode(false)
     }
-  }, [isAuthenticated, items])
+  }, [canUseServerCart, items])
 
-  const getTargetItemId = (item: CartItem) => (isAuthenticated ? item.id : item.product_id)
+  const getTargetItemId = (item: CartItem) => (canUseServerCart ? item.id : item.product_id)
 
   const toggleEditMode = () => {
     setIsEditMode((current) => {
@@ -259,6 +260,11 @@ function CartPage() {
           },
         },
       })
+      return
+    }
+
+    if (role !== 'customer') {
+      toast.info('Checkout hanya tersedia untuk akun customer')
       return
     }
 
@@ -530,9 +536,11 @@ function CartPage() {
               </div>
             </div>
 
-            {!isAuthenticated ? (
+            {!canUseServerCart ? (
               <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                Keranjang guest aktif. Login saat checkout untuk melanjutkan pesanan Anda.
+                {isAuthenticated
+                  ? 'Akun ini tidak memakai cart customer. Gunakan akun customer untuk melanjutkan checkout.'
+                  : 'Keranjang guest aktif. Login saat checkout untuk melanjutkan pesanan Anda.'}
               </div>
             ) : null}
 
@@ -542,7 +550,11 @@ function CartPage() {
               disabled={items.length === 0 || isMutating}
               className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isAuthenticated ? 'Checkout' : 'Login untuk Checkout'}
+              {canUseServerCart
+                ? 'Checkout'
+                : isAuthenticated
+                  ? 'Gunakan Akun Customer'
+                  : 'Login untuk Checkout'}
             </button>
 
             <Link

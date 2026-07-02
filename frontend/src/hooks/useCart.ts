@@ -5,32 +5,39 @@ import type { AddToCartPayload, CartSummary, UpdateCartPayload } from '@/types/c
 
 export const CART_QUERY_KEY = ['cart']
 
-function useCartQueryKey() {
-  const { isAuthenticated } = useAuth()
+function useCanUseServerCart() {
+  const { isAuthenticated, role } = useAuth()
 
-  return [...CART_QUERY_KEY, isAuthenticated ? 'auth' : 'guest']
+  return isAuthenticated && role === 'customer'
+}
+
+function useCartQueryKey() {
+  const canUseServerCart = useCanUseServerCart()
+
+  return [...CART_QUERY_KEY, canUseServerCart ? 'auth' : 'guest']
 }
 
 export function useCart() {
-  const { isAuthenticated, loading } = useAuth()
+  const { loading } = useAuth()
+  const canUseServerCart = useCanUseServerCart()
   const queryKey = useCartQueryKey()
 
   return useQuery({
     queryKey,
     queryFn: async () =>
-      isAuthenticated ? cartService.getCart() : cartService.getGuestCart(),
+      canUseServerCart ? cartService.getCart() : cartService.getGuestCart(),
     enabled: !loading,
   })
 }
 
 export function useAddCart() {
-  const { isAuthenticated } = useAuth()
+  const canUseServerCart = useCanUseServerCart()
   const queryClient = useQueryClient()
   const queryKey = useCartQueryKey()
 
   return useMutation({
     mutationFn: async (payload: AddToCartPayload) =>
-      isAuthenticated ? cartService.addToCart(payload) : cartService.addGuestToCart(payload),
+      canUseServerCart ? cartService.addToCart(payload) : cartService.addGuestToCart(payload),
     onSuccess: (data) => {
       queryClient.setQueryData<CartSummary>(queryKey, data)
     },
@@ -38,13 +45,13 @@ export function useAddCart() {
 }
 
 export function useUpdateCart() {
-  const { isAuthenticated } = useAuth()
+  const canUseServerCart = useCanUseServerCart()
   const queryClient = useQueryClient()
   const queryKey = useCartQueryKey()
 
   return useMutation({
     mutationFn: async ({ id, payload }: { id: number; payload: UpdateCartPayload }) =>
-      isAuthenticated
+      canUseServerCart
         ? cartService.updateQuantity(id, payload)
         : cartService.updateGuestQuantity(id, payload),
     onSuccess: (data) => {
@@ -54,15 +61,15 @@ export function useUpdateCart() {
 }
 
 export function useDeleteCart() {
-  const { isAuthenticated } = useAuth()
+  const canUseServerCart = useCanUseServerCart()
   const queryClient = useQueryClient()
   const queryKey = useCartQueryKey()
 
   return useMutation({
     mutationFn: async (id: number) =>
-      isAuthenticated ? cartService.removeItem(id) : cartService.removeGuestItem(id),
+      canUseServerCart ? cartService.removeItem(id) : cartService.removeGuestItem(id),
     onSuccess: async (data) => {
-      if (isAuthenticated) {
+      if (canUseServerCart) {
         await queryClient.invalidateQueries({ queryKey })
         return
       }
@@ -73,14 +80,15 @@ export function useDeleteCart() {
 }
 
 export function useClearCart() {
-  const { isAuthenticated } = useAuth()
+  const canUseServerCart = useCanUseServerCart()
   const queryClient = useQueryClient()
   const queryKey = useCartQueryKey()
 
   return useMutation({
-    mutationFn: async () => (isAuthenticated ? cartService.clearCart() : cartService.clearGuestCart()),
+    mutationFn: async () =>
+      canUseServerCart ? cartService.clearCart() : cartService.clearGuestCart(),
     onSuccess: async (data) => {
-      if (isAuthenticated) {
+      if (canUseServerCart) {
         await queryClient.invalidateQueries({ queryKey })
         return
       }

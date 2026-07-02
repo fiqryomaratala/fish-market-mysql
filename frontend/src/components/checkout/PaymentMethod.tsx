@@ -8,9 +8,14 @@ const paymentIcons = {
   cod: Truck,
 } as const
 
-export function PaymentMethod() {
+type PaymentMethodProps = {
+  isOnlinePaymentUnavailable?: boolean
+}
+
+export function PaymentMethod({ isOnlinePaymentUnavailable = false }: PaymentMethodProps) {
   const {
     register,
+    setValue,
     watch,
     formState: { errors },
   } = useFormContext<CheckoutFormValues>()
@@ -24,8 +29,32 @@ export function PaymentMethod() {
       </p>
       <h2 className="mt-2 text-2xl font-semibold text-slate-900">Pilih Pembayaran</h2>
       <p className="mt-2 text-sm leading-6 text-slate-500">
-        Opsi pembayaran ini masih dummy dan mudah ditambah saat integrasi payment gateway dilakukan.
+        Pembayaran online akan diarahkan ke checkout Xendit, sedangkan COD diproses manual saat pesanan diterima.
       </p>
+
+      {isOnlinePaymentUnavailable ? (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          <p className="font-semibold">Pembayaran online sedang tidak tersedia.</p>
+          <p className="mt-1 leading-6">
+            Anda bisa mencoba lagi nanti, atau pindah ke COD agar checkout tetap bisa dilanjutkan sekarang.
+          </p>
+          {selectedMethod !== 'cod' ? (
+            <button
+              type="button"
+              onClick={() => {
+                setValue('payment_method', 'cod', {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: true,
+                })
+              }}
+              className="mt-3 inline-flex rounded-xl border border-amber-200 bg-white px-4 py-2 font-semibold text-amber-700 transition hover:bg-amber-100"
+            >
+              Ganti ke COD
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-6 grid gap-4">
         {paymentMethodOptions.map((option) => {

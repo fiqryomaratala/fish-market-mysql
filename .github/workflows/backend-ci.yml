@@ -1,0 +1,71 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  backend-ci:
+    name: Lint, Test, and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve Go version
+        id: go-version
+        shell: bash
+        run: |
+          if [ -f go.mod ]; then
+            GO_VERSION=$(awk '/^go / {print $2; exit}' go.mod)
+            echo "value=${GO_VERSION:-1.24}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=1.24" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.go-version.outputs.value }}
+          cache: false
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('backend/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-mod-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run go fmt
+        run: go fmt ./...
+
+      - name: Verify formatting
+        working-directory: .
+        run: git diff --exit-code
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build all packages
+        run: go build ./...

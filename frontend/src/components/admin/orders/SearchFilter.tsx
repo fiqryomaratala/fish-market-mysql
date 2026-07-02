@@ -75,7 +75,7 @@ export function SearchFilter({
               ariaLabel="Filter status pesanan"
               options={[
                 { label: 'Semua Status', value: '' },
-                ...ORDER_STATUS_OPTIONS.map((status) => ({ label: status, value: status })),
+                ...ORDER_STATUS_OPTIONS,
               ]}
             />
           </div>

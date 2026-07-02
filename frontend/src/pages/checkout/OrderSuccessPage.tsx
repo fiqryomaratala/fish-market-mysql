@@ -3,6 +3,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useOrderDetail } from '@/hooks/useCheckout'
+import { PaymentStatusBadge } from '@/components/orders/PaymentStatusBadge'
+import {
+  getOrderStatusLabel,
+  getOrderStatusTone,
+  getPaymentStatusDescription,
+} from '@/types/checkout'
 
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
@@ -116,7 +122,7 @@ function OrderSuccessPage() {
                   Pesanan Anda berhasil dibuat.
                 </h1>
                 <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-500 md:text-base">
-                  Order tersimpan di backend dan detailnya diambil dari endpoint `GET /orders/:id`.
+                  {getPaymentStatusDescription(data.payment_status, data.payment_method)}
                 </p>
               </div>
             </div>
@@ -127,7 +133,14 @@ function OrderSuccessPage() {
               Invoice
             </p>
             <p className="mt-2 text-2xl font-semibold text-slate-900">{data.invoice_number}</p>
-            <p className="mt-2 text-sm text-slate-500">Status: {data.status}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span
+                className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${getOrderStatusTone(data.status)}`}
+              >
+                {getOrderStatusLabel(data.status)}
+              </span>
+              <PaymentStatusBadge status={data.payment_status} />
+            </div>
           </div>
         </div>
       </section>
@@ -151,13 +164,29 @@ function OrderSuccessPage() {
             </div>
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Payment
+                Status Pembayaran
               </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900">{data.payment_status}</p>
+              <div className="mt-2">
+                <PaymentStatusBadge status={data.payment_status} />
+              </div>
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                {getPaymentStatusDescription(data.payment_status, data.payment_method)}
+              </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Customer
+                Metode Pembayaran
+              </p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{data.payment_method}</p>
+              {data.payment_method.toLowerCase().includes('xendit') ? (
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Anda akan menyelesaikan pembayaran melalui halaman aman milik Xendit.
+                </p>
+              ) : null}
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                Pemesan
               </p>
               <p className="mt-2 text-lg font-semibold text-slate-900">{data.customer || '-'}</p>
             </div>
@@ -165,7 +194,7 @@ function OrderSuccessPage() {
 
           <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
-              Shipping Address
+              Alamat Pengiriman
             </p>
             <p className="mt-3 text-sm leading-7 text-slate-600">
               {data.shipping_address || 'Alamat pengiriman tidak tersedia.'}
@@ -198,7 +227,7 @@ function OrderSuccessPage() {
         <aside className="xl:sticky xl:top-28 xl:self-start">
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">
-              Summary
+              Ringkasan
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">Total Pembayaran</h2>
             <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -215,9 +244,19 @@ function OrderSuccessPage() {
             </div>
 
             <div className="mt-6 grid gap-3">
+              {data.payment_status !== 'paid' && data.payment_url ? (
+                <a
+                  href={data.payment_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold !text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:!text-white visited:!text-white"
+                >
+                  Bayar via Xendit
+                </a>
+              ) : null}
               <Link
                 to="/products"
-                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-300 transition hover:-translate-y-0.5 hover:bg-slate-800"
+                className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold !text-white shadow-lg shadow-slate-300 transition hover:-translate-y-0.5 hover:bg-slate-800 hover:!text-white visited:!text-white"
               >
                 Kembali Belanja
               </Link>

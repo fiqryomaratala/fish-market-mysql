@@ -75,28 +75,48 @@ export interface UpdateOrderStatusPayload {
   status: string
 }
 
-export type OrderStatus = 
-  | 'Pending'
-  | 'Paid'
-  | 'Processing'
-  | 'Shipping'
-  | 'Completed'
-  | 'Cancelled'
+export type OrderStatus =
+  | 'pending'
+  | 'processing'
+  | 'shipping'
+  | 'completed'
+  | 'cancelled'
 
-export const ORDER_STATUS_OPTIONS: OrderStatus[] = [
-  'Pending',
-  'Paid',
-  'Processing',
-  'Shipping',
-  'Completed',
-  'Cancelled',
+export const ORDER_STATUS_OPTIONS: Array<{ label: string; value: OrderStatus }> = [
+  { label: 'Pending', value: 'pending' },
+  { label: 'Processing', value: 'processing' },
+  { label: 'Shipping', value: 'shipping' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Cancelled', value: 'cancelled' },
 ]
 
 export const ORDER_STATUS_COLORS: Record<OrderStatus, string> = {
-  Pending: 'yellow',
-  Paid: 'blue',
-  Processing: 'purple',
-  Shipping: 'orange',
-  Completed: 'green',
-  Cancelled: 'red',
+  pending: 'yellow',
+  processing: 'purple',
+  shipping: 'orange',
+  completed: 'green',
+  cancelled: 'red',
+}
+
+export function normalizeOrderStatus(status: string): OrderStatus | null {
+  const normalized = status.trim().toLowerCase()
+
+  if (
+    normalized === 'pending' ||
+    normalized === 'processing' ||
+    normalized === 'shipping' ||
+    normalized === 'completed' ||
+    normalized === 'cancelled'
+  ) {
+    return normalized
+  }
+
+  return null
+}
+
+export function getOrderStatusLabel(status: string): string {
+  const normalized = normalizeOrderStatus(status)
+  const option = ORDER_STATUS_OPTIONS.find((item) => item.value === normalized)
+
+  return option?.label ?? status
 }

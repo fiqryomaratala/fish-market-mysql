@@ -1,11 +1,11 @@
 import { RotateCcw } from 'lucide-react'
 import { OrderSearch } from '@/components/orders/OrderSearch'
 import { SortDropdown } from '@/components/marketplace/SortDropdown'
+import { getOrderStatusLabel } from '@/types/checkout'
 
 export type OrderFilterStatus =
   | 'All'
   | 'Pending'
-  | 'Paid'
   | 'Processing'
   | 'Shipping'
   | 'Completed'
@@ -26,7 +26,6 @@ type OrderFilterProps = {
 const statusOptions: OrderFilterStatus[] = [
   'All',
   'Pending',
-  'Paid',
   'Processing',
   'Shipping',
   'Completed',
@@ -35,12 +34,11 @@ const statusOptions: OrderFilterStatus[] = [
 
 const statusLabelMap: Record<OrderFilterStatus, string> = {
   All: 'Semua',
-  Pending: 'Menunggu',
-  Paid: 'Dibayar',
-  Processing: 'Diproses',
-  Shipping: 'Dikirim',
-  Completed: 'Selesai',
-  Cancelled: 'Dibatalkan',
+  Pending: getOrderStatusLabel('Pending'),
+  Processing: getOrderStatusLabel('Processing'),
+  Shipping: getOrderStatusLabel('Shipping'),
+  Completed: getOrderStatusLabel('Completed'),
+  Cancelled: getOrderStatusLabel('Cancelled'),
 }
 
 const sortOptions: Array<{ label: string; value: OrderSortOption }> = [

@@ -1,5 +1,8 @@
-import type { OrderStatus } from '@/types/order-management'
-import { ORDER_STATUS_COLORS } from '@/types/order-management'
+import {
+  ORDER_STATUS_COLORS,
+  getOrderStatusLabel,
+  normalizeOrderStatus,
+} from '@/types/order-management'
 
 interface OrderStatusBadgeProps {
   status: string
@@ -14,36 +17,6 @@ const statusColorClasses: Record<string, string> = {
   red: 'bg-red-100 text-red-700 border-red-200',
 }
 
-function normalizeOrderStatus(status: string): OrderStatus | null {
-  const normalized = status.trim().toLowerCase()
-
-  if (normalized === 'pending') {
-    return 'Pending'
-  }
-
-  if (normalized === 'paid') {
-    return 'Paid'
-  }
-
-  if (normalized === 'processing') {
-    return 'Processing'
-  }
-
-  if (normalized === 'shipping') {
-    return 'Shipping'
-  }
-
-  if (normalized === 'completed') {
-    return 'Completed'
-  }
-
-  if (normalized === 'cancelled') {
-    return 'Cancelled'
-  }
-
-  return null
-}
-
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
   const normalizedStatus = normalizeOrderStatus(status)
   const color = normalizedStatus ? ORDER_STATUS_COLORS[normalizedStatus] : 'yellow'
@@ -53,7 +26,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
     <span
       className={`inline-flex items-center rounded-lg border px-3 py-1 text-xs font-semibold ${colorClass}`}
     >
-      {status}
+      {getOrderStatusLabel(status)}
     </span>
   )
 }

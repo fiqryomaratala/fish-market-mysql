@@ -1,16 +1,15 @@
 import { Check } from 'lucide-react'
-import type { OrderStatus } from '@/types/order-management'
+import { getOrderStatusLabel, type OrderStatus } from '@/types/order-management'
 
 interface OrderTimelineProps {
   currentStatus: string
 }
 
 const timelineSteps: OrderStatus[] = [
-  'Pending',
-  'Paid',
-  'Processing',
-  'Shipping',
-  'Completed',
+  'pending',
+  'processing',
+  'shipping',
+  'completed',
 ]
 
 export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
@@ -76,7 +75,7 @@ export function OrderTimeline({ currentStatus }: OrderTimelineProps) {
                     : 'text-slate-500'
                 }`}
               >
-                {step}
+                {getOrderStatusLabel(step)}
               </p>
             </div>
           )

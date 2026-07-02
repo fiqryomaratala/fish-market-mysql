@@ -1,0 +1,17 @@
+./access_routes.go
+./activity_log_routes.go
+./auth_routes.go
+./cart_routes.go
+./checkout_routes.go
+./dashboard_routes.go
+./feeding_log_routes.go
+./fish_batch_routes.go
+./harvest_routes.go
+./inventory_routes.go
+./notification_routes.go
+./order_routes.go
+./pond_routes.go
+./product_routes.go
+./report_routes.go
+./tracking_routes.go
+./user_routes.go
