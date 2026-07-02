@@ -83,7 +83,7 @@ function RegisterPage() {
   return (
     <AuthFormShell
       title="Register"
-      description="Buat akun customer untuk mulai belanja ikan segar, simpan data akun Anda, dan pantau pesanan dengan lebih mudah."
+      description="Buat akun baru dengan validasi yang aman dan alur autentikasi yang langsung terhubung ke backend Gin + JWT."
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">

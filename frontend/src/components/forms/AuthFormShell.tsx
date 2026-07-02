@@ -12,7 +12,7 @@ export function AuthFormShell({
   children,
 }: AuthFormShellProps) {
   return (
-    <div className="flex h-full w-full flex-col rounded-10 border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 md:justify-center md:p-8">
+    <div className="w-full rounded-10 border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 md:p-8">
       <div className="space-y-2">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
           Akun

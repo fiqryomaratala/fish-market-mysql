@@ -13,7 +13,7 @@ interface OrderStatusModalProps {
 
 export function OrderStatusModal({ order, onClose }: OrderStatusModalProps) {
   const [selectedStatus, setSelectedStatus] = useState<string>(
-    order?.status || 'pending'
+    order?.status || 'Pending'
   )
   const updateStatusMutation = useUpdateOrderStatus()
 
@@ -68,7 +68,7 @@ export function OrderStatusModal({ order, onClose }: OrderStatusModalProps) {
               value={selectedStatus}
               onChange={setSelectedStatus}
               ariaLabel="Pilih status pesanan"
-              options={ORDER_STATUS_OPTIONS}
+              options={ORDER_STATUS_OPTIONS.map((status) => ({ label: status, value: status }))}
             />
           </div>
 

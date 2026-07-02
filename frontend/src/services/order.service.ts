@@ -1,7 +1,6 @@
 import api from '@/api/axios'
 import type { ApiResponse, Order as ApiOrder, OrderPayload, OrderStatusPayload } from '@/types/api'
 import type { Order, OrdersQueryParams, OrdersResult } from '@/types/order'
-import { getPaymentMethodLabel } from '@/types/checkout'
 
 type OrderApiItem = {
   id?: number
@@ -9,8 +8,6 @@ type OrderApiItem = {
   total_price?: number
   status?: string
   payment_status?: string
-  payment_method?: string
-  payment_url?: string
   shipping_address?: string
   created_at?: string
   customer?: string
@@ -52,6 +49,11 @@ function toTitleCase(value: string) {
     .join(' ')
 }
 
+function extractPaymentMethod(shippingAddress: string) {
+  const matchedMethod = shippingAddress.match(/Metode pembayaran:\s*([^,]+)/i)
+  return matchedMethod?.[1]?.trim() ?? 'Not specified'
+}
+
 function extractShippingName(shippingAddress: string, customer: string) {
   const firstSegment = shippingAddress
     .split(',')
@@ -61,8 +63,13 @@ function extractShippingName(shippingAddress: string, customer: string) {
   return firstSegment ?? customer ?? 'Customer'
 }
 
-function normalizeStatus(status: string) {
+function normalizeStatus(status: string, paymentStatus: string) {
   const normalizedStatus = status.trim().toLowerCase()
+  const normalizedPayment = paymentStatus.trim().toLowerCase()
+
+  if (normalizedStatus === 'pending' && normalizedPayment === 'paid') {
+    return 'Paid'
+  }
 
   return toTitleCase(normalizedStatus || 'pending')
 }
@@ -71,17 +78,14 @@ function mapOrder(record: OrderApiItem, fallbackId: number): Order {
   const shippingAddress = toStringValue(record.shipping_address)
   const customer = toStringValue(record.customer, 'Customer')
   const paymentStatus = toStringValue(record.payment_status)
-  const paymentMethod = toStringValue(record.payment_method, 'bank_transfer')
 
   return {
     id: toNumber(record.id, fallbackId),
     invoice_number: toStringValue(record.invoice_number, `INV-${fallbackId}`),
-    status: normalizeStatus(toStringValue(record.status, 'pending')),
+    status: normalizeStatus(toStringValue(record.status, 'pending'), paymentStatus),
     total: toNumber(record.total_price),
     total_item: Array.isArray(record.items) ? record.items.length : 0,
-    payment_method: paymentMethod ? getPaymentMethodLabel(paymentMethod) : 'Not specified',
-    payment_status: paymentStatus,
-    payment_url: toStringValue(record.payment_url),
+    payment_method: toTitleCase(extractPaymentMethod(shippingAddress)),
     shipping_name: extractShippingName(shippingAddress, customer),
     shipping_address: shippingAddress,
     created_at: toStringValue(record.created_at),

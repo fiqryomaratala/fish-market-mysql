@@ -5,8 +5,6 @@ export interface Order {
   total: number
   total_item: number
   payment_method: string
-  payment_status?: string
-  payment_url?: string
   shipping_name: string
   shipping_address: string
   created_at: string

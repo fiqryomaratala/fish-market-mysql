@@ -10,12 +10,7 @@ import { useCart } from '@/hooks/useCart'
 import { useCheckout } from '@/hooks/useCheckout'
 import { checkoutSchema, type CheckoutFormValues } from '@/types/checkout'
 
-type CheckoutErrorState = {
-  isOnlinePaymentUnavailable: boolean
-  message: string
-}
-
-function getCheckoutErrorState(error: unknown): CheckoutErrorState {
+function getErrorMessage(error: unknown) {
   if (
     typeof error === 'object' &&
     error !== null &&
@@ -28,40 +23,14 @@ function getCheckoutErrorState(error: unknown): CheckoutErrorState {
     'message' in error.response.data &&
     typeof error.response.data.message === 'string'
   ) {
-    const response = error.response as {
-      status?: number
-      data: { message: string }
-    }
-    const message = response.data.message
-    const normalizedMessage = message.trim().toLowerCase()
-    const isOnlinePaymentUnavailable =
-      response.status === 503 || normalizedMessage.includes('online payment is currently unavailable')
-
-    if (isOnlinePaymentUnavailable) {
-      return {
-        isOnlinePaymentUnavailable: true,
-        message:
-          'Pembayaran online sedang tidak tersedia. Anda bisa mencoba lagi beberapa saat lagi atau beralih ke COD agar pesanan tetap bisa diproses.',
-      }
-    }
-
-    return {
-      isOnlinePaymentUnavailable: false,
-      message,
-    }
+    return error.response.data.message
   }
 
   if (error instanceof Error) {
-    return {
-      isOnlinePaymentUnavailable: false,
-      message: error.message,
-    }
+    return error.message
   }
 
-  return {
-    isOnlinePaymentUnavailable: false,
-    message: 'Terjadi kesalahan saat memproses checkout.',
-  }
+  return 'Terjadi kesalahan saat memproses checkout.'
 }
 
 function CheckoutLoadingState() {
@@ -106,7 +75,7 @@ function CheckoutErrorState({
 
 function CheckoutPage() {
   const navigate = useNavigate()
-  const { user, role, isAuthenticated, loading: authLoading } = useAuth()
+  const { user, isAuthenticated, loading: authLoading } = useAuth()
   const { data: cart, isLoading, error, refetch, isFetching } = useCart()
   const checkoutMutation = useCheckout()
   const form = useForm<CheckoutFormValues>({
@@ -136,13 +105,6 @@ function CheckoutPage() {
   }, [authLoading, isAuthenticated, navigate])
 
   useEffect(() => {
-    if (!authLoading && isAuthenticated && role !== 'customer') {
-      toast.info('Checkout hanya tersedia untuk akun customer')
-      navigate('/cart', { replace: true })
-    }
-  }, [authLoading, isAuthenticated, navigate, role])
-
-  useEffect(() => {
     if (!isLoading && cart && cart.items.length === 0) {
       navigate('/cart', { replace: true })
     }
@@ -156,8 +118,7 @@ function CheckoutPage() {
     }
   }, [form, user?.name])
 
-  const submitErrorState = checkoutMutation.error ? getCheckoutErrorState(checkoutMutation.error) : null
-  const submitError = submitErrorState?.message ?? null
+  const submitError = checkoutMutation.error ? getErrorMessage(checkoutMutation.error) : null
 
   const handleRetrySubmit = () => {
     checkoutMutation.reset()
@@ -167,17 +128,11 @@ function CheckoutPage() {
     try {
       const result = await checkoutMutation.mutateAsync(values)
       toast.success(`Order ${result.invoice_number} berhasil dibuat.`)
-
-      if (result.payment_method !== 'cod' && result.payment_url) {
-        window.location.assign(result.payment_url)
-        return
-      }
-
       navigate(`/orders/success/${result.order_id}`, {
         replace: true,
       })
     } catch (checkoutError) {
-      toast.error(getCheckoutErrorState(checkoutError).message)
+      toast.error(getErrorMessage(checkoutError))
     }
   }
 
@@ -189,14 +144,10 @@ function CheckoutPage() {
     return null
   }
 
-  if (role !== 'customer') {
-    return null
-  }
-
   if (error) {
     return (
       <CheckoutErrorState
-        message={getCheckoutErrorState(error).message}
+        message={getErrorMessage(error)}
         onRetry={() => {
           void refetch()
         }}
@@ -234,7 +185,6 @@ function CheckoutPage() {
         form={form}
         isSubmitting={checkoutMutation.isPending}
         isRefreshingCart={isFetching}
-        isOnlinePaymentUnavailable={submitErrorState?.isOnlinePaymentUnavailable ?? false}
         submitError={submitError}
         onSubmit={handleSubmit}
         onRetry={handleRetrySubmit}

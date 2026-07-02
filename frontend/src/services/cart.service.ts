@@ -236,46 +236,11 @@ class CartService {
       return
     }
 
-    const products = await productService.getProducts({ page: 1, limit: 1000 })
-    const productLookup = new Map(products.items.map((product) => [product.id, product]))
-    const syncableRecords = records
-      .map((record) => {
-        const product = productLookup.get(record.product_id)
-
-        if (!product || product.status !== 'available' || product.stock <= 0) {
-          return null
-        }
-
-        return {
-          product_id: record.product_id,
-          quantity: Math.min(record.quantity, product.stock),
-        }
+    for (const record of records) {
+      await this.addToCart({
+        product_id: record.product_id,
+        quantity: record.quantity,
       })
-      .filter(
-        (record): record is GuestCartRecord => record !== null && record.quantity > 0,
-      )
-
-    if (syncableRecords.length === 0) {
-      clearGuestCartRecords()
-      return
-    }
-
-    const remainingRecords: GuestCartRecord[] = []
-
-    for (const record of syncableRecords) {
-      try {
-        await this.addToCart({
-          product_id: record.product_id,
-          quantity: record.quantity,
-        })
-      } catch {
-        remainingRecords.push(record)
-      }
-    }
-
-    if (remainingRecords.length > 0) {
-      writeGuestCartRecords(remainingRecords)
-      return
     }
 
     clearGuestCartRecords()

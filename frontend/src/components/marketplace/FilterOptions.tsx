@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { RotateCcw } from 'lucide-react'
 import type { MarketplaceFilters } from '@/components/marketplace/FilterSidebar'
 
@@ -105,6 +106,13 @@ export function FilterOptions({
   onHarvestStatusChange,
   onReset,
 }: FilterOptionsProps) {
+  useEffect(() => {
+    console.log('Filter aktif:', {
+      availability: getOptionLabel(availability),
+      harvestStatus: getOptionLabel(harvestStatus),
+    })
+  }, [availability, harvestStatus])
+
   return (
     <div className="space-y-6">
       <RadioGroup

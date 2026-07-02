@@ -1,5 +1,4 @@
 import { Calendar, CreditCard, MapPin, Package } from 'lucide-react'
-import { PaymentStatusBadge } from '@/components/orders/PaymentStatusBadge'
 import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
 import type { Order } from '@/types/order'
 
@@ -51,10 +50,7 @@ export function OrderCard({ order, onViewDetail }: OrderCardProps) {
             <CreditCard className="size-4 text-emerald-600" />
             Metode Pembayaran
           </div>
-          <p className="mt-2 text-sm leading-6 text-slate-700">{order.payment_method}</p>
-          <div className="mt-3">
-            <PaymentStatusBadge status={order.payment_status ?? 'unpaid'} />
-          </div>
+          <p className="mt-2 text-sm leading-6 text-slate-500">{order.payment_method}</p>
         </div>
 
         <div className="order-subcard rounded-xl border border-slate-100 bg-slate-50 p-4">

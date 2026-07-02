@@ -1,12 +1,6 @@
 import { ArrowLeft, Calendar, CreditCard, MapPin, Package } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { PaymentStatusBadge } from '@/components/orders/PaymentStatusBadge'
 import { useOrderDetail } from '@/hooks/useCheckout'
-import {
-  getOrderStatusLabel,
-  getOrderStatusTone,
-  getPaymentStatusDescription,
-} from '@/types/checkout'
 
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
@@ -60,22 +54,14 @@ function OrderDetailPage() {
         className="order-subcard inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
       >
         <ArrowLeft className="size-4" />
-        Kembali ke Pesanan
+        Back to Orders
       </button>
 
       <section className="order-card rounded-[1.75rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.18),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.14),_transparent_26%),linear-gradient(135deg,_#ffffff_0%,_#f8fafc_54%,_#ecfeff_100%)] p-6">
         <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-600">
-          Detail Pesanan
+          Order Detail
         </p>
         <h1 className="mt-4 text-3xl font-semibold text-slate-900">{data.invoice_number}</h1>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span
-            className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${getOrderStatusTone(data.status)}`}
-          >
-            {getOrderStatusLabel(data.status)}
-          </span>
-          <PaymentStatusBadge status={data.payment_status} />
-        </div>
       </section>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -91,36 +77,9 @@ function OrderDetailPage() {
         <div className="order-subcard rounded-xl border border-slate-100 bg-white p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
             <CreditCard className="size-4 text-emerald-600" />
-            Status Pembayaran
+            Payment Status
           </div>
-          <div className="mt-2">
-            <PaymentStatusBadge status={data.payment_status} />
-          </div>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            {getPaymentStatusDescription(data.payment_status, data.payment_method)}
-          </p>
-          {data.payment_status !== 'paid' && data.payment_url ? (
-            <a
-              href={data.payment_url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
-            >
-              Bayar via Xendit
-            </a>
-          ) : null}
-        </div>
-        <div className="order-subcard rounded-xl border border-slate-100 bg-white p-5">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-            <CreditCard className="size-4 text-sky-600" />
-            Metode Pembayaran
-          </div>
-          <p className="mt-2 text-sm font-semibold text-slate-900">{data.payment_method}</p>
-          {data.payment_method.toLowerCase().includes('xendit') ? (
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              Pembayaran online diproses melalui checkout aman milik Xendit.
-            </p>
-          ) : null}
+          <p className="mt-2 text-sm text-slate-500">{data.payment_status}</p>
         </div>
         <div className="order-subcard rounded-xl border border-slate-100 bg-white p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
@@ -143,7 +102,7 @@ function OrderDetailPage() {
             <MapPin className="size-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">Alamat Pengiriman</p>
+            <p className="text-sm font-semibold text-slate-900">Shipping Address</p>
             <p className="mt-2 text-sm leading-7 text-slate-500">
               {data.shipping_address || '-'}
             </p>
