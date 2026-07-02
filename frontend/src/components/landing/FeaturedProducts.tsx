@@ -2,11 +2,22 @@ import { Package } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import { ProductCard } from '@/components/marketplace/ProductCard'
 
+const PRIORITY_CATEGORIES = ['Gurame', 'Bandeng']
+
 export function FeaturedProducts() {
-  const productsQuery = useProducts({ page: 1, limit: 4 })
-  const featuredProducts = (productsQuery.data?.items ?? []).filter(
-    (product) => product.status === 'available',
-  )
+  const productsQuery = useProducts({ page: 1, limit: 12, status: 'available' })
+  const featuredProducts = [...(productsQuery.data?.items ?? [])]
+    .sort((leftProduct, rightProduct) => {
+      const leftPriority = PRIORITY_CATEGORIES.includes(leftProduct.category) ? 0 : 1
+      const rightPriority = PRIORITY_CATEGORIES.includes(rightProduct.category) ? 0 : 1
+
+      if (leftPriority !== rightPriority) {
+        return leftPriority - rightPriority
+      }
+
+      return rightProduct.stock - leftProduct.stock
+    })
+    .slice(0, 4)
 
   return (
     <section id="marketplace" className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
