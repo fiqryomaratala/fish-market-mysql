@@ -877,6 +877,35 @@ func (r *storeOrderRepository) FindByID(id uint) (*models.Order, error) {
 	return &cloned, nil
 }
 
+func (r *storeOrderRepository) FindByInvoiceNumber(invoiceNumber string) (*models.Order, error) {
+	r.store.mu.Lock()
+	defer r.store.mu.Unlock()
+
+	for _, order := range r.store.orders {
+		if order.InvoiceNumber != invoiceNumber {
+			continue
+		}
+
+		cloned := *order
+		if user, ok := r.store.users[order.UserID]; ok {
+			cloned.User = *cloneUser(user)
+		}
+		orderItems := r.store.orderItems[order.ID]
+		cloned.OrderItems = make([]models.OrderItem, 0, len(orderItems))
+		for _, item := range orderItems {
+			clonedItem := item
+			if product, ok := r.store.products[item.ProductID]; ok {
+				clonedItem.Product = *cloneProduct(product)
+			}
+			cloned.OrderItems = append(cloned.OrderItems, clonedItem)
+		}
+
+		return &cloned, nil
+	}
+
+	return nil, nil
+}
+
 func (r *storeOrderRepository) Update(order *models.Order) error {
 	r.store.mu.Lock()
 	defer r.store.mu.Unlock()
@@ -1103,6 +1132,7 @@ func TestIntegrationCartCheckoutOrderFlow(t *testing.T) {
 
 	checkoutRecorder := performJSONRequest(t, router, http.MethodPost, "/api/checkout", map[string]interface{}{
 		"shipping_address": "Jl. Laut 123",
+		"payment_method":   "cod",
 	}, customerToken)
 	require.Equal(t, http.StatusCreated, checkoutRecorder.Code)
 
@@ -1152,7 +1182,97 @@ func TestIntegrationCartCheckoutOrderFlow(t *testing.T) {
 	assert.Contains(t, txRecorder.Body.String(), invoice)
 }
 
+func TestIntegrationOnlineCheckoutWebhookFlow(t *testing.T) {
+	SetupTest(t)
+	gin.SetMode(gin.TestMode)
+
+	gateway := &integrationPaymentGateway{
+		webhookToken: "integration-webhook-token",
+		invoiceURL:   "https://checkout.xendit.test/invoice/integration-001",
+	}
+	store, router := setupOperationsIntegrationRouterWithPaymentGateway(t, gateway)
+	customerToken := loginAndExtractToken(t, router, "customer1@fishmarket.com", "password123")
+
+	product := store.addProduct(&models.Product{
+		Name:        "Ikan Nila Online",
+		Description: "Untuk flow online checkout",
+		Price:       55000,
+		Stock:       30,
+		Category:    "ikan konsumsi",
+		Status:      "active",
+	})
+	batch := &models.FishBatch{
+		Model:           gorm.Model{ID: 2},
+		BatchCode:       "BTCH-2026-0100",
+		FishType:        "Nila",
+		SeedCount:       1000,
+		CurrentCount:    1000,
+		AverageWeight:   0.25,
+		StartDate:       time.Date(2026, 8, 1, 0, 0, 0, 0, time.UTC),
+		ExpectedHarvest: time.Date(2026, 12, 15, 0, 0, 0, 0, time.UTC),
+		Status:          "active",
+	}
+	store.batches[batch.ID] = batch
+	store.linkProductToBatch(product.ID, batch.ID)
+
+	storeInventoryRepo := &storeInventoryRepository{store: store}
+	err := storeInventoryRepo.Create(&models.Inventory{
+		ProductID:   product.ID,
+		FishBatchID: batch.ID,
+		Quantity:    20,
+		Unit:        "kg",
+		Status:      "available",
+	})
+	require.NoError(t, err)
+
+	addCartRecorder := performJSONRequest(t, router, http.MethodPost, "/api/cart", map[string]interface{}{
+		"product_id": product.ID,
+		"quantity":   1,
+	}, customerToken)
+	require.Equal(t, http.StatusCreated, addCartRecorder.Code)
+
+	checkoutRecorder := performJSONRequest(t, router, http.MethodPost, "/api/checkout", map[string]interface{}{
+		"shipping_address": "Jl. Online Payment No. 1",
+		"payment_method":   "bank_transfer",
+	}, customerToken)
+	require.Equal(t, http.StatusCreated, checkoutRecorder.Code)
+	assert.Contains(t, checkoutRecorder.Body.String(), `"payment_status":"unpaid"`)
+	assert.Contains(t, checkoutRecorder.Body.String(), `"payment_method":"bank_transfer"`)
+	assert.Contains(t, checkoutRecorder.Body.String(), `"payment_url":"https://checkout.xendit.test/invoice/integration-001"`)
+
+	var checkoutResponse apiResponseEnvelope
+	require.NoError(t, json.Unmarshal(checkoutRecorder.Body.Bytes(), &checkoutResponse))
+	checkoutData := checkoutResponse.Data.(map[string]interface{})
+	orderID := int(checkoutData["order_id"].(float64))
+	invoice := checkoutData["invoice"].(string)
+	require.Equal(t, invoice, gateway.lastExternalID)
+
+	orderBeforeWebhook := performJSONRequest(t, router, http.MethodGet, "/api/orders/"+strconv.Itoa(orderID), nil, customerToken)
+	require.Equal(t, http.StatusOK, orderBeforeWebhook.Code)
+	assert.Contains(t, orderBeforeWebhook.Body.String(), `"status":"pending"`)
+	assert.Contains(t, orderBeforeWebhook.Body.String(), `"payment_status":"unpaid"`)
+	assert.Contains(t, orderBeforeWebhook.Body.String(), `"payment_url":"https://checkout.xendit.test/invoice/integration-001"`)
+
+	webhookRecorder := performWebhookRequest(t, router, map[string]interface{}{
+		"external_id": invoice,
+		"status":      "paid",
+		"paid_at":     "2026-07-01T13:00:00Z",
+	}, "integration-webhook-token")
+	require.Equal(t, http.StatusOK, webhookRecorder.Code)
+	assert.Contains(t, webhookRecorder.Body.String(), `"message":"Webhook processed"`)
+
+	orderAfterWebhook := performJSONRequest(t, router, http.MethodGet, "/api/orders/"+strconv.Itoa(orderID), nil, customerToken)
+	require.Equal(t, http.StatusOK, orderAfterWebhook.Code)
+	assert.Contains(t, orderAfterWebhook.Body.String(), `"status":"processing"`)
+	assert.Contains(t, orderAfterWebhook.Body.String(), `"payment_status":"paid"`)
+	assert.Contains(t, orderAfterWebhook.Body.String(), `"payment_url":"https://checkout.xendit.test/invoice/integration-001"`)
+}
+
 func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Engine) {
+	return setupOperationsIntegrationRouterWithPaymentGateway(t, nil)
+}
+
+func setupOperationsIntegrationRouterWithPaymentGateway(t *testing.T, paymentGateway services.PaymentGatewayService) (*integrationStore, *gin.Engine) {
 	t.Helper()
 
 	adminPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
@@ -1185,8 +1305,11 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	authService := services.NewAuthService(userRepo)
 	cartService := services.NewCartService(cartRepo, productRepo, inventoryRepo)
 	inventoryService := services.NewInventoryService(inventoryRepo, inventoryTxRepo, productRepo)
-	checkoutService := services.NewCheckoutServiceWithDependencies(cartRepo, orderRepo, inventoryService)
 	orderService := services.NewOrderService(orderRepo)
+	if paymentGateway == nil {
+		paymentGateway = &integrationPaymentGateway{}
+	}
+	checkoutService := services.NewCheckoutServiceWithOptionalDependencies(cartRepo, orderRepo, userRepo, inventoryService, paymentGateway)
 	pondService := services.NewPondService(pondRepo)
 	batchService := services.NewFishBatchService(batchRepo, pondRepo)
 	harvestService := services.NewHarvestService(harvestRepo, batchRepo, inventoryService)
@@ -1195,6 +1318,7 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	cartHandler := handlers.NewCartHandler(cartService)
 	checkoutHandler := handlers.NewCheckoutHandler(checkoutService)
 	orderHandler := handlers.NewOrderHandler(orderService)
+	paymentHandler := handlers.NewPaymentHandler(orderService, paymentGateway)
 	pondHandler := handlers.NewPondHandler(pondService)
 	batchHandler := handlers.NewFishBatchHandler(batchService)
 	harvestHandler := handlers.NewHarvestHandler(harvestService)
@@ -1232,6 +1356,7 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	checkout := router.Group("/api/checkout")
 	checkout.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("customer"))
 	checkout.POST("", checkoutHandler.Checkout)
+	router.POST("/api/payments/xendit/webhook", paymentHandler.HandleXenditWebhook)
 
 	orders := router.Group("/api/orders")
 	orders.Use(middleware.AuthMiddleware())
@@ -1275,4 +1400,46 @@ func setupOperationsIntegrationRouter(t *testing.T) (*integrationStore, *gin.Eng
 	inventory.GET("/:id", inventoryHandler.GetByID)
 
 	return store, router
+}
+
+type integrationPaymentGateway struct {
+	webhookToken   string
+	invoiceURL     string
+	lastExternalID string
+}
+
+func (g *integrationPaymentGateway) CreatePaymentLink(input services.CreatePaymentLinkInput) (*services.CreatePaymentLinkResult, error) {
+	if g.invoiceURL == "" {
+		return nil, services.ErrPaymentGatewayNotConfigured
+	}
+
+	g.lastExternalID = input.ExternalID
+
+	return &services.CreatePaymentLinkResult{
+		ID:         "integration-link-id",
+		InvoiceURL: g.invoiceURL,
+		Status:     "PENDING",
+	}, nil
+}
+
+func (g *integrationPaymentGateway) ParseWebhook(request *http.Request) (*services.PaymentWebhookPayload, error) {
+	if strings.TrimSpace(g.webhookToken) == "" {
+		return nil, services.ErrPaymentGatewayNotConfigured
+	}
+	if strings.TrimSpace(request.Header.Get("x-callback-token")) != strings.TrimSpace(g.webhookToken) {
+		return nil, services.ErrPaymentWebhookUnauthorized
+	}
+
+	var payload services.PaymentWebhookPayload
+	if err := json.NewDecoder(request.Body).Decode(&payload); err != nil {
+		return nil, err
+	}
+
+	payload.ExternalID = strings.TrimSpace(payload.ExternalID)
+	payload.Status = strings.ToUpper(strings.TrimSpace(payload.Status))
+	if payload.ExternalID == "" {
+		return nil, assert.AnError
+	}
+
+	return &payload, nil
 }

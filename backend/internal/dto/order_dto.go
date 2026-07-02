@@ -15,6 +15,8 @@ type OrderResponse struct {
 	TotalPrice      float64             `json:"total_price"`
 	Status          string              `json:"status"`
 	PaymentStatus   string              `json:"payment_status"`
+	PaymentMethod   string              `json:"payment_method"`
+	PaymentURL      string              `json:"payment_url,omitempty"`
 	ShippingAddress string              `json:"shipping_address"`
 	CreatedAt       string              `json:"created_at"`
 	Items           []OrderItemResponse `json:"items,omitempty"`

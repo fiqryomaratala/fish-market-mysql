@@ -214,6 +214,7 @@ func TestIntegrationValidationRBACAndCartEdgeFlow(t *testing.T) {
 
 	checkoutSuccess := performJSONRequest(t, router, http.MethodPost, "/api/checkout", map[string]interface{}{
 		"shipping_address": "Jl. Integrasi QA No. 1",
+		"payment_method":   "cod",
 	}, customerToken)
 	require.Equal(t, http.StatusCreated, checkoutSuccess.Code)
 	assert.Contains(t, checkoutSuccess.Body.String(), `"invoice":"INV-`)

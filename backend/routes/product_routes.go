@@ -15,7 +15,12 @@ import (
 
 func RegisterProductRoutes(r *gin.Engine, db *gorm.DB) {
 	productRepo := repositories.NewProductRepository(db)
-	productService := services.NewProductService(productRepo, filepath.Join(config.GetConfig().UploadPath, "products"))
+	inventoryRepo := repositories.NewInventoryRepository(db)
+	productService := services.NewProductService(
+		productRepo,
+		filepath.Join(config.GetConfig().UploadPath, "products"),
+		inventoryRepo,
+	)
 	productHandler := handlers.NewProductHandler(productService)
 
 	api := r.Group("/api")

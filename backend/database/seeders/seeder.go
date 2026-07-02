@@ -354,10 +354,11 @@ func SeedNotifications(tx *gorm.DB) error {
 	for i := 0; i < 30; i++ {
 		user := users[gofakeit.Number(0, len(users)-1)]
 		notifType := notifTypes[gofakeit.Number(0, len(notifTypes)-1)]
+		title, message := buildSeedNotificationContent(notifType, uint(gofakeit.Number(1, 20)))
 		notifications = append(notifications, models.Notification{
 			UserID:        user.ID,
-			Title:         strings.Title(strings.ToLower(strings.ReplaceAll(notifType, "_", " "))),
-			Message:       gofakeit.Sentence(8),
+			Title:         title,
+			Message:       message,
 			Type:          notifType,
 			ReferenceType: notifType,
 			ReferenceID:   uint(gofakeit.Number(1, 20)),
@@ -366,6 +367,21 @@ func SeedNotifications(tx *gorm.DB) error {
 	}
 
 	return tx.Create(&notifications).Error
+}
+
+func buildSeedNotificationContent(notifType string, referenceID uint) (string, string) {
+	switch notifType {
+	case "ORDER":
+		return "Pesanan Baru", fmt.Sprintf("Pesanan #%d telah masuk dan menunggu tindak lanjut.", referenceID)
+	case "HARVEST":
+		return "Jadwal Panen Diperbarui", fmt.Sprintf("Data panen untuk batch terkait #%d telah diperbarui.", referenceID)
+	case "INVENTORY":
+		return "Pembaruan Inventaris", fmt.Sprintf("Ada perubahan stok pada item inventaris #%d. Silakan periksa detailnya.", referenceID)
+	case "BATCH":
+		return "Perkembangan Batch Ikan", fmt.Sprintf("Batch ikan #%d memiliki pembaruan status terbaru.", referenceID)
+	default:
+		return "Notifikasi Sistem", "Ada informasi terbaru yang perlu Anda periksa."
+	}
 }
 
 func SeedActivityLogs(tx *gorm.DB) error {

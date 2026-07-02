@@ -61,6 +61,7 @@ func TestIntegrationOwnershipAndIsolationFlow(t *testing.T) {
 
 	checkoutRecorder := performJSONRequest(t, router, http.MethodPost, "/api/checkout", map[string]interface{}{
 		"shipping_address": "Jl. Customer Satu",
+		"payment_method":   "cod",
 	}, customerOneToken)
 	require.Equal(t, http.StatusCreated, checkoutRecorder.Code)
 

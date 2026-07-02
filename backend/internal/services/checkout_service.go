@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fiqryomaratala/backend/config"
 	"github.com/fiqryomaratala/backend/internal/dto"
 	"github.com/fiqryomaratala/backend/internal/helpers"
 	"github.com/fiqryomaratala/backend/internal/logger"
@@ -16,10 +17,12 @@ import (
 )
 
 var ErrCartEmpty = errors.New("cart is empty")
+var ErrOnlinePaymentUnavailable = errors.New("online payment is unavailable")
 
 type CheckoutInput struct {
 	UserID          uint
 	ShippingAddress string
+	PaymentMethod   string
 	Audit           *AuditContext
 }
 
@@ -31,14 +34,18 @@ type checkoutService struct {
 	db               *gorm.DB
 	cartRepo         repositories.CartRepository
 	orderRepo        repositories.OrderRepository
+	userRepo         repositories.UserRepository
 	inventoryService InventoryService
+	paymentGateway   PaymentGatewayService
 }
 
 func NewCheckoutService(
 	db *gorm.DB,
 ) CheckoutService {
+	cfg := config.GetConfig()
 	return &checkoutService{
-		db: db,
+		db:             db,
+		paymentGateway: NewXenditPaymentService(cfg),
 	}
 }
 
@@ -47,15 +54,32 @@ func NewCheckoutServiceWithDependencies(
 	orderRepo repositories.OrderRepository,
 	inventoryService InventoryService,
 ) CheckoutService {
+	return NewCheckoutServiceWithOptionalDependencies(cartRepo, orderRepo, nil, inventoryService, nil)
+}
+
+func NewCheckoutServiceWithOptionalDependencies(
+	cartRepo repositories.CartRepository,
+	orderRepo repositories.OrderRepository,
+	userRepo repositories.UserRepository,
+	inventoryService InventoryService,
+	paymentGateway ...PaymentGatewayService,
+) CheckoutService {
+	var gateway PaymentGatewayService
+	if len(paymentGateway) > 0 {
+		gateway = paymentGateway[0]
+	}
+
 	return &checkoutService{
 		cartRepo:         cartRepo,
 		orderRepo:        orderRepo,
+		userRepo:         userRepo,
 		inventoryService: inventoryService,
+		paymentGateway:   gateway,
 	}
 }
 
 func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, error) {
-	invoiceNumber := ""
+	var result *dto.CheckoutResponse
 	logger.Info("checkout started", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
 	var err error
 	if s.db != nil {
@@ -65,14 +89,15 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 			productRepo := repositories.NewProductRepository(tx)
 			inventoryRepo := repositories.NewInventoryRepository(tx)
 			transactionRepo := repositories.NewInventoryTransactionRepository(tx)
+			userRepo := repositories.NewUserRepository(tx)
 			inventoryService := NewInventoryService(inventoryRepo, transactionRepo, productRepo)
 
 			var processErr error
-			invoiceNumber, processErr = s.processCheckout(input, cartRepo, orderRepo, inventoryService)
+			result, processErr = s.processCheckout(input, cartRepo, orderRepo, userRepo, inventoryService)
 			return processErr
 		})
 	} else {
-		invoiceNumber, err = s.processCheckout(input, s.cartRepo, s.orderRepo, s.inventoryService)
+		result, err = s.processCheckout(input, s.cartRepo, s.orderRepo, s.userRepo, s.inventoryService)
 	}
 	if err != nil {
 		logger.Error("checkout failed", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
@@ -84,7 +109,7 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 			input.Audit.UserID,
 			"CREATE",
 			"ORDER",
-			"Checkout order "+invoiceNumber,
+			"Checkout order "+result.Invoice,
 			input.Audit.IPAddress,
 			input.Audit.UserAgent,
 		)
@@ -92,28 +117,29 @@ func (s *checkoutService) Checkout(input CheckoutInput) (*dto.CheckoutResponse, 
 
 	helpers.CreateNotification(
 		input.UserID,
-		"Order Created",
-		"Order "+invoiceNumber+" berhasil dibuat.",
+		"Pesanan Berhasil Dibuat",
+		"Pesanan "+result.Invoice+" berhasil dibuat dan sedang menunggu proses lebih lanjut.",
 		"ORDER",
 		"ORDER",
 		0,
 	)
 
-	logger.Info("checkout successful", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID), zap.String("invoice", invoiceNumber))
+	logger.Info("checkout successful", zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID), zap.String("invoice", result.Invoice))
 
-	return &dto.CheckoutResponse{Invoice: invoiceNumber}, nil
+	return result, nil
 }
 
 func (s *checkoutService) processCheckout(
 	input CheckoutInput,
 	cartRepo repositories.CartRepository,
 	orderRepo repositories.OrderRepository,
+	userRepo repositories.UserRepository,
 	inventoryService InventoryService,
-) (string, error) {
+) (*dto.CheckoutResponse, error) {
 	cartItems, err := cartRepo.FindByUserID(input.UserID)
 	if err != nil {
 		logger.Error("failed to load cart items during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
-		return "", err
+		return nil, err
 	}
 
 	activeCartItems := make([]models.Cart, 0, len(cartItems))
@@ -121,7 +147,7 @@ func (s *checkoutService) processCheckout(
 		if item.Product.ID == 0 || item.Product.Status == "hidden" {
 			itemToDelete := item
 			if err := cartRepo.Delete(&itemToDelete); err != nil {
-				return "", err
+				return nil, err
 			}
 			continue
 		}
@@ -130,13 +156,13 @@ func (s *checkoutService) processCheckout(
 	}
 
 	if len(activeCartItems) == 0 {
-		return "", ErrCartEmpty
+		return nil, ErrCartEmpty
 	}
 
 	invoiceNumber, err := s.generateInvoiceNumber(orderRepo)
 	if err != nil {
 		logger.Error("failed to generate invoice during checkout", err, zap.String("module", "ORDER"), zap.Uint("user_id", input.UserID))
-		return "", err
+		return nil, err
 	}
 
 	totalPrice := 0.0
@@ -149,7 +175,7 @@ func (s *checkoutService) processCheckout(
 			"Checkout Order",
 			input.Audit,
 		); err != nil {
-			return "", err
+			return nil, err
 		}
 
 		subtotal := float64(cartItem.Quantity) * cartItem.Product.Price
@@ -169,12 +195,51 @@ func (s *checkoutService) processCheckout(
 		TotalPrice:      totalPrice,
 		Status:          "pending",
 		PaymentStatus:   "unpaid",
+		PaymentMethod:   normalizePaymentMethod(input.PaymentMethod),
+		PaymentProvider: resolvePaymentProvider(input.PaymentMethod),
 		ShippingAddress: strings.TrimSpace(input.ShippingAddress),
 	}
 
 	if err := orderRepo.Create(order); err != nil {
 		logger.Error("failed to create order during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
-		return "", err
+		return nil, err
+	}
+
+	if shouldCreatePaymentLink(order.PaymentMethod) {
+		if s.paymentGateway == nil || userRepo == nil {
+			return nil, ErrOnlinePaymentUnavailable
+		}
+
+		user, err := userRepo.FindByID(input.UserID)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, ErrOnlinePaymentUnavailable
+		}
+
+		frontendURL := strings.TrimRight(config.GetConfig().FrontendURL, "/")
+		paymentLink, err := s.paymentGateway.CreatePaymentLink(CreatePaymentLinkInput{
+			ExternalID:         invoiceNumber,
+			Amount:             totalPrice,
+			PayerName:          strings.TrimSpace(user.Name),
+			PayerEmail:         strings.TrimSpace(user.Email),
+			Description:        "Pembayaran pesanan " + invoiceNumber,
+			SuccessRedirectURL: fmt.Sprintf("%s/orders/success/%d", frontendURL, order.ID),
+			FailureRedirectURL: fmt.Sprintf("%s/orders/%d", frontendURL, order.ID),
+		})
+		if err != nil {
+			if errors.Is(err, ErrPaymentGatewayNotConfigured) {
+				return nil, ErrOnlinePaymentUnavailable
+			}
+			return nil, err
+		}
+
+		order.PaymentLinkID = paymentLink.ID
+		order.PaymentLinkURL = paymentLink.InvoiceURL
+		if err := orderRepo.Update(order); err != nil {
+			return nil, err
+		}
 	}
 
 	for index := range orderItems {
@@ -182,14 +247,23 @@ func (s *checkoutService) processCheckout(
 	}
 	if err := orderRepo.CreateItems(orderItems); err != nil {
 		logger.Error("failed to create order items during checkout", err, zap.String("module", "ORDER"), zap.String("invoice", invoiceNumber))
-		return "", err
+		return nil, err
 	}
 
 	if err := cartRepo.DeleteByUserID(input.UserID); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return invoiceNumber, nil
+	return &dto.CheckoutResponse{
+		OrderID:       order.ID,
+		Invoice:       invoiceNumber,
+		Total:         totalPrice,
+		Status:        order.Status,
+		PaymentStatus: order.PaymentStatus,
+		PaymentMethod: order.PaymentMethod,
+		PaymentURL:    order.PaymentLinkURL,
+		CreatedAt:     order.CreatedAt.UTC().Format(time.RFC3339),
+	}, nil
 }
 
 func (s *checkoutService) generateInvoiceNumber(orderRepo repositories.OrderRepository) (string, error) {
@@ -200,4 +274,26 @@ func (s *checkoutService) generateInvoiceNumber(orderRepo repositories.OrderRepo
 	}
 
 	return fmt.Sprintf("INV-%d-%06d", year, total+1), nil
+}
+
+func normalizePaymentMethod(value string) string {
+	method := strings.TrimSpace(strings.ToLower(value))
+	switch method {
+	case "bank_transfer", "e_wallet", "cod":
+		return method
+	default:
+		return "bank_transfer"
+	}
+}
+
+func resolvePaymentProvider(method string) string {
+	if normalizePaymentMethod(method) == "cod" {
+		return "manual"
+	}
+
+	return "xendit"
+}
+
+func shouldCreatePaymentLink(method string) bool {
+	return normalizePaymentMethod(method) != "cod"
 }

@@ -13,6 +13,7 @@ type Config struct {
 	AppEnv             string
 	AppPort            string
 	BaseURL            string
+	FrontendURL        string
 	CORSAllowedOrigins string
 	LogLevel           string
 	DBHost             string
@@ -24,6 +25,8 @@ type Config struct {
 	JWTSecret          string
 	JWTExpired         string
 	UploadPath         string
+	XenditAPIKey       string
+	XenditWebhookToken string
 }
 
 var (
@@ -40,6 +43,7 @@ func LoadConfig() {
 			AppEnv:             getEnv("APP_ENV", "development"),
 			AppPort:            getEnv("APP_PORT", "8080"),
 			BaseURL:            getEnv("BASE_URL", "http://localhost"),
+			FrontendURL:        getEnv("FRONTEND_URL", "http://localhost:5173"),
 			CORSAllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"),
 			LogLevel:           getEnv("LOG_LEVEL", "debug"),
 			DBHost:             getEnv("DB_HOST", "localhost"),
@@ -51,6 +55,8 @@ func LoadConfig() {
 			JWTSecret:          getEnv("JWT_SECRET", "your-secret-key"),
 			JWTExpired:         getEnv("JWT_EXPIRED", "24h"),
 			UploadPath:         getEnv("UPLOAD_PATH", "uploads/"),
+			XenditAPIKey:       getEnv("XENDIT_API_KEY", ""),
+			XenditWebhookToken: getEnv("XENDIT_WEBHOOK_TOKEN", ""),
 		}
 
 		validateConfig(appConfig)

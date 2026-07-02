@@ -118,6 +118,77 @@ func TestOrderServiceGenerateInvoicePDF(t *testing.T) {
 	assert.Equal(t, "INV-2026-000001.pdf", filename)
 }
 
+func TestOrderServiceUpdatePaymentByInvoicePaidMovesOrderToProcessing(t *testing.T) {
+	SetupTest(t)
+
+	order := sampleOrder()
+	orderRepo := &mocks.MockOrderRepository{
+		FindByInvoiceNumberFunc: func(invoiceNumber string) (*models.Order, error) {
+			assert.Equal(t, "INV-2026-000001", invoiceNumber)
+			return order, nil
+		},
+		UpdateFunc: func(updated *models.Order) error {
+			order.PaymentStatus = updated.PaymentStatus
+			order.Status = updated.Status
+			return nil
+		},
+		FindByIDFunc: func(id uint) (*models.Order, error) {
+			return order, nil
+		},
+	}
+
+	service := services.NewOrderService(orderRepo)
+	result, err := service.UpdatePaymentByInvoice("INV-2026-000001", "PAID")
+
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, "paid", result.PaymentStatus)
+	assert.Equal(t, "processing", result.Status)
+}
+
+func TestOrderServiceUpdatePaymentByInvoiceFailedCancelsPendingOrder(t *testing.T) {
+	SetupTest(t)
+
+	order := sampleOrder()
+	orderRepo := &mocks.MockOrderRepository{
+		FindByInvoiceNumberFunc: func(invoiceNumber string) (*models.Order, error) {
+			return order, nil
+		},
+		UpdateFunc: func(updated *models.Order) error {
+			order.PaymentStatus = updated.PaymentStatus
+			order.Status = updated.Status
+			return nil
+		},
+		FindByIDFunc: func(id uint) (*models.Order, error) {
+			return order, nil
+		},
+	}
+
+	service := services.NewOrderService(orderRepo)
+	result, err := service.UpdatePaymentByInvoice("INV-2026-000001", "FAILED")
+
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, "unpaid", result.PaymentStatus)
+	assert.Equal(t, "cancelled", result.Status)
+}
+
+func TestOrderServiceUpdatePaymentByInvoiceRejectsUnknownStatus(t *testing.T) {
+	SetupTest(t)
+
+	orderRepo := &mocks.MockOrderRepository{
+		FindByInvoiceNumberFunc: func(invoiceNumber string) (*models.Order, error) {
+			return sampleOrder(), nil
+		},
+	}
+
+	service := services.NewOrderService(orderRepo)
+	result, err := service.UpdatePaymentByInvoice("INV-2026-000001", "PENDING")
+
+	assert.ErrorIs(t, err, services.ErrInvalidPaymentStatus)
+	assert.Nil(t, result)
+}
+
 func sampleOrder() *models.Order {
 	return &models.Order{
 		Model:           models.Order{}.Model,

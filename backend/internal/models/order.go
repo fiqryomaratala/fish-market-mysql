@@ -10,6 +10,10 @@ type Order struct {
 	TotalPrice      float64
 	Status          string
 	PaymentStatus   string
+	PaymentMethod   string
+	PaymentProvider string
+	PaymentLinkID   string
+	PaymentLinkURL  string
 	ShippingAddress string
 
 	User       User

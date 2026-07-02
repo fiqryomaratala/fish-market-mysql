@@ -43,6 +43,7 @@ type OrderService interface {
 	GetByID(id, requesterID uint, role string) (*dto.OrderResponse, error)
 	UpdateStatus(id uint, input UpdateOrderStatusInput) (*dto.OrderResponse, error)
 	UpdatePayment(id uint, input UpdateOrderPaymentInput) (*dto.OrderResponse, error)
+	UpdatePaymentByInvoice(invoiceNumber string, paymentStatus string) (*dto.OrderResponse, error)
 	GenerateInvoicePDF(id, requesterID uint, role string) ([]byte, string, error)
 }
 
@@ -164,6 +165,43 @@ func (s *orderService) UpdatePayment(id uint, input UpdateOrderPaymentInput) (*d
 	return &result, nil
 }
 
+func (s *orderService) UpdatePaymentByInvoice(invoiceNumber string, paymentStatus string) (*dto.OrderResponse, error) {
+	order, err := s.orderRepo.FindByInvoiceNumber(strings.TrimSpace(invoiceNumber))
+	if err != nil {
+		return nil, err
+	}
+	if order == nil {
+		return nil, ErrOrderNotFound
+	}
+
+	switch strings.TrimSpace(strings.ToLower(paymentStatus)) {
+	case "paid":
+		order.PaymentStatus = "paid"
+		if strings.EqualFold(order.Status, "pending") {
+			order.Status = "processing"
+		}
+	case "expired", "failed", "voided":
+		order.PaymentStatus = "unpaid"
+		if strings.EqualFold(order.Status, "pending") {
+			order.Status = "cancelled"
+		}
+	default:
+		return nil, ErrInvalidPaymentStatus
+	}
+
+	if err := s.orderRepo.Update(order); err != nil {
+		return nil, err
+	}
+
+	updated, err := s.orderRepo.FindByID(order.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	result := toOrderDTO(updated)
+	return &result, nil
+}
+
 func (s *orderService) GenerateInvoicePDF(id, requesterID uint, role string) ([]byte, string, error) {
 	order, err := s.orderRepo.FindByID(id)
 	if err != nil {
@@ -255,6 +293,8 @@ func toOrderDTO(order *models.Order) dto.OrderResponse {
 		TotalPrice:      order.TotalPrice,
 		Status:          order.Status,
 		PaymentStatus:   order.PaymentStatus,
+		PaymentMethod:   order.PaymentMethod,
+		PaymentURL:      order.PaymentLinkURL,
 		ShippingAddress: order.ShippingAddress,
 		CreatedAt:       order.CreatedAt.UTC().Format(time.RFC3339),
 		Items:           items,

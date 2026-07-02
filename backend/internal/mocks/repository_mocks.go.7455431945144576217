@@ -376,13 +376,13 @@ func (m *MockHarvestRepository) GetSummary() (*repositories.HarvestSummary, erro
 }
 
 type MockOrderRepository struct {
-	CreateFunc              func(order *models.Order) error
-	CreateItemsFunc         func(items []models.OrderItem) error
-	CountByYearFunc         func(year int) (int64, error)
-	FindAllFunc             func(filter repositories.OrderFilter) ([]models.Order, int64, error)
-	FindByIDFunc            func(id uint) (*models.Order, error)
+	CreateFunc      func(order *models.Order) error
+	CreateItemsFunc func(items []models.OrderItem) error
+	CountByYearFunc func(year int) (int64, error)
+	FindAllFunc     func(filter repositories.OrderFilter) ([]models.Order, int64, error)
+	FindByIDFunc    func(id uint) (*models.Order, error)
 	FindByInvoiceNumberFunc func(invoiceNumber string) (*models.Order, error)
-	UpdateFunc              func(order *models.Order) error
+	UpdateFunc      func(order *models.Order) error
 }
 
 func (m *MockOrderRepository) Create(order *models.Order) error {

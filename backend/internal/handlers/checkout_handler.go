@@ -17,6 +17,7 @@ type CheckoutHandler struct {
 
 type CheckoutRequest struct {
 	ShippingAddress string `json:"shipping_address" validate:"max=255"`
+	PaymentMethod   string `json:"payment_method" validate:"omitempty,oneof=bank_transfer e_wallet cod"`
 }
 
 func NewCheckoutHandler(checkoutService services.CheckoutService) *CheckoutHandler {
@@ -53,6 +54,7 @@ func (h *CheckoutHandler) Checkout(c *gin.Context) {
 	result, err := h.checkoutService.Checkout(services.CheckoutInput{
 		UserID:          currentUserID(c),
 		ShippingAddress: req.ShippingAddress,
+		PaymentMethod:   req.PaymentMethod,
 		Audit:           auditContextFromGin(c),
 	})
 	if err != nil {
@@ -61,6 +63,8 @@ func (h *CheckoutHandler) Checkout(c *gin.Context) {
 			utils.Error(c, http.StatusBadRequest, "Cart is empty")
 		case errors.Is(err, services.ErrInsufficientInventory):
 			utils.Error(c, http.StatusBadRequest, "Inventory is not enough")
+		case errors.Is(err, services.ErrOnlinePaymentUnavailable):
+			utils.Error(c, http.StatusServiceUnavailable, "Online payment is currently unavailable")
 		default:
 			utils.InternalServerError(c)
 		}

@@ -19,6 +19,7 @@ type OrderRepository interface {
 	CountByYear(year int) (int64, error)
 	FindAll(filter OrderFilter) ([]models.Order, int64, error)
 	FindByID(id uint) (*models.Order, error)
+	FindByInvoiceNumber(invoiceNumber string) (*models.Order, error)
 	Update(order *models.Order) error
 }
 
@@ -79,6 +80,21 @@ func (r *orderRepository) FindByID(id uint) (*models.Order, error) {
 		}
 		return nil, err
 	}
+	return &item, nil
+}
+
+func (r *orderRepository) FindByInvoiceNumber(invoiceNumber string) (*models.Order, error) {
+	var item models.Order
+	err := r.db.Preload("User").Preload("OrderItems").Preload("OrderItems.Product").
+		Where("invoice_number = ?", invoiceNumber).
+		First(&item).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
 	return &item, nil
 }
 

@@ -218,7 +218,7 @@ func (s *inventoryService) Adjust(input InventoryAdjustmentInput) (*dto.Inventor
 	if input.Audit != nil && updated.Quantity <= 5 {
 		helpers.CreateNotification(
 			input.Audit.UserID,
-			"Low Stock",
+			"Stok Hampir Habis",
 			fmt.Sprintf("Stok %s tinggal %.2f %s.", updated.Product.Name, updated.Quantity, updated.Unit),
 			"INVENTORY",
 			"INVENTORY",
@@ -304,7 +304,7 @@ func (s *inventoryService) RecordOperationalTransaction(input InventoryOperation
 	if input.Audit != nil && updated.Quantity <= 5 {
 		helpers.CreateNotification(
 			input.Audit.UserID,
-			"Low Stock",
+			"Stok Hampir Habis",
 			fmt.Sprintf("Stok %s tinggal %.2f %s.", updated.Product.Name, updated.Quantity, updated.Unit),
 			"INVENTORY",
 			"INVENTORY",
@@ -357,7 +357,7 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 		if audit != nil && item.Quantity <= 5 {
 			helpers.CreateNotification(
 				audit.UserID,
-				"Low Stock",
+				"Stok Hampir Habis",
 				fmt.Sprintf("Stok %s tinggal %.2f %s.", item.Product.Name, item.Quantity, item.Unit),
 				"INVENTORY",
 				"INVENTORY",

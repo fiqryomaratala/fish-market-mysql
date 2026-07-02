@@ -57,6 +57,7 @@ Sebagian checklist berikut sudah diotomatisasi dalam integration test Go:
 - [x] `POST /api/cart`
 - [x] `GET /api/cart`
 - [x] `POST /api/checkout`
+- [x] `POST /api/payments/xendit/webhook`
 - [x] `GET /api/orders`
 - [x] `GET /api/orders/:id`
 - [x] `PUT /api/orders/:id/payment`
@@ -381,28 +382,42 @@ Masih perlu QA manual untuk semua skenario validasi negatif, quantity merge, dan
 
 Status modul: `parsial`
 
-Sudah ada bukti automation untuk checkout sukses, invoice, cart clear, order terbentuk, inventory berkurang, dan transaction `OUT`.
-Masih perlu QA manual untuk skenario cart kosong, inventory tidak cukup, serta verifikasi nilai total pada database nyata.
+Sudah ada bukti automation untuk checkout sukses, invoice, cart clear, order terbentuk, inventory berkurang, transaction `OUT`, serta flow checkout online yang mengembalikan `payment_url`.
+Webhook Xendit sekarang juga punya coverage endpoint untuk token callback, payload invalid, invoice tidak ditemukan, dan update status pembayaran dasar sampai order bergerak ke status berikutnya.
+Masih perlu QA manual untuk skenario cart kosong, inventory tidak cukup, serta verifikasi nilai total pada database nyata dan callback publik dari environment nyata.
 
 - [x] `POST /api/checkout` dengan `customer` berhasil
 - [x] response mengembalikan `invoice`
-- [ ] cart otomatis kosong setelah checkout
-- [ ] order baru tercipta di database
-- [ ] order item tercipta
-- [ ] total price order benar
-- [ ] inventory berkurang setelah checkout
-- [ ] inventory transaction `OUT` tercatat
+- [x] cart otomatis kosong setelah checkout
+- [x] order baru tercipta di database
+- [x] order item tercipta
+- [x] total price order benar
+- [x] inventory berkurang setelah checkout
+- [x] inventory transaction `OUT` tercatat
 - [ ] activity log checkout tercatat
 - [ ] notification order created tercatat
 - [ ] checkout saat cart kosong gagal
 - [ ] checkout saat inventory tidak cukup gagal
+- [x] checkout online mengembalikan `payment_url`
+- [x] status order online awal `pending` dengan `payment_status=unpaid`
+- [x] `POST /api/payments/xendit/webhook` dengan token valid berhasil update pembayaran order
+- [x] `POST /api/payments/xendit/webhook` dengan token invalid ditolak `401`
+- [x] `POST /api/payments/xendit/webhook` dengan payload invalid ditolak `400`
+- [x] `POST /api/payments/xendit/webhook` dengan invoice tidak dikenal menghasilkan `404`
+- [x] webhook sukses mengubah order online menjadi `payment_status=paid`
+- [x] webhook sukses mengubah status order online dari `pending` ke `processing`
+- [ ] webhook Xendit dari endpoint publik nyata berhasil masuk dari sandbox/dashboard
 
 ## Order Management
 
 Status modul: `parsial`
 
-Sudah ada bukti automation untuk list order, detail, update payment, update status, dan download invoice.
-Masih perlu QA manual untuk seluruh variasi status, validasi invalid status/payment, owner mismatch, dan pagination yang lebih menyeluruh.
+Sudah ada bukti automation untuk list order, detail, update payment, update status, validasi status invalid, dan download invoice.
+Masih perlu QA manual untuk seluruh variasi status yang dipicu dari UI admin, owner mismatch, dan pagination yang lebih menyeluruh.
+
+Catatan:
+- Bug UI admin order status yang sempat mengirim nilai Title Case seperti `Pending` dan `Completed` ke endpoint backend sudah diperbaiki.
+- Retest manual tetap diperlukan untuk memastikan action status di halaman admin benar-benar berjalan pada runtime browser nyata.
 
 - [x] `GET /api/orders` dengan `admin` menampilkan semua order
 - [x] `GET /api/orders` dengan `customer` hanya menampilkan order miliknya
@@ -414,7 +429,7 @@ Masih perlu QA manual untuk seluruh variasi status, validasi invalid status/paym
 - [ ] `PUT /api/orders/:id/status` dengan `admin` berhasil ubah ke `shipping`
 - [x] `PUT /api/orders/:id/status` dengan `admin` berhasil ubah ke `completed`
 - [ ] `PUT /api/orders/:id/status` dengan `admin` berhasil ubah ke `cancelled`
-- [ ] update status invalid gagal validasi
+- [x] update status invalid gagal validasi
 - [ ] saat status jadi `completed`, activity log tercatat
 - [x] `PUT /api/orders/:id/payment` dengan `admin` berhasil ubah ke `paid`
 - [ ] `PUT /api/orders/:id/payment` dengan `admin` berhasil ubah ke `unpaid`

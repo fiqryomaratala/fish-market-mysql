@@ -14,6 +14,19 @@ docker compose up -d --build
 
 Perintah di atas menyalakan full stack Docker sekaligus: `mysql`, `backend`, dan `nginx`.
 
+Jika ingin mengaktifkan checkout online Xendit di stack Docker, isi dulu `backend/.env` minimal dengan:
+
+```env
+FRONTEND_URL=http://localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+XENDIT_API_KEY=xnd_development_your_api_key
+XENDIT_WEBHOOK_TOKEN=your_xendit_webhook_token
+```
+
+Catatan:
+- `docker-compose.yml` membaca `backend/.env` dan akan meneruskan variabel ini ke container backend.
+- Untuk uji webhook sandbox dari tunnel publik, sesuaikan juga `BASE_URL` di `backend/.env` dengan domain publik backend yang sedang dipakai.
+
 ## Menjalankan Migration
 
 Untuk menjalankan migration melalui backend lokal:

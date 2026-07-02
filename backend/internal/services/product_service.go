@@ -69,14 +69,25 @@ type ProductService interface {
 }
 
 type productService struct {
-	productRepo repositories.ProductRepository
-	uploadDir   string
+	productRepo   repositories.ProductRepository
+	inventoryRepo repositories.InventoryRepository
+	uploadDir     string
 }
 
-func NewProductService(productRepo repositories.ProductRepository, uploadDir string) ProductService {
+func NewProductService(
+	productRepo repositories.ProductRepository,
+	uploadDir string,
+	inventoryRepo ...repositories.InventoryRepository,
+) ProductService {
+	var stockRepo repositories.InventoryRepository
+	if len(inventoryRepo) > 0 {
+		stockRepo = inventoryRepo[0]
+	}
+
 	return &productService{
-		productRepo: productRepo,
-		uploadDir:   uploadDir,
+		productRepo:   productRepo,
+		inventoryRepo: stockRepo,
+		uploadDir:     uploadDir,
 	}
 }
 
@@ -131,6 +142,14 @@ func (s *productService) GetAll(params ProductListParams) (*ProductListResult, e
 		return nil, err
 	}
 
+	if !params.AllowHidden {
+		for index := range products {
+			if err := s.syncPublicStock(&products[index]); err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	return &ProductListResult{
 		Products: products,
 		Total:    total,
@@ -147,6 +166,10 @@ func (s *productService) GetByID(id uint) (*models.Product, error) {
 	}
 	if product == nil {
 		return nil, ErrProductNotFound
+	}
+
+	if err := s.syncPublicStock(product); err != nil {
+		return nil, err
 	}
 
 	return product, nil
@@ -285,6 +308,28 @@ func resolveProductImageURL(uploadedImageURL, inputImageURL string) string {
 	}
 
 	return strings.TrimSpace(inputImageURL)
+}
+
+func (s *productService) syncPublicStock(product *models.Product) error {
+	if product == nil || s.inventoryRepo == nil {
+		return nil
+	}
+
+	total, err := s.inventoryRepo.GetTotalAvailableByProduct(product.ID)
+	if err != nil {
+		logger.Error("failed to resolve public product stock from inventory", err, zap.String("module", "PRODUCT"), zap.Uint("product_id", product.ID))
+		return err
+	}
+
+	product.Stock = int(total)
+	if product.Stock <= 0 {
+		product.Stock = 0
+		product.Status = "out_of_stock"
+		return nil
+	}
+
+	product.Status = "available"
+	return nil
 }
 
 func (s *productService) Delete(id uint, audit *AuditContext) error {

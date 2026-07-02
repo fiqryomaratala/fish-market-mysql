@@ -8,21 +8,28 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      APP_NAME: Fish Marketplace Backend
-      APP_ENV: production
-      APP_PORT: 8080
-      BASE_URL: http://localhost
-      LOG_LEVEL: info
+      APP_NAME: ${APP_NAME:-Fish Marketplace Backend}
+      APP_ENV: ${APP_ENV:-production}
+      APP_PORT: ${APP_PORT:-8080}
+      BASE_URL: ${BASE_URL:-http://localhost}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      # Di dalam network Docker, backend harus mengakses service MySQL via nama service, bukan localhost.
       DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: fishuser
-      DB_PASSWORD: fishpass
-      DB_NAME: fish_market_db
-      DB_CHARSET: utf8mb4
-      JWT_SECRET: change-this-production-secret
-      JWT_EXPIRED: 24h
-      UPLOAD_PATH: /app/uploads
+      DB_PORT: "3306"
+      DB_USER: ${DB_USER:-fishuser}
+      DB_PASSWORD: ${DB_PASSWORD:-fishpass}
+      DB_NAME: ${DB_NAME:-fish_market_db}
+      DB_CHARSET: ${DB_CHARSET:-utf8mb4}
+      JWT_SECRET: ${JWT_SECRET:-change-this-production-secret}
+      JWT_EXPIRED: ${JWT_EXPIRED:-24h}
+      UPLOAD_PATH: ${UPLOAD_PATH:-/app/uploads}
+      XENDIT_API_KEY: ${XENDIT_API_KEY:-}
+      XENDIT_WEBHOOK_TOKEN: ${XENDIT_WEBHOOK_TOKEN:-}
     volumes:
       - uploads_data:/app/uploads
     expose:
