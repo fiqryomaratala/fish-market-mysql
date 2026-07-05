@@ -49,7 +49,10 @@ function CustomerNotificationsPage() {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const notifications = notificationsQuery.data?.items ?? []
+  const notifications = useMemo(
+    () => notificationsQuery.data?.items ?? [],
+    [notificationsQuery.data?.items],
+  )
 
   const summary = useMemo(() => {
     const unread = notifications.filter((notification) => !notification.is_read).length

@@ -1,5 +1,5 @@
 import { Minus, Pencil, Plus, RefreshCcw, ShoppingBag, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { toast } from 'sonner'
@@ -132,19 +132,11 @@ function CartPage() {
   const isMutating =
     updateCartMutation.isPending || deleteCartMutation.isPending || clearCartMutation.isPending
 
-  useEffect(() => {
-    setSelectedItems((current) =>
-      current.filter((id) =>
-        items.some((item) => (isAuthenticated ? item.id : item.product_id) === id),
-      ),
-    )
-
-    if (items.length === 0) {
-      setIsEditMode(false)
-    }
-  }, [isAuthenticated, items])
-
   const getTargetItemId = (item: CartItem) => (isAuthenticated ? item.id : item.product_id)
+  const validSelectedItems = selectedItems.filter((id) =>
+    items.some((item) => getTargetItemId(item) === id),
+  )
+  const isEditActive = isEditMode && items.length > 0
 
   const toggleEditMode = () => {
     setIsEditMode((current) => {
@@ -192,13 +184,13 @@ function CartPage() {
   }
 
   const handleDeleteSelected = async () => {
-    if (selectedItems.length === 0) {
+    if (validSelectedItems.length === 0) {
       toast.info('Pilih setidaknya satu produk untuk dihapus')
       return
     }
 
     try {
-      await Promise.all(selectedItems.map((itemId) => deleteCartMutation.mutateAsync(itemId)))
+      await Promise.all(validSelectedItems.map((itemId) => deleteCartMutation.mutateAsync(itemId)))
       toast.success('Produk terpilih berhasil dihapus dari keranjang')
       setSelectedItems([])
       setIsEditMode(false)
@@ -309,7 +301,7 @@ function CartPage() {
           </button>
         </div>
 
-        {isEditMode ? (
+        {isEditActive ? (
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-lg shadow-slate-200/50 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold text-slate-900">Mode ubah aktif</p>
@@ -321,7 +313,7 @@ function CartPage() {
               <button
                 type="button"
                 onClick={handleDeleteSelected}
-                disabled={selectedItems.length === 0 || isMutating}
+                disabled={validSelectedItems.length === 0 || isMutating}
                 className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Hapus yang dipilih
@@ -365,14 +357,14 @@ function CartPage() {
                 <tbody className="divide-y divide-slate-100">
                   {items.map((item) => {
                     const targetItemId = getTargetItemId(item)
-                    const isSelected = selectedItems.includes(targetItemId)
+                    const isSelected = validSelectedItems.includes(targetItemId)
 
                     return (
                     <tr
                       key={item.id}
                       className="transition hover:bg-slate-50/80"
                     >
-                      {isEditMode ? (
+                      {isEditActive ? (
                         <td className="px-6 py-5">
                           <label className="inline-flex items-center justify-center">
                             <input
@@ -406,7 +398,7 @@ function CartPage() {
                       <td className="px-4 py-5">
                         <QuantityControl
                           item={item}
-                          disabled={isMutating || isEditMode}
+                          disabled={isMutating || isEditActive}
                           onChange={handleQuantityChange}
                         />
                       </td>
@@ -417,7 +409,7 @@ function CartPage() {
                         <button
                           type="button"
                           onClick={() => handleDeleteItem(targetItemId)}
-                          disabled={isMutating || isEditMode}
+                          disabled={isMutating || isEditActive}
                           className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <Trash2 className="size-4" />
@@ -433,7 +425,7 @@ function CartPage() {
           <div className="grid gap-4 md:hidden">
             {items.map((item) => {
               const targetItemId = getTargetItemId(item)
-              const isSelected = selectedItems.includes(targetItemId)
+              const isSelected = validSelectedItems.includes(targetItemId)
 
               return (
               <article
@@ -441,7 +433,7 @@ function CartPage() {
                 className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-0.5"
               >
                 <div className="flex gap-4">
-                  {isEditMode ? (
+                  {isEditActive ? (
                     <label className="mt-1 inline-flex shrink-0 items-start justify-center">
                       <input
                         type="checkbox"
@@ -473,7 +465,7 @@ function CartPage() {
                     <div className="mt-2">
                       <QuantityControl
                         item={item}
-                        disabled={isMutating || isEditMode}
+                        disabled={isMutating || isEditActive}
                         onChange={handleQuantityChange}
                       />
                     </div>
@@ -481,7 +473,7 @@ function CartPage() {
                   <button
                     type="button"
                     onClick={() => handleDeleteItem(targetItemId)}
-                    disabled={isMutating || isEditMode}
+                    disabled={isMutating || isEditActive}
                     className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-3 text-slate-500 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Trash2 className="size-4" />

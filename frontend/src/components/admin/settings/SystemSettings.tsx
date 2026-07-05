@@ -1,5 +1,5 @@
 import { Activity, Database, Loader2, RefreshCcw, Server, Shield } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useUpdateSystemSettings } from '@/hooks/use-settings'
 import type { SettingsData, SystemInfo, SystemSettingsData } from '@/types/settings'
 
@@ -51,27 +51,28 @@ export function SystemSettings({ settings, systemInfo }: SystemSettingsProps) {
     }),
     [settings],
   )
-  const [formData, setFormData] = useState<SystemSettingsData>(initialState)
-
-  useEffect(() => {
-    setFormData(initialState)
-  }, [initialState])
+  const [draftFormData, setDraftFormData] = useState<SystemSettingsData | null>(null)
+  const formData = draftFormData ?? initialState
 
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialState)
 
   const handleToggle = (key: keyof SystemSettingsData, value: boolean) => {
-    setFormData((current) => ({
-      ...current,
+    setDraftFormData((current) => ({
+      ...(current ?? initialState),
       [key]: value,
     }))
   }
 
   const handleReset = () => {
-    setFormData(initialState)
+    setDraftFormData(null)
   }
 
   const handleSave = () => {
-    updateSystemSettingsMutation.mutate(formData)
+    updateSystemSettingsMutation.mutate(formData, {
+      onSuccess: () => {
+        setDraftFormData(null)
+      },
+    })
   }
 
   return (

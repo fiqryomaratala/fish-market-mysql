@@ -17,7 +17,7 @@ export function usePermission(options?: UsePermissionOptions) {
     role,
   } = useAuth()
 
-  const requiredPermissions = options?.permissions ?? []
+  const requiredPermissions = useMemo(() => options?.permissions ?? [], [options?.permissions])
   const requireAll = options?.requireAll ?? false
 
   const allowed = useMemo(() => {

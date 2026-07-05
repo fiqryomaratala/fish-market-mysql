@@ -9,6 +9,30 @@ import type {
   SystemSettingsData
 } from '@/types/settings'
 
+type ErrorWithMessage = {
+  response?: {
+    data?: {
+      message?: string
+    }
+  }
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'response' in error
+  ) {
+    const message = (error as ErrorWithMessage).response?.data?.message
+
+    if (message) {
+      return message
+    }
+  }
+
+  return fallback
+}
+
 const QUERY_KEYS = {
   settings: ['settings'] as const,
   profile: ['profile'] as const,
@@ -24,8 +48,8 @@ export function useSettings() {
       try {
         const response = await settingsService.getSettings()
         return response.data
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal memuat pengaturan'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal memuat pengaturan')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -47,8 +71,8 @@ export function useUpdateSettings() {
       try {
         const response = await settingsService.updateSettings(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal menyimpan pengaturan'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal menyimpan pengaturan')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -76,8 +100,8 @@ export function useUpdateGeneralSettings() {
       try {
         const response = await settingsService.updateSettings(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal menyimpan pengaturan umum'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal menyimpan pengaturan umum')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -105,8 +129,8 @@ export function useUpdateProfile() {
       try {
         const response = await settingsService.updateProfile(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal menyimpan profil'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal menyimpan profil')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -134,8 +158,8 @@ export function useChangePassword() {
       try {
         const response = await settingsService.changePassword(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal mengubah password'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal mengubah password')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -162,8 +186,8 @@ export function useUpdateNotificationSettings() {
       try {
         const response = await settingsService.updateSettings(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal menyimpan pengaturan notifikasi'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal menyimpan pengaturan notifikasi')
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -191,8 +215,8 @@ export function useUpdateSystemSettings() {
       try {
         const response = await settingsService.updateSettings(data)
         return response
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Gagal menyimpan pengaturan sistem'
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, 'Gagal menyimpan pengaturan sistem')
         toast({
           variant: 'destructive',
           title: 'Error',

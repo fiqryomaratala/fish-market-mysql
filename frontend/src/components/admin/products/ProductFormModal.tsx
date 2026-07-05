@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ImagePlus, Upload, X } from 'lucide-react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { DropdownSelect } from '@/components/common/DropdownSelect'
 import {
@@ -62,6 +62,29 @@ export function ProductFormModal({
   onClose,
   onSubmit,
 }: ProductFormModalProps) {
+  if (!isOpen) {
+    return null
+  }
+
+  return (
+    <ProductFormModalContent
+      key={`${mode}-${product?.id ?? 'new'}`}
+      mode={mode}
+      product={product}
+      isSubmitting={isSubmitting}
+      onClose={onClose}
+      onSubmit={onSubmit}
+    />
+  )
+}
+
+function ProductFormModalContent({
+  mode,
+  product,
+  isSubmitting,
+  onClose,
+  onSubmit,
+}: Omit<ProductFormModalProps, 'isOpen'>) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -71,22 +94,17 @@ export function ProductFormModal({
     control,
     reset,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<ProductFormInput, unknown, ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: getDefaultValues(product),
   })
 
-  const imageUrl = watch('image_url')
+  const imageUrl = useWatch({ control, name: 'image_url' })
 
   useEffect(() => {
-    if (isOpen) {
-      reset(getDefaultValues(product))
-      setSelectedImage(null)
-      setIsDragging(false)
-    }
-  }, [isOpen, product, reset])
+    reset(getDefaultValues(product))
+  }, [product, reset])
 
   const previewUrl = useMemo(() => {
     if (selectedImage) {
@@ -103,10 +121,6 @@ export function ProductFormModal({
       }
     }
   }, [previewUrl, selectedImage])
-
-  if (!isOpen) {
-    return null
-  }
 
   const setImageFile = (file: File | null) => {
     setSelectedImage(file)

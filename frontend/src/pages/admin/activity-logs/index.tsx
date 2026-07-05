@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AlertCircle, Activity, Blocks, RefreshCcw, ShieldCheck, Users } from 'lucide-react'
 import { Pagination } from '@/components/admin/products/Pagination'
 import {
@@ -44,7 +44,7 @@ export default function ActivityLogsManagementPage() {
   const debouncedSearch = useDebouncedValue(searchInput.trim().toLowerCase(), 300)
 
   const activityLogsQuery = useActivityLogs({ page: 1, limit: FETCH_LIMIT })
-  const logs = activityLogsQuery.data?.items ?? []
+  const logs = useMemo(() => activityLogsQuery.data?.items ?? [], [activityLogsQuery.data?.items])
 
   const isRoleFilterAvailable = useMemo(
     () => logs.some((log) => Boolean(log.user_role.trim())),
@@ -92,21 +92,11 @@ export default function ActivityLogsManagementPage() {
   }, [filteredLogs])
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const currentLogs = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const startIndex = (safePage - 1) * PAGE_SIZE
+    const startIndex = (safeCurrentPage - 1) * PAGE_SIZE
     return filteredLogs.slice(startIndex, startIndex + PAGE_SIZE)
-  }, [currentPage, filteredLogs, totalPages])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, moduleFilter, roleFilter, dateFilter, viewMode])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
+  }, [filteredLogs, safeCurrentPage])
 
   if (role !== 'admin') {
     return null
@@ -174,11 +164,26 @@ export default function ActivityLogsManagementPage() {
         viewMode={viewMode}
         isRefreshing={activityLogsQuery.isFetching}
         isRoleFilterAvailable={isRoleFilterAvailable}
-        onSearchChange={setSearchInput}
-        onModuleFilterChange={setModuleFilter}
-        onRoleFilterChange={setRoleFilter}
-        onDateFilterChange={setDateFilter}
-        onViewModeChange={setViewMode}
+        onSearchChange={(value) => {
+          setSearchInput(value)
+          setCurrentPage(1)
+        }}
+        onModuleFilterChange={(value) => {
+          setModuleFilter(value)
+          setCurrentPage(1)
+        }}
+        onRoleFilterChange={(value) => {
+          setRoleFilter(value)
+          setCurrentPage(1)
+        }}
+        onDateFilterChange={(value) => {
+          setDateFilter(value)
+          setCurrentPage(1)
+        }}
+        onViewModeChange={(value) => {
+          setViewMode(value)
+          setCurrentPage(1)
+        }}
         onRefresh={() => void activityLogsQuery.refetch()}
       />
 
@@ -240,9 +245,9 @@ export default function ActivityLogsManagementPage() {
           )}
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

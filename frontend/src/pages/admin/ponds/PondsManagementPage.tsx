@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import { AlertCircle, Database, RefreshCcw, Settings, Waves } from 'lucide-react'
 import { toast } from 'sonner'
@@ -75,12 +75,12 @@ function PondsManagementPage() {
   }, [debouncedSearch, pondsQuery.data?.items, status])
 
   const totalPages = Math.max(1, Math.ceil(filteredPonds.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedPonds = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const start = (safePage - 1) * PAGE_SIZE
+    const start = (safeCurrentPage - 1) * PAGE_SIZE
 
     return filteredPonds.slice(start, start + PAGE_SIZE)
-  }, [currentPage, filteredPonds, totalPages])
+  }, [filteredPonds, safeCurrentPage])
 
   const summary = useMemo(() => {
     const items = pondsQuery.data?.items ?? []
@@ -92,16 +92,6 @@ function PondsManagementPage() {
       totalCapacity: items.reduce((total, item) => total + item.capacity, 0),
     }
   }, [pondsQuery.data?.items])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, status])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const handleOpenCreate = () => {
     if (!canManage) {
@@ -228,8 +218,14 @@ function PondsManagementPage() {
         status={status}
         isRefreshing={pondsQuery.isFetching}
         canManage={canManage}
-        onSearchChange={setSearchInput}
-        onStatusChange={setStatus}
+        onSearchChange={(value) => {
+          setSearchInput(value)
+          setCurrentPage(1)
+        }}
+        onStatusChange={(value) => {
+          setStatus(value)
+          setCurrentPage(1)
+        }}
         onRefresh={() => void pondsQuery.refetch()}
         onAdd={handleOpenCreate}
       />
@@ -298,9 +294,9 @@ function PondsManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

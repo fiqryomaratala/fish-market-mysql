@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Eye, EyeOff, Loader2, LockKeyhole, ShieldAlert, X } from 'lucide-react'
 import { useChangePassword } from '@/hooks/use-settings'
 
@@ -31,17 +31,15 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-      setShowCurrentPassword(false)
-      setShowNewPassword(false)
-      setShowConfirmPassword(false)
-      setErrorMessage('')
-    }
-  }, [isOpen])
+  const resetForm = () => {
+    setCurrentPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
+    setShowCurrentPassword(false)
+    setShowNewPassword(false)
+    setShowConfirmPassword(false)
+    setErrorMessage('')
+  }
 
   const requirements = useMemo(
     () => ({
@@ -69,6 +67,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
       return
     }
 
+    resetForm()
     onClose()
   }
 
@@ -88,6 +87,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
         confirm_password: confirmPassword,
       })
 
+      resetForm()
       onClose()
     } catch {
       setErrorMessage('Gagal mengubah password. Silakan periksa kembali data Anda.')

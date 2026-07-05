@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import {
   AlertCircle,
@@ -102,11 +102,11 @@ function InventoryManagementPage() {
   }, [category, debouncedSearch, inventoriesQuery.data?.items, status])
 
   const totalPages = Math.max(1, Math.ceil(filteredInventories.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedInventories = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const start = (safePage - 1) * PAGE_SIZE
+    const start = (safeCurrentPage - 1) * PAGE_SIZE
     return filteredInventories.slice(start, start + PAGE_SIZE)
-  }, [currentPage, filteredInventories, totalPages])
+  }, [filteredInventories, safeCurrentPage])
 
   const lowStockItems = useMemo(
     () => (inventoriesQuery.data?.items ?? []).filter((item) => item.stock <= item.minimum_stock),
@@ -123,16 +123,6 @@ function InventoryManagementPage() {
       totalCategories: new Set(items.map((item) => item.category)).size,
     }
   }, [inventoriesQuery.data?.items])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [category, debouncedSearch, status])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const handleOpenCreate = () => {
     if (!canManage) {
@@ -287,9 +277,12 @@ function InventoryManagementPage() {
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative min-w-0 flex-1">
               <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-              <input
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
+                <input
+                  value={searchInput}
+                  onChange={(event) => {
+                    setSearchInput(event.target.value)
+                    setCurrentPage(1)
+                  }}
                 placeholder="Cari nama inventaris atau SKU"
                 className="w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-700 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
               />
@@ -298,7 +291,10 @@ function InventoryManagementPage() {
             <div className="flex flex-col gap-3 md:flex-row">
               <DropdownSelect
                 value={category}
-                onChange={setCategory}
+                onChange={(value) => {
+                  setCategory(value)
+                  setCurrentPage(1)
+                }}
                 ariaLabel="Filter kategori inventaris"
                 className="min-w-[220px]"
                 options={[
@@ -309,7 +305,10 @@ function InventoryManagementPage() {
 
               <DropdownSelect
                 value={status}
-                onChange={setStatus}
+                onChange={(value) => {
+                  setStatus(value)
+                  setCurrentPage(1)
+                }}
                 ariaLabel="Filter status inventaris"
                 className="min-w-[220px]"
                 options={[
@@ -420,9 +419,9 @@ function InventoryManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

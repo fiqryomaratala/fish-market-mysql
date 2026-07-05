@@ -10,6 +10,7 @@ import { NotificationSettings } from '@/components/admin/settings/NotificationSe
 import { SystemSettings } from '@/components/admin/settings/SystemSettings'
 import { SummaryCard } from '@/components/admin/settings/SummaryCard'
 import { LoadingSkeleton } from '@/components/admin/settings/LoadingSkeleton'
+import type { SettingsData } from '@/types/settings'
 
 type MenuType = 'general' | 'profile' | 'security' | 'notifications' | 'system'
 
@@ -61,7 +62,7 @@ export function SettingsPage() {
   const systemInfo = settingsQuery.data?.system_info
 
   // Parse settings array to object
-  const parsedSettings = settingsData.reduce((acc, setting) => {
+  const parsedSettings = settingsData.reduce<Record<string, string | number | boolean>>((acc, setting) => {
     const { key, value } = setting
     
     // Try to parse boolean values
@@ -78,22 +79,22 @@ export function SettingsPage() {
     }
     
     return acc
-  }, {} as Record<string, any>)
+  }, {})
 
   const renderContent = () => {
     switch (activeMenu) {
       case 'general':
-        return <GeneralSettings settings={parsedSettings} />
+        return <GeneralSettings settings={parsedSettings as SettingsData} />
       case 'profile':
         return <ProfileSettings profile={profileData} />
       case 'security':
         return <SecuritySettings />
       case 'notifications':
-        return <NotificationSettings settings={parsedSettings} />
+        return <NotificationSettings settings={parsedSettings as SettingsData} />
       case 'system':
-        return <SystemSettings settings={parsedSettings} systemInfo={systemInfo} />
+        return <SystemSettings settings={parsedSettings as SettingsData} systemInfo={systemInfo} />
       default:
-        return <GeneralSettings settings={parsedSettings} />
+        return <GeneralSettings settings={parsedSettings as SettingsData} />
     }
   }
 

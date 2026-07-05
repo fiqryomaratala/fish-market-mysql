@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { FishBatch } from '@/types/fish-batch'
@@ -58,7 +58,6 @@ export function HarvestFormModal({
   const {
     control,
     register,
-    watch,
     handleSubmit,
     reset,
     formState: { errors },
@@ -73,13 +72,17 @@ export function HarvestFormModal({
     }
   }, [harvest, isOpen, reset])
 
+  const selectedFishBatchId = useWatch({ control, name: 'fish_batch_id' })
+  const watchedTotalQuantity = useWatch({ control, name: 'total_quantity' })
+  const watchedAverageWeight = useWatch({ control, name: 'average_weight' })
+
   const selectedBatch = useMemo(
-    () => fishBatches.find((item) => item.id === Number(watch('fish_batch_id'))),
-    [fishBatches, watch],
+    () => fishBatches.find((item) => item.id === Number(selectedFishBatchId)),
+    [fishBatches, selectedFishBatchId],
   )
 
-  const totalQuantity = Number(watch('total_quantity')) || 0
-  const averageWeight = Number(watch('average_weight')) || 0
+  const totalQuantity = Number(watchedTotalQuantity) || 0
+  const averageWeight = Number(watchedAverageWeight) || 0
   const totalWeight = totalQuantity * averageWeight
   const survivalRate =
     selectedBatch && selectedBatch.initial_quantity > 0

@@ -31,13 +31,14 @@ export function DropdownSelect({
 }: DropdownSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
+  const menuIsOpen = isOpen && !disabled
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value),
     [options, value],
   )
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!menuIsOpen) {
       return
     }
 
@@ -52,13 +53,7 @@ export function DropdownSelect({
     return () => {
       document.removeEventListener('mousedown', handlePointerDown)
     }
-  }, [isOpen])
-
-  useEffect(() => {
-    if (disabled) {
-      setIsOpen(false)
-    }
-  }, [disabled])
+  }, [menuIsOpen])
 
   return (
     <div ref={dropdownRef} className={joinClassNames('relative', className)}>
@@ -66,14 +61,14 @@ export function DropdownSelect({
         type="button"
         disabled={disabled}
         aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        aria-expanded={menuIsOpen}
         aria-label={ariaLabel}
         onClick={() => setIsOpen((current) => !current)}
         className={joinClassNames(
           'flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm outline-none transition',
           disabled
             ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
-            : isOpen
+            : menuIsOpen
               ? 'border-cyan-400 bg-cyan-50/50 ring-4 ring-cyan-100'
               : 'border-slate-200 bg-white text-slate-700 hover:border-cyan-200',
         )}
@@ -89,12 +84,12 @@ export function DropdownSelect({
         <ChevronDown
           className={joinClassNames(
             'size-4 shrink-0 text-slate-400 transition-transform',
-            isOpen && 'rotate-180',
+            menuIsOpen && 'rotate-180',
           )}
         />
       </button>
 
-      {isOpen ? (
+      {menuIsOpen ? (
         <div className="absolute left-0 right-0 top-[calc(100%+0.65rem)] z-20 rounded-[1.6rem] border border-slate-200/90 bg-white p-3 shadow-[0_20px_45px_rgba(148,163,184,0.28)]">
           <div role="listbox" aria-label={ariaLabel} className="grid gap-2">
             {options.map((option) => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import {
   Activity,
@@ -129,6 +129,15 @@ export default function ReportsManagementPage() {
   const [isExportingPdf, setIsExportingPdf] = useState(false)
   const [isExportingExcel, setIsExportingExcel] = useState(false)
 
+  const resetPages = () => {
+    setSalesPage(1)
+    setHarvestPage(1)
+    setInventoryPage(1)
+    setFeedSummaryPage(1)
+    setFishBatchPage(1)
+    setCustomerPage(1)
+  }
+
   const salesQuery = useSalesReport(submittedFilter, { enabled: activeTab === 'sales' })
   const harvestQuery = useHarvestReport(submittedFilter, { enabled: activeTab === 'harvest' })
   const inventoryQuery = useInventoryReport(submittedFilter, { enabled: activeTab === 'inventory' })
@@ -161,6 +170,7 @@ export default function ReportsManagementPage() {
   }, [activeTab, customerQuery, feedingQuery, fishBatchQuery, harvestQuery, inventoryQuery, salesQuery])
 
   const handleGenerate = () => {
+    resetPages()
     setSubmittedFilter({
       start_date: startDate || undefined,
       end_date: endDate || undefined,
@@ -168,6 +178,7 @@ export default function ReportsManagementPage() {
   }
 
   const handleReset = () => {
+    resetPages()
     setStartDate('')
     setEndDate('')
     setActiveQuickFilter(null)
@@ -176,6 +187,7 @@ export default function ReportsManagementPage() {
 
   const handleQuickFilter = (value: QuickFilterKey) => {
     const range = getQuickFilterRange(value)
+    resetPages()
     setStartDate(range.startDate)
     setEndDate(range.endDate)
     setActiveQuickFilter(value)
@@ -189,106 +201,61 @@ export default function ReportsManagementPage() {
     : 'Backend saat ini belum menyediakan endpoint export khusus untuk tab ini. Export aktif untuk Harvest Report, Feeding Report, dan Fish Batch Report.'
 
   const salesTotalPages = Math.max(1, Math.ceil((salesQuery.data?.rows.length ?? 0) / 5))
+  const safeSalesPage = Math.min(salesPage, salesTotalPages)
   const paginatedSalesRows = useMemo(() => {
     const rows = salesQuery.data?.rows ?? []
-    const safePage = Math.min(salesPage, salesTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeSalesPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [salesPage, salesQuery.data?.rows, salesTotalPages])
+  }, [safeSalesPage, salesQuery.data?.rows])
 
   const harvestTotalPages = Math.max(1, Math.ceil((harvestQuery.data?.rows.length ?? 0) / 5))
+  const safeHarvestPage = Math.min(harvestPage, harvestTotalPages)
   const paginatedHarvestRows = useMemo(() => {
     const rows = harvestQuery.data?.rows ?? []
-    const safePage = Math.min(harvestPage, harvestTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeHarvestPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [harvestPage, harvestQuery.data?.rows, harvestTotalPages])
+  }, [harvestQuery.data?.rows, safeHarvestPage])
 
   const inventoryTotalPages = Math.max(1, Math.ceil((inventoryQuery.data?.rows.length ?? 0) / 5))
+  const safeInventoryPage = Math.min(inventoryPage, inventoryTotalPages)
   const paginatedInventoryRows = useMemo(() => {
     const rows = inventoryQuery.data?.rows ?? []
-    const safePage = Math.min(inventoryPage, inventoryTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeInventoryPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [inventoryPage, inventoryQuery.data?.rows, inventoryTotalPages])
+  }, [inventoryQuery.data?.rows, safeInventoryPage])
 
   const feedSummaryTotalPages = Math.max(
     1,
     Math.ceil((feedingQuery.data?.rows.length ?? 0) / 5),
   )
+  const safeFeedSummaryPage = Math.min(feedSummaryPage, feedSummaryTotalPages)
   const paginatedFeedSummaryRows = useMemo(() => {
     const rows = feedingQuery.data?.rows ?? []
-    const safePage = Math.min(feedSummaryPage, feedSummaryTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeFeedSummaryPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [feedSummaryPage, feedSummaryTotalPages, feedingQuery.data?.rows])
+  }, [feedingQuery.data?.rows, safeFeedSummaryPage])
 
   const fishBatchTotalPages = Math.max(1, Math.ceil((fishBatchQuery.data?.rows.length ?? 0) / 5))
+  const safeFishBatchPage = Math.min(fishBatchPage, fishBatchTotalPages)
   const paginatedFishBatchRows = useMemo(() => {
     const rows = fishBatchQuery.data?.rows ?? []
-    const safePage = Math.min(fishBatchPage, fishBatchTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeFishBatchPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [fishBatchPage, fishBatchQuery.data?.rows, fishBatchTotalPages])
+  }, [fishBatchQuery.data?.rows, safeFishBatchPage])
 
   const customerTotalPages = Math.max(1, Math.ceil((customerQuery.data?.rows.length ?? 0) / 5))
+  const safeCustomerPage = Math.min(customerPage, customerTotalPages)
   const paginatedCustomerRows = useMemo(() => {
     const rows = customerQuery.data?.rows ?? []
-    const safePage = Math.min(customerPage, customerTotalPages)
-    const start = (safePage - 1) * 5
+    const start = (safeCustomerPage - 1) * 5
 
     return rows.slice(start, start + 5)
-  }, [customerPage, customerQuery.data?.rows, customerTotalPages])
-
-  useEffect(() => {
-    setSalesPage(1)
-    setHarvestPage(1)
-    setInventoryPage(1)
-    setFeedSummaryPage(1)
-    setFishBatchPage(1)
-    setCustomerPage(1)
-  }, [activeTab, submittedFilter.end_date, submittedFilter.start_date])
-
-  useEffect(() => {
-    if (salesPage > salesTotalPages) {
-      setSalesPage(salesTotalPages)
-    }
-  }, [salesPage, salesTotalPages])
-
-  useEffect(() => {
-    if (harvestPage > harvestTotalPages) {
-      setHarvestPage(harvestTotalPages)
-    }
-  }, [harvestPage, harvestTotalPages])
-
-  useEffect(() => {
-    if (inventoryPage > inventoryTotalPages) {
-      setInventoryPage(inventoryTotalPages)
-    }
-  }, [inventoryPage, inventoryTotalPages])
-
-  useEffect(() => {
-    if (feedSummaryPage > feedSummaryTotalPages) {
-      setFeedSummaryPage(feedSummaryTotalPages)
-    }
-  }, [feedSummaryPage, feedSummaryTotalPages])
-
-  useEffect(() => {
-    if (fishBatchPage > fishBatchTotalPages) {
-      setFishBatchPage(fishBatchTotalPages)
-    }
-  }, [fishBatchPage, fishBatchTotalPages])
-
-  useEffect(() => {
-    if (customerPage > customerTotalPages) {
-      setCustomerPage(customerTotalPages)
-    }
-  }, [customerPage, customerTotalPages])
+  }, [customerQuery.data?.rows, safeCustomerPage])
 
   const handleExportPdf = async () => {
     if (!exportType) {
@@ -365,7 +332,13 @@ export default function ReportsManagementPage() {
         isSubmitting={activeQuery.isFetching}
       />
 
-      <ReportTabs activeTab={activeTab} onChange={setActiveTab} />
+      <ReportTabs
+        activeTab={activeTab}
+        onChange={(tab) => {
+          setActiveTab(tab)
+          resetPages()
+        }}
+      />
 
       <ExportSection
         canExport={canExport}
@@ -438,9 +411,9 @@ export default function ReportsManagementPage() {
               <div className="space-y-4">
                 <SalesTable rows={paginatedSalesRows} />
                 <Pagination
-                  currentPage={Math.min(salesPage, salesTotalPages)}
+                  currentPage={safeSalesPage}
                   totalPages={salesTotalPages}
-                  onPageChange={setSalesPage}
+                  onPageChange={(page) => setSalesPage(Math.min(page, salesTotalPages))}
                 />
               </div>
             </>
@@ -488,9 +461,9 @@ export default function ReportsManagementPage() {
               <div className="space-y-4">
                 <HarvestTable rows={paginatedHarvestRows} />
                 <Pagination
-                  currentPage={Math.min(harvestPage, harvestTotalPages)}
+                  currentPage={safeHarvestPage}
                   totalPages={harvestTotalPages}
-                  onPageChange={setHarvestPage}
+                  onPageChange={(page) => setHarvestPage(Math.min(page, harvestTotalPages))}
                 />
               </div>
             </>
@@ -536,9 +509,9 @@ export default function ReportsManagementPage() {
             <div className="space-y-4">
               <InventoryTable rows={paginatedInventoryRows} />
               <Pagination
-                currentPage={Math.min(inventoryPage, inventoryTotalPages)}
+                currentPage={safeInventoryPage}
                 totalPages={inventoryTotalPages}
-                onPageChange={setInventoryPage}
+                onPageChange={(page) => setInventoryPage(Math.min(page, inventoryTotalPages))}
               />
             </div>
           )}
@@ -609,9 +582,9 @@ export default function ReportsManagementPage() {
 
                 <div className="mt-6">
                   <Pagination
-                    currentPage={Math.min(feedSummaryPage, feedSummaryTotalPages)}
+                    currentPage={safeFeedSummaryPage}
                     totalPages={feedSummaryTotalPages}
-                    onPageChange={setFeedSummaryPage}
+                    onPageChange={(page) => setFeedSummaryPage(Math.min(page, feedSummaryTotalPages))}
                   />
                 </div>
               </section>
@@ -658,9 +631,9 @@ export default function ReportsManagementPage() {
             <div className="space-y-4">
               <FishBatchTable rows={paginatedFishBatchRows} />
               <Pagination
-                currentPage={Math.min(fishBatchPage, fishBatchTotalPages)}
+                currentPage={safeFishBatchPage}
                 totalPages={fishBatchTotalPages}
-                onPageChange={setFishBatchPage}
+                onPageChange={(page) => setFishBatchPage(Math.min(page, fishBatchTotalPages))}
               />
             </div>
           )}
@@ -705,9 +678,9 @@ export default function ReportsManagementPage() {
             <div className="space-y-4">
               <CustomerTable rows={paginatedCustomerRows} />
               <Pagination
-                currentPage={Math.min(customerPage, customerTotalPages)}
+                currentPage={safeCustomerPage}
                 totalPages={customerTotalPages}
-                onPageChange={setCustomerPage}
+                onPageChange={(page) => setCustomerPage(Math.min(page, customerTotalPages))}
               />
             </div>
           )}

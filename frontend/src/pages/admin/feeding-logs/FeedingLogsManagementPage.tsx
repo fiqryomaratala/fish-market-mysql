@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import {
   AlertCircle,
@@ -164,18 +164,17 @@ function FeedingLogsManagementPage() {
   }, [batchFilter, dateFilter, debouncedSearch, enrichedLogs, feedFilter])
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedLogs = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const start = (safePage - 1) * PAGE_SIZE
+    const start = (safeCurrentPage - 1) * PAGE_SIZE
     return filteredLogs.slice(start, start + PAGE_SIZE)
-  }, [currentPage, filteredLogs, totalPages])
+  }, [filteredLogs, safeCurrentPage])
 
   const summary = useMemo(() => {
     const today = getStartOfToday()
     const weekStart = getStartOfWeek()
     const totalsByFeed = new Map<string, number>()
     let totalFeedUsed = 0
-    let totalActiveDays = 0
     const uniqueDays = new Set<string>()
 
     for (const log of filteredLogs) {
@@ -188,7 +187,7 @@ function FeedingLogsManagementPage() {
       }
     }
 
-    totalActiveDays = uniqueDays.size
+    const totalActiveDays = uniqueDays.size
 
     const mostUsedFeed =
       [...totalsByFeed.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || '-'
@@ -222,16 +221,6 @@ function FeedingLogsManagementPage() {
     () => [...new Set(feedInventories.map((item) => item.name))],
     [feedInventories],
   )
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [batchFilter, dateFilter, debouncedSearch, feedFilter])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const handleOpenCreate = () => {
     if (!canManage) {
@@ -380,10 +369,22 @@ function FeedingLogsManagementPage() {
         feedOptions={feedOptions}
         isRefreshing={isRefreshing}
         canManage={canManage}
-        onSearchChange={setSearchInput}
-        onBatchFilterChange={setBatchFilter}
-        onFeedFilterChange={setFeedFilter}
-        onDateFilterChange={setDateFilter}
+        onSearchChange={(value) => {
+          setSearchInput(value)
+          setCurrentPage(1)
+        }}
+        onBatchFilterChange={(value) => {
+          setBatchFilter(value)
+          setCurrentPage(1)
+        }}
+        onFeedFilterChange={(value) => {
+          setFeedFilter(value)
+          setCurrentPage(1)
+        }}
+        onDateFilterChange={(value) => {
+          setDateFilter(value)
+          setCurrentPage(1)
+        }}
         onRefresh={() => {
           void feedingLogsQuery.refetch()
           void fishBatchesQuery.refetch()
@@ -468,9 +469,9 @@ function FeedingLogsManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

@@ -16,18 +16,18 @@ function getNotificationIcon(type: string) {
   const normalized = normalizeNotificationType(type)
 
   if (normalized === 'ORDER') {
-    return Package
+    return <Package className="size-5" />
   }
 
   if (normalized === 'INVENTORY') {
-    return ShoppingBag
+    return <ShoppingBag className="size-5" />
   }
 
   if (normalized === 'HARVEST' || normalized === 'BATCH' || normalized === 'FEEDING') {
-    return Sparkles
+    return <Sparkles className="size-5" />
   }
 
-  return Bell
+  return <Bell className="size-5" />
 }
 
 function getTypeBadgeClassName(type: string) {
@@ -53,8 +53,6 @@ export function NotificationsCenterCard({
   isMarkingAsRead,
   onMarkAsRead,
 }: NotificationsCenterCardProps) {
-  const Icon = getNotificationIcon(notification.type)
-
   return (
     <article
       className={`rounded-[1.5rem] border bg-white p-5 shadow-lg shadow-slate-200/60 transition ${
@@ -65,7 +63,7 @@ export function NotificationsCenterCard({
     >
       <div className="flex items-start gap-4">
         <div className="rounded-2xl bg-blue-50 p-3 text-blue-600">
-          <Icon className="size-5" />
+          {getNotificationIcon(notification.type)}
         </div>
 
         <div className="min-w-0 flex-1">

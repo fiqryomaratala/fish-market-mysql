@@ -10,7 +10,7 @@ import {
   Warehouse,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { ChangePasswordModal } from '@/components/customer/profile/ChangePasswordModal'
@@ -123,6 +123,23 @@ function StaffSettingsPage() {
     notificationPreferencesForm.reset(getStoredNotificationPreferences())
   }, [notificationPreferencesForm])
 
+  const harvestAlerts = useWatch({
+    control: notificationPreferencesForm.control,
+    name: 'harvestAlerts',
+  })
+  const feedingReminders = useWatch({
+    control: notificationPreferencesForm.control,
+    name: 'feedingReminders',
+  })
+  const inventoryAlerts = useWatch({
+    control: notificationPreferencesForm.control,
+    name: 'inventoryAlerts',
+  })
+  const systemNotifications = useWatch({
+    control: notificationPreferencesForm.control,
+    name: 'systemNotifications',
+  })
+
   const lastLogin = useMemo(() => {
     const lastLoginFromToken = token ? decodeJwt(token)?.iat : undefined
 
@@ -229,28 +246,28 @@ function StaffSettingsPage() {
                 label="Harvest Alerts"
                 description="Peringatan batch yang mendekati jadwal panen."
                 icon={Siren}
-                checked={notificationPreferencesForm.watch('harvestAlerts')}
+                checked={Boolean(harvestAlerts)}
                 {...notificationPreferencesForm.register('harvestAlerts')}
               />
               <NotificationToggle
                 label="Feeding Reminders"
                 description="Reminder jadwal pakan dan log yang belum tercatat."
                 icon={ClipboardList}
-                checked={notificationPreferencesForm.watch('feedingReminders')}
+                checked={Boolean(feedingReminders)}
                 {...notificationPreferencesForm.register('feedingReminders')}
               />
               <NotificationToggle
                 label="Inventory Alerts"
                 description="Notifikasi stok pakan, obat, atau alat yang menipis."
                 icon={Warehouse}
-                checked={notificationPreferencesForm.watch('inventoryAlerts')}
+                checked={Boolean(inventoryAlerts)}
                 {...notificationPreferencesForm.register('inventoryAlerts')}
               />
               <NotificationToggle
                 label="System Notifications"
                 description="Informasi update sistem dan pengumuman portal internal."
                 icon={BellRing}
-                checked={notificationPreferencesForm.watch('systemNotifications')}
+                checked={Boolean(systemNotifications)}
                 {...notificationPreferencesForm.register('systemNotifications')}
               />
 

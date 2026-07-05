@@ -38,10 +38,10 @@ export function SortDropdown({
   disabled = false,
 }: SortDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const menuIsOpen = isOpen && !disabled
   const [menuStyle, setMenuStyle] = useState<{
     top: number
     left: number
@@ -57,25 +57,6 @@ export function SortDropdown({
   const selectedOption = normalizedOptions.find((option) => option.value === value)
   const displayValue = selectedOption?.label ?? placeholder
   const widthClass = widthClasses[width]
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsVisible(true)
-      return
-    }
-
-    const timeout = window.setTimeout(() => {
-      setIsVisible(false)
-    }, 200)
-
-    return () => window.clearTimeout(timeout)
-  }, [isOpen])
-
-  useEffect(() => {
-    if (disabled) {
-      setIsOpen(false)
-    }
-  }, [disabled])
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
@@ -94,7 +75,7 @@ export function SortDropdown({
   }, [])
 
   useLayoutEffect(() => {
-    if (!isVisible || !triggerRef.current) {
+    if (!menuIsOpen || !triggerRef.current) {
       return
     }
 
@@ -121,7 +102,7 @@ export function SortDropdown({
       window.removeEventListener('resize', updatePosition)
       window.removeEventListener('scroll', updatePosition, true)
     }
-  }, [align, isVisible])
+  }, [align, menuIsOpen])
 
   return (
     <div
@@ -137,13 +118,13 @@ export function SortDropdown({
         disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
         aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        aria-expanded={menuIsOpen}
         className={`inline-flex w-full items-center justify-between gap-3 rounded-2xl border bg-white px-5 py-3.5 text-left text-sm shadow-sm transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] outline-none ${
           disabled
             ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
             : 'text-slate-800'
         } ${
-          isOpen
+          menuIsOpen
             ? 'border-blue-200 ring-4 ring-blue-100'
             : 'border-slate-200 hover:border-blue-200'
         }`}
@@ -153,12 +134,12 @@ export function SortDropdown({
         </span>
         <ChevronDown
           className={`size-4 shrink-0 text-slate-500 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isOpen ? 'rotate-180' : ''
+            menuIsOpen ? 'rotate-180' : ''
           }`}
         />
       </button>
 
-      {isVisible
+      {menuIsOpen
         ? createPortal(
             <div
               ref={menuRef}
@@ -169,11 +150,7 @@ export function SortDropdown({
                 width: menuStyle.width,
                 zIndex: 1000,
               }}
-              className={`origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80 transition duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                isOpen
-                  ? 'scale-100 opacity-100'
-                  : 'pointer-events-none scale-95 opacity-0'
-              }`}
+              className="origin-top rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/80"
             >
               <div role="listbox" aria-label={label} className="grid gap-1">
                 {normalizedOptions.map((option) => (

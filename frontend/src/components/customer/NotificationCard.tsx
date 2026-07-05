@@ -14,28 +14,26 @@ function getNotificationIcon(type: string) {
   const normalized = type.trim().toUpperCase()
 
   if (normalized === 'ORDER') {
-    return Package
+    return <Package className="size-5" />
   }
 
   if (normalized === 'INVENTORY') {
-    return ShoppingBag
+    return <ShoppingBag className="size-5" />
   }
 
   if (normalized === 'HARVEST') {
-    return Sparkles
+    return <Sparkles className="size-5" />
   }
 
-  return Bell
+  return <Bell className="size-5" />
 }
 
 export function NotificationCard({ notification }: NotificationCardProps) {
-  const Icon = getNotificationIcon(notification.type)
-
   return (
     <article className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-emerald-200 hover:bg-white">
       <div className="flex items-start gap-3">
         <div className="rounded-xl bg-blue-50 p-3 text-blue-600">
-          <Icon className="size-5" />
+          {getNotificationIcon(notification.type)}
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">

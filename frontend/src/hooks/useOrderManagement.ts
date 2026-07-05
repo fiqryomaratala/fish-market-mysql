@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { orderManagementService } from '@/services/order-management.service'
 import type {
+  OrderListItem,
   OrdersQueryParams,
   UpdateOrderStatusPayload,
 } from '@/types/order-management'
@@ -39,13 +40,16 @@ export function useUpdateOrderStatus() {
       const previousOrders = queryClient.getQueryData([QUERY_KEY, 'list'])
       const previousOrder = queryClient.getQueryData([QUERY_KEY, 'detail', id])
 
-      queryClient.setQueryData([QUERY_KEY, 'detail', id], (old: any) => {
+      queryClient.setQueryData<OrderListItem | undefined>(
+        [QUERY_KEY, 'detail', id],
+        (old) => {
         if (!old) return old
         return {
           ...old,
           status: payload.status,
         }
-      })
+        }
+      )
 
       return { previousOrders, previousOrder }
     },

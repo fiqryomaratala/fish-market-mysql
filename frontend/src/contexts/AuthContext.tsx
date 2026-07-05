@@ -53,8 +53,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const role = user?.role ?? null
-  const permissions = user?.permissions ?? []
 
   useEffect(() => {
     const handleUnauthorized = () => {
@@ -96,68 +94,73 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({
-      user,
-      token,
-      role,
-      permissions,
-      isAuthenticated: Boolean(user && token),
-      loading,
-      login: async (payload) => {
-        const auth = await authService.login(payload)
-        applyAuthState(auth, setToken, setUser)
-        if (auth.user.role === 'customer') {
-          await cartService.syncGuestCartToServer()
-          await queryClient.invalidateQueries({ queryKey: ['cart'] })
-        }
-        return auth.user
-      },
-      register: async (payload) => {
-        const auth = await authService.register(payload)
-        applyAuthState(auth, setToken, setUser)
-        if (auth.user.role === 'customer') {
-          await cartService.syncGuestCartToServer()
-          await queryClient.invalidateQueries({ queryKey: ['cart'] })
-        }
-        return auth.user
-      },
-      logout: async () => {
-        await authService.logout()
-        clearAuthStorage()
-        applyAuthState(null, setToken, setUser)
-        queryClient.clear()
-        window.location.replace('/')
-      },
-      refreshUser: async () => {
-        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+    () => {
+      const role = user?.role ?? null
+      const permissions = user?.permissions ?? []
 
-        if (!currentToken) {
-          applyAuthState(null, setToken, setUser)
-          return null
-        }
-
-        setToken(currentToken)
-
-        try {
-          const profile = await authService.getProfile()
-          setUser(profile)
-          return profile
-        } catch {
+      return {
+        user,
+        token,
+        role,
+        permissions,
+        isAuthenticated: Boolean(user && token),
+        loading,
+        login: async (payload) => {
+          const auth = await authService.login(payload)
+          applyAuthState(auth, setToken, setUser)
+          if (auth.user.role === 'customer') {
+            await cartService.syncGuestCartToServer()
+            await queryClient.invalidateQueries({ queryKey: ['cart'] })
+          }
+          return auth.user
+        },
+        register: async (payload) => {
+          const auth = await authService.register(payload)
+          applyAuthState(auth, setToken, setUser)
+          if (auth.user.role === 'customer') {
+            await cartService.syncGuestCartToServer()
+            await queryClient.invalidateQueries({ queryKey: ['cart'] })
+          }
+          return auth.user
+        },
+        logout: async () => {
+          await authService.logout()
           clearAuthStorage()
           applyAuthState(null, setToken, setUser)
-          return null
-        }
-      },
-      hasRole: (nextRole) => role === nextRole,
-      hasAnyRole: (...roles) => roles.includes(role ?? ''),
-      hasPermission: (permission) => permissions.includes(permission),
-      hasAnyPermission: (...nextPermissions) =>
-        nextPermissions.some((permission) => permissions.includes(permission)),
-      isAdmin: () => role === 'admin',
-      isStaff: () => role === 'staff',
-      isCustomer: () => role === 'customer',
-    }),
-    [loading, permissions, role, token, user],
+          queryClient.clear()
+          window.location.replace('/')
+        },
+        refreshUser: async () => {
+          const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+
+          if (!currentToken) {
+            applyAuthState(null, setToken, setUser)
+            return null
+          }
+
+          setToken(currentToken)
+
+          try {
+            const profile = await authService.getProfile()
+            setUser(profile)
+            return profile
+          } catch {
+            clearAuthStorage()
+            applyAuthState(null, setToken, setUser)
+            return null
+          }
+        },
+        hasRole: (nextRole) => role === nextRole,
+        hasAnyRole: (...roles) => roles.includes(role ?? ''),
+        hasPermission: (permission) => permissions.includes(permission),
+        hasAnyPermission: (...nextPermissions) =>
+          nextPermissions.some((permission) => permissions.includes(permission)),
+        isAdmin: () => role === 'admin',
+        isStaff: () => role === 'staff',
+        isCustomer: () => role === 'customer',
+      }
+    },
+    [loading, token, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

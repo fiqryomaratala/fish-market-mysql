@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import { AlertCircle, Fish, Package, RefreshCcw, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
@@ -80,12 +80,12 @@ function FishBatchesManagementPage() {
   }, [debouncedSearch, fishBatchesQuery.data?.items, fishType, status])
 
   const totalPages = Math.max(1, Math.ceil(filteredBatches.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedBatches = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const start = (safePage - 1) * PAGE_SIZE
+    const start = (safeCurrentPage - 1) * PAGE_SIZE
 
     return filteredBatches.slice(start, start + PAGE_SIZE)
-  }, [currentPage, filteredBatches, totalPages])
+  }, [filteredBatches, safeCurrentPage])
 
   const summary = useMemo(() => {
     const items = fishBatchesQuery.data?.items ?? []
@@ -97,16 +97,6 @@ function FishBatchesManagementPage() {
       harvestedBatch: items.filter((item) => item.status === 'Harvested').length,
     }
   }, [fishBatchesQuery.data?.items])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, fishType, status])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const handleOpenCreate = () => {
     if (!canManage) {
@@ -244,9 +234,18 @@ function FishBatchesManagementPage() {
         fishType={fishType}
         isRefreshing={fishBatchesQuery.isFetching}
         canManage={canManage}
-        onSearchChange={setSearchInput}
-        onStatusChange={setStatus}
-        onFishTypeChange={setFishType}
+        onSearchChange={(value) => {
+          setSearchInput(value)
+          setCurrentPage(1)
+        }}
+        onStatusChange={(value) => {
+          setStatus(value)
+          setCurrentPage(1)
+        }}
+        onFishTypeChange={(value) => {
+          setFishType(value)
+          setCurrentPage(1)
+        }}
         onRefresh={() => void fishBatchesQuery.refetch()}
         onAdd={handleOpenCreate}
       />
@@ -320,9 +319,9 @@ function FishBatchesManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

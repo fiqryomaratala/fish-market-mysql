@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import { AlertCircle, Box, RefreshCcw } from 'lucide-react'
 import { toast } from 'sonner'
@@ -100,22 +100,12 @@ function ProductsManagementPage() {
     [data?.items, sort],
   )
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedProducts = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const startIndex = (safePage - 1) * PAGE_SIZE
+    const startIndex = (safeCurrentPage - 1) * PAGE_SIZE
 
     return sortedProducts.slice(startIndex, startIndex + PAGE_SIZE)
-  }, [currentPage, sortedProducts, totalPages])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, category, status, sort])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
+  }, [safeCurrentPage, sortedProducts])
 
   const openCreateModal = () => {
     setFormMode('create')
@@ -218,14 +208,23 @@ function ProductsManagementPage() {
           <SearchBar
             className="min-w-0 flex-1"
             value={searchInput}
-            onChange={setSearchInput}
+            onChange={(value) => {
+              setSearchInput(value)
+              setCurrentPage(1)
+            }}
           />
           <FilterBar
             category={category}
             status={status}
             isRefreshing={isFetching}
-            onCategoryChange={setCategory}
-            onStatusChange={setStatus}
+            onCategoryChange={(value) => {
+              setCategory(value)
+              setCurrentPage(1)
+            }}
+            onStatusChange={(value) => {
+              setStatus(value)
+              setCurrentPage(1)
+            }}
             onRefresh={() => void refetch()}
             onAdd={openCreateModal}
           />
@@ -294,9 +293,9 @@ function ProductsManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

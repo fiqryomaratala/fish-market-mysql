@@ -1,5 +1,5 @@
 import { Bell, Loader2, Mail, Package, Sprout, Users } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useUpdateNotificationSettings } from '@/hooks/use-settings'
 import type { NotificationSettingsData, SettingsData } from '@/types/settings'
 
@@ -59,27 +59,28 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
     [settings],
   )
 
-  const [formData, setFormData] = useState<NotificationSettingsData>(initialState)
-
-  useEffect(() => {
-    setFormData(initialState)
-  }, [initialState])
+  const [draftFormData, setDraftFormData] = useState<NotificationSettingsData | null>(null)
+  const formData = draftFormData ?? initialState
 
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialState)
 
   const handleToggle = (key: keyof NotificationSettingsData, value: boolean) => {
-    setFormData((current) => ({
-      ...current,
+    setDraftFormData((current) => ({
+      ...(current ?? initialState),
       [key]: value,
     }))
   }
 
   const handleReset = () => {
-    setFormData(initialState)
+    setDraftFormData(null)
   }
 
   const handleSave = () => {
-    updateNotificationSettingsMutation.mutate(formData)
+    updateNotificationSettingsMutation.mutate(formData, {
+      onSuccess: () => {
+        setDraftFormData(null)
+      },
+    })
   }
 
   return (

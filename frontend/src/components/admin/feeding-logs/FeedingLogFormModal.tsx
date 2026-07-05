@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { DropdownSelect } from '@/components/common/DropdownSelect'
 import type { FishBatch } from '@/types/fish-batch'
@@ -110,7 +110,6 @@ export function FeedingLogFormModal({
   const {
     control,
     register,
-    watch,
     handleSubmit,
     reset,
     formState: { errors },
@@ -125,8 +124,10 @@ export function FeedingLogFormModal({
     }
   }, [inventoryOptions, isOpen, log, reset])
 
-  const selectedBatch = fishBatches.find((item) => item.id === Number(watch('fish_batch_id')))
-  const selectedInventory = inventoryOptions.find((item) => item.id === Number(watch('feed_inventory_id')))
+  const selectedFishBatchId = useWatch({ control, name: 'fish_batch_id' })
+  const selectedFeedInventoryId = useWatch({ control, name: 'feed_inventory_id' })
+  const selectedBatch = fishBatches.find((item) => item.id === Number(selectedFishBatchId))
+  const selectedInventory = inventoryOptions.find((item) => item.id === Number(selectedFeedInventoryId))
 
   if (!isOpen) {
     return null

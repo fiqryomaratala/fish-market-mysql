@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import { AlertCircle, RefreshCcw, Users } from 'lucide-react'
 import { toast } from 'sonner'
@@ -78,11 +78,12 @@ function UsersManagementPage() {
   const updateRoleMutation = useUpdateUserRole()
   const updateStatusMutation = useUpdateUserStatus()
 
-  const users = data?.items ?? []
+  const users = useMemo(() => data?.items ?? [], [data?.items])
   const totalUsers = data?.meta.total ?? 0
   const serverPage = data?.meta.page ?? currentPage
   const serverLimit = data?.meta.limit ?? PAGE_SIZE
   const totalPages = Math.max(1, Math.ceil(totalUsers / Math.max(serverLimit, 1)))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
 
   const summary = useMemo(() => {
     return {
@@ -93,16 +94,6 @@ function UsersManagementPage() {
       active: users.filter((u) => u.status === 'Active').length,
     }
   }, [totalUsers, users])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, roleFilter, statusFilter])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const openCreateModal = () => {
     setFormMode('create')
@@ -216,9 +207,18 @@ function UsersManagementPage() {
             roleFilter={roleFilter}
             statusFilter={statusFilter}
             isRefreshing={isFetching}
-            onSearchChange={setSearchInput}
-            onRoleChange={setRoleFilter}
-            onStatusChange={setStatusFilter}
+            onSearchChange={(value) => {
+              setSearchInput(value)
+              setCurrentPage(1)
+            }}
+            onRoleChange={(value) => {
+              setRoleFilter(value)
+              setCurrentPage(1)
+            }}
+            onStatusChange={(value) => {
+              setStatusFilter(value)
+              setCurrentPage(1)
+            }}
             onRefresh={() => void refetch()}
             onAdd={openCreateModal}
           />
@@ -243,7 +243,7 @@ function UsersManagementPage() {
             <span className="hidden h-4 w-px bg-slate-200 sm:block" />
             <p>
               Halaman{' '}
-              <span className="font-semibold text-slate-900">{serverPage}</span>{' '}
+              <span className="font-semibold text-slate-900">{Math.min(serverPage, totalPages)}</span>{' '}
               dari{' '}
               <span className="font-semibold text-slate-900">{totalPages}</span>
             </p>
@@ -298,9 +298,9 @@ function UsersManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(serverPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

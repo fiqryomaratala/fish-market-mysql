@@ -117,11 +117,13 @@ function StaffProfilePage() {
 
   const profile = profileQuery.data
   const dashboard = dashboardQuery.data
-  const feedingItems = feedingLogsQuery.data?.items ?? []
-  const harvestItems = harvestsQuery.data?.items ?? []
-  const pondItems = pondsQuery.data?.items ?? []
-  const fishBatchItems = fishBatchesQuery.data?.items ?? []
-  const inventoryMovements = inventoryMovementsQuery.data ?? []
+  const feedingItems = useMemo(() => feedingLogsQuery.data?.items ?? [], [feedingLogsQuery.data?.items])
+  const harvestItems = useMemo(() => harvestsQuery.data?.items ?? [], [harvestsQuery.data?.items])
+  const pondItems = useMemo(() => pondsQuery.data?.items ?? [], [pondsQuery.data?.items])
+  const fishBatchItems = useMemo(() => fishBatchesQuery.data?.items ?? [], [fishBatchesQuery.data?.items])
+  const inventoryMovements = useMemo(() => inventoryMovementsQuery.data ?? [], [inventoryMovementsQuery.data])
+  const totalFeedingLogs = feedingLogsQuery.data?.meta.total ?? feedingItems.length
+  const totalHarvestRecords = harvestsQuery.data?.meta.total ?? harvestItems.length
   const currentPhotoUrl = photoUrl ?? profile?.avatar ?? user?.avatar ?? ''
   const currentUserName = normalizeName(user?.name ?? profile?.name ?? '')
 
@@ -167,8 +169,8 @@ function StaffProfilePage() {
       assignedFishBatches:
         assignedFishBatches.length > 0 ? assignedFishBatches : fallbackFishBatches,
       shift: getShiftLabel(personallyCreatedFeeding.map((item) => item.feeding_time)),
-      totalFeedingLogs: feedingLogsQuery.data?.meta.total ?? feedingItems.length,
-      totalHarvestRecords: harvestsQuery.data?.meta.total ?? harvestItems.length,
+      totalFeedingLogs,
+      totalHarvestRecords,
       totalInventoryUpdates: inventoryMovements.length,
       todaysActivities:
         (dashboard?.today_feedings ?? 0) +
@@ -181,15 +183,15 @@ function StaffProfilePage() {
     currentUserName,
     dashboard,
     feedingItems,
-    feedingLogsQuery.data?.meta.total,
     fishBatchItems,
     harvestItems,
-    harvestsQuery.data?.meta.total,
     inventoryMovements,
     pondItems,
     profile?.id,
     profile?.role,
     token,
+    totalFeedingLogs,
+    totalHarvestRecords,
     user?.id,
     user?.role,
   ])

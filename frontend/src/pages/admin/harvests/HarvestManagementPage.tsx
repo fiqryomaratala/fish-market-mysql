@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AxiosError } from 'axios'
 import {
   AlertCircle,
@@ -147,11 +147,11 @@ function HarvestManagementPage() {
   }, [dateFilter, debouncedSearch, enrichedHarvests, fishType, status])
 
   const totalPages = Math.max(1, Math.ceil(filteredHarvests.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedHarvests = useMemo(() => {
-    const safePage = Math.min(currentPage, totalPages)
-    const start = (safePage - 1) * PAGE_SIZE
+    const start = (safeCurrentPage - 1) * PAGE_SIZE
     return filteredHarvests.slice(start, start + PAGE_SIZE)
-  }, [currentPage, filteredHarvests, totalPages])
+  }, [filteredHarvests, safeCurrentPage])
 
   const summary = useMemo(() => {
     const items = enrichedHarvests
@@ -175,16 +175,6 @@ function HarvestManagementPage() {
   )
 
   const performanceHarvest = filteredHarvests[0] ?? enrichedHarvests[0] ?? null
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [dateFilter, debouncedSearch, fishType, status])
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
 
   const handleOpenCreate = () => {
     if (!canManage) {
@@ -321,10 +311,22 @@ function HarvestManagementPage() {
         fishTypes={fishTypes}
         isRefreshing={isRefreshing}
         canManage={canManage}
-        onSearchChange={setSearchInput}
-        onStatusChange={setStatus}
-        onFishTypeChange={setFishType}
-        onDateFilterChange={setDateFilter}
+        onSearchChange={(value) => {
+          setSearchInput(value)
+          setCurrentPage(1)
+        }}
+        onStatusChange={(value) => {
+          setStatus(value)
+          setCurrentPage(1)
+        }}
+        onFishTypeChange={(value) => {
+          setFishType(value)
+          setCurrentPage(1)
+        }}
+        onDateFilterChange={(value) => {
+          setDateFilter(value)
+          setCurrentPage(1)
+        }}
         onRefresh={() => {
           void harvestsQuery.refetch()
           void fishBatchesQuery.refetch()
@@ -403,9 +405,9 @@ function HarvestManagementPage() {
           />
 
           <Pagination
-            currentPage={Math.min(currentPage, totalPages)}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
           />
         </section>
       ) : null}

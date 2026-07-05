@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Eye,
@@ -67,12 +67,11 @@ export function ChangePasswordModal({
     }))
   }
 
-  useEffect(() => {
-    if (!isOpen) {
-      reset()
-      setVisibility(defaultVisibilityState)
-    }
-  }, [isOpen, reset])
+  const handleClose = () => {
+    reset()
+    setVisibility(defaultVisibilityState)
+    onClose()
+  }
 
   if (!isOpen) {
     return null
@@ -95,11 +94,13 @@ export function ChangePasswordModal({
 
         <form
           onSubmit={handleSubmit((values) =>
-            onSubmit({
-              current_password: values.current_password,
-              new_password: values.new_password,
-              confirm_password: values.confirm_password,
-            })
+            onSubmit(
+              {
+                current_password: values.current_password,
+                new_password: values.new_password,
+                confirm_password: values.confirm_password,
+              },
+            )
           )}
           className="mt-6 space-y-4"
         >
@@ -156,7 +157,7 @@ export function ChangePasswordModal({
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isSubmitting}
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
             >

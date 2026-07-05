@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import type { Inventory, InventoryStockTransactionInput } from '@/types/inventory'
 import { formatNumber } from '@/utils/format'
@@ -37,7 +37,7 @@ export function StockAdjustmentModal({
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors },
   } = useForm<StockAdjustmentInput, unknown, StockAdjustmentValues>({
     resolver: zodResolver(stockAdjustmentSchema),
@@ -60,11 +60,11 @@ export function StockAdjustmentModal({
     }
   }, [isOpen, reset])
 
+  const adjustmentType = useWatch({ control, name: 'type' })
+
   if (!isOpen || !inventory) {
     return null
   }
-
-  const adjustmentType = watch('type')
   const submitHandler = handleSubmit(async (values) => {
     await onSubmit({
       inventory_id: inventory.id,

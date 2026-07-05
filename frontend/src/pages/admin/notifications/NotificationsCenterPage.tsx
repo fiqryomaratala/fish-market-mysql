@@ -5,7 +5,7 @@ import {
   Inbox,
   RefreshCcw,
 } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   LoadingSkeleton,
   NotificationDetailModal,
@@ -89,12 +89,14 @@ export function NotificationsCenterPage() {
   const markAllAsReadMutation = useMarkAllAsRead()
   const deleteNotificationMutation = useDeleteNotification()
 
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [debouncedSearch, statusFilter, typeFilter])
-
-  const allNotifications = allNotificationsQuery.data?.items ?? []
-  const typeScopedNotifications = notificationsQuery.data?.items ?? []
+  const allNotifications = useMemo(
+    () => allNotificationsQuery.data?.items ?? [],
+    [allNotificationsQuery.data?.items],
+  )
+  const typeScopedNotifications = useMemo(
+    () => notificationsQuery.data?.items ?? [],
+    [notificationsQuery.data?.items],
+  )
 
   const filteredNotifications = useMemo(
     () =>
@@ -105,14 +107,11 @@ export function NotificationsCenterPage() {
   )
 
   const totalPages = Math.max(1, Math.ceil(filteredNotifications.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedNotifications = filteredNotifications.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
+    (safeCurrentPage - 1) * PAGE_SIZE,
+    safeCurrentPage * PAGE_SIZE,
   )
-
-  useEffect(() => {
-    setCurrentPage((current) => Math.min(current, totalPages))
-  }, [totalPages])
 
   const summary = useMemo(() => {
     const unreadCount = allNotifications.filter((notification) => !notification.is_read).length
@@ -279,21 +278,30 @@ export function NotificationsCenterPage() {
         statusFilter={statusFilter}
         isRefreshing={allNotificationsQuery.isFetching || notificationsQuery.isFetching}
         isMarkingAll={markAllAsReadMutation.isPending}
-        onSearchChange={setSearchValue}
-        onTypeChange={setTypeFilter}
-        onStatusChange={setStatusFilter}
+        onSearchChange={(value) => {
+          setSearchValue(value)
+          setCurrentPage(1)
+        }}
+        onTypeChange={(value) => {
+          setTypeFilter(value)
+          setCurrentPage(1)
+        }}
+        onStatusChange={(value) => {
+          setStatusFilter(value)
+          setCurrentPage(1)
+        }}
         onRefresh={handleRefresh}
         onMarkAllAsRead={handleMarkAllAsRead}
       />
 
       <NotificationList
         notifications={paginatedNotifications}
-        currentPage={Math.min(currentPage, totalPages)}
+        currentPage={safeCurrentPage}
         totalPages={totalPages}
         totalItems={filteredNotifications.length}
         activeMarkingId={markAsReadMutation.variables ?? null}
         activeDeletingId={deleteNotificationMutation.variables ?? null}
-        onPageChange={setCurrentPage}
+        onPageChange={(page) => setCurrentPage(Math.min(page, totalPages))}
         onViewDetail={setSelectedNotification}
         onMarkAsRead={handleMarkAsRead}
         onDelete={handleDeleteNotification}

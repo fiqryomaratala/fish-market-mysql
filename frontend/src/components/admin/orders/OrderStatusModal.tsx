@@ -30,7 +30,7 @@ export function OrderStatusModal({ order, onClose }: OrderStatusModalProps) {
 
       toast.success('Status pesanan berhasil diperbarui')
       onClose()
-    } catch (error) {
+    } catch {
       toast.error('Gagal memperbarui status pesanan')
     }
   }
