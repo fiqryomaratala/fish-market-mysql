@@ -50,7 +50,7 @@ export function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             to="/login"
-            className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition duration-300 hover:border-blue-200 hover:text-blue-700"
+            className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition duration-300 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
           >
             Masuk
           </Link>
@@ -88,7 +88,7 @@ export function Navbar() {
             <div className="mt-2 grid grid-cols-2 gap-3">
               <Link
                 to="/login"
-                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
                 onClick={() => setIsOpen(false)}
               >
                 Masuk
