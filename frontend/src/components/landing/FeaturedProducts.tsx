@@ -24,9 +24,6 @@ export function FeaturedProducts() {
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-3xl space-y-4">
-            <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
-              Produk Unggulan
-            </span>
             <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
               Hasil panen air tawar pilihan yang siap untuk pesanan hari ini
             </h2>

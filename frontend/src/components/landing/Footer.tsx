@@ -20,11 +20,11 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.8fr_0.8fr]">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white">
+            <div className="landing-blue-icon flex h-11 w-11 items-center justify-center rounded-xl">
               <Waves className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-[0.26em] text-blue-700 uppercase">
+              <p className="landing-blue-text text-sm font-semibold tracking-[0.26em] uppercase">
                 Fish Market
               </p>
               <p className="text-xs text-slate-500">Manajemen Budidaya</p>

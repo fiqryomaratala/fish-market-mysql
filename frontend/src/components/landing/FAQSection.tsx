@@ -36,10 +36,7 @@ export function FAQSection() {
     <section className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="text-center">
-          <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
-            FAQ
-          </span>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-900 sm:text-4xl">
+          <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
             Pertanyaan yang Sering Diajukan
           </h2>
         </div>
@@ -62,7 +59,7 @@ export function FAQSection() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`h-5 w-5 flex-none text-blue-500 transition duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                    className={`landing-blue-text h-5 w-5 flex-none transition duration-300 ${isOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
                 {isOpen ? (

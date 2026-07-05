@@ -26,9 +26,6 @@ export function TestimonialsSection() {
     <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl space-y-4">
-          <span className="inline-flex rounded-lg border border-green-100 bg-green-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-green-700 uppercase">
-            Testimoni
-          </span>
           <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
             Dipercaya oleh pembeli ikan, distributor, dan tim hospitality
           </h2>
@@ -42,7 +39,7 @@ export function TestimonialsSection() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 text-lg font-semibold text-white">
+                  <div className="landing-blue-icon flex h-14 w-14 items-center justify-center rounded-xl text-lg font-semibold">
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
@@ -62,7 +59,7 @@ export function TestimonialsSection() {
               <p className="mt-5 text-sm leading-7 text-slate-500">
                 {testimonial.review}
               </p>
-              <p className="mt-5 text-xs font-semibold tracking-[0.18em] text-blue-700 uppercase">
+              <p className="landing-blue-text mt-5 text-xs font-semibold tracking-[0.18em] uppercase">
                 Klien #{index + 1}
               </p>
             </article>

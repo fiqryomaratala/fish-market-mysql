@@ -6,12 +6,9 @@ export function TrackingCTA() {
 
   return (
     <section id="tracking" className="bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl overflow-hidden rounded-xl border border-blue-100 bg-blue-600 p-8 shadow-sm sm:p-10">
+      <div className="landing-blue-band mx-auto max-w-5xl overflow-hidden rounded-xl border border-blue-200/50 p-8 shadow-sm sm:p-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <div className="space-y-4">
-            <span className="inline-flex rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-slate-50 uppercase">
-              CTA Pelacakan Batch
-            </span>
             <h2 className="text-3xl font-semibold text-white sm:text-4xl">
               Lacak Batch Ikan Anda
             </h2>

@@ -1,35 +1,27 @@
-import {
-  Fish,
-  LayoutGrid,
-  ShoppingCart,
-  Sprout,
-  Tractor,
-} from 'lucide-react'
-
 const steps = [
   {
-    icon: LayoutGrid,
     title: 'Pond',
+    titleClassName: '',
     description: 'Kolam dipetakan dengan parameter kualitas air dan kapasitas budidaya.',
   },
   {
-    icon: Fish,
     title: 'Fish Batch',
+    titleClassName: 'whitespace-nowrap text-[1.55rem] lg:text-[1.65rem]',
     description: 'Batch ikan tercatat sejak tebar benih dengan identitas digital yang jelas.',
   },
   {
-    icon: Sprout,
     title: 'Feeding',
+    titleClassName: '',
     description: 'Jadwal pakan, pertumbuhan, dan kesehatan dipantau secara terstruktur.',
   },
   {
-    icon: Tractor,
     title: 'Harvest',
+    titleClassName: '',
     description: 'Panen dilakukan tepat waktu dengan pencatatan kualitas dan volume hasil.',
   },
   {
-    icon: ShoppingCart,
     title: 'Marketplace',
+    titleClassName: '',
     description: 'Produk masuk ke etalase digital dengan stok, harga, dan traceability siap jual.',
   },
 ]
@@ -39,29 +31,28 @@ export function ProcessSection() {
     <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl space-y-4">
-          <span className="inline-flex rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-blue-700 uppercase">
-            Proses Budidaya
-          </span>
           <h2 className="text-3xl font-semibold text-slate-900 sm:text-4xl">
             Satu alur kerja terhubung dari pemantauan kolam hingga pengiriman ke marketplace
           </h2>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-5">
-          {steps.map(({ icon: Icon, title, description }, index) => (
-            <article key={title} className="relative">
-              {index < steps.length - 1 ? (
-                <div className="absolute left-7 top-16 hidden h-px w-[calc(100%-1rem)] bg-blue-100 lg:block" />
-              ) : null}
-              <div className="relative h-full rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <p className="mt-5 text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+          {steps.map(({ title, titleClassName, description }, index) => (
+            <article
+              key={title}
+              className="overflow-hidden rounded-[10px] border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="landing-blue-band flex min-h-32 items-start px-5 py-5 text-white lg:min-h-36">
+                <h3 className={`max-w-[7rem] text-[1.8rem] font-semibold leading-tight lg:max-w-[8rem] ${titleClassName}`}>
+                  {title}
+                </h3>
+              </div>
+
+              <div className="space-y-4 px-5 py-5">
+                <p className="landing-blue-text text-sm font-semibold tracking-[0.04em]">
                   Tahap {index + 1}
                 </p>
-                <h3 className="mt-3 text-xl font-semibold text-slate-900">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-500">
+                <p className="text-sm leading-7 text-slate-500">
                   {description}
                 </p>
               </div>

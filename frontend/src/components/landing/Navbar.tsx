@@ -23,15 +23,15 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white">
+    <header className="landing-navbar sticky top-0 z-50 border-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="#home" className="flex items-center gap-3">
-          <Logo />
+          <Logo className="border-sky-100/80 bg-white/75 shadow-[0_10px_24px_rgba(8,47,73,0.1)]" />
           <div>
-            <p className="text-sm font-semibold tracking-[0.26em] text-emerald-700 uppercase">
+            <p className="landing-blue-text text-sm font-semibold tracking-[0.26em] uppercase">
               Fish Market
             </p>
-            <p className="text-xs text-slate-500">Manajemen Budidaya Modern</p>
+            <p className="text-xs text-slate-500/90">Manajemen Budidaya Modern</p>
           </div>
         </a>
 
@@ -40,7 +40,7 @@ export function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition duration-300 hover:bg-white hover:text-slate-900"
+              className="landing-navbar-link rounded-full px-4 py-2 text-sm font-medium transition duration-300"
             >
               {item.label}
             </a>
@@ -50,13 +50,13 @@ export function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             to="/login"
-            className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition duration-300 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
+            className="landing-navbar-outline rounded-lg border px-5 py-2.5 text-sm font-semibold transition duration-300"
           >
             Masuk
           </Link>
           <Link
             to="/register"
-            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold !text-white transition duration-300 hover:bg-blue-700 hover:!text-white"
+            className="landing-blue-button rounded-lg px-5 py-2.5 text-sm font-semibold !text-white transition duration-300 hover:!text-white"
           >
             Daftar
           </Link>
@@ -65,7 +65,7 @@ export function Navbar() {
         <button
           type="button"
           aria-label="Toggle navigation menu"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
+          className="landing-navbar-outline inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition lg:hidden"
           onClick={() => setIsOpen((current) => !current)}
         >
           {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -73,13 +73,13 @@ export function Navbar() {
       </div>
 
       {isOpen ? (
-        <div className="border-t border-slate-200 bg-white px-4 py-4 lg:hidden">
+        <div className="landing-navbar-panel border-t px-4 py-4 lg:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-2">
             {navItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
-                className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-white hover:text-slate-900"
+                className="landing-navbar-link rounded-2xl px-4 py-3 text-sm font-medium transition"
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}
@@ -88,14 +88,14 @@ export function Navbar() {
             <div className="mt-2 grid grid-cols-2 gap-3">
               <Link
                 to="/login"
-                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900"
+                className="landing-navbar-outline rounded-lg border px-4 py-3 text-center text-sm font-semibold transition"
                 onClick={() => setIsOpen(false)}
               >
                 Masuk
               </Link>
               <Link
                 to="/register"
-                className="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-semibold !text-white transition hover:bg-blue-700 hover:!text-white"
+                className="landing-blue-button rounded-lg px-4 py-3 text-center text-sm font-semibold !text-white transition hover:!text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Daftar

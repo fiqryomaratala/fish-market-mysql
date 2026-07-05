@@ -164,16 +164,148 @@ select:-webkit-autofill:focus,
 }
 
 .landing-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 58%, #047857 100%);
+  background: linear-gradient(180deg, #0f3a5b 0%, #0f4c81 52%, #1f6aa5 100%);
   border: 2px solid rgba(255, 255, 255, 0.92);
   border-radius: 9999px;
   box-shadow:
-    0 8px 18px rgba(37, 99, 235, 0.22),
-    0 2px 6px rgba(4, 120, 87, 0.16);
+    0 8px 18px rgba(15, 58, 91, 0.24),
+    0 2px 6px rgba(31, 106, 165, 0.18);
 }
 
 .landing-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 48%, #065f46 100%);
+  background: linear-gradient(180deg, #0b2f4d 0%, #0f3f68 48%, #185789 100%);
+}
+
+.landing-blue-band {
+  background:
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.16), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(8, 47, 73, 0.42), transparent 32%),
+    linear-gradient(135deg, #082f49 0%, #0f4c81 52%, #38bdf8 100%);
+}
+
+.landing-blue-panel {
+  background:
+    radial-gradient(circle at top right, rgba(15, 76, 129, 0.14), transparent 28%),
+    linear-gradient(145deg, rgba(219, 234, 254, 0.92) 0%, rgba(255, 255, 255, 0.98) 100%);
+  border-color: rgba(56, 189, 248, 0.28);
+  box-shadow:
+    0 16px 34px rgba(15, 76, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.landing-blue-soft {
+  background: linear-gradient(135deg, rgba(186, 230, 253, 0.84) 0%, rgba(224, 242, 254, 0.96) 100%);
+  border-color: rgba(56, 189, 248, 0.34);
+}
+
+.landing-blue-pill {
+  background: linear-gradient(135deg, rgba(186, 230, 253, 0.92) 0%, rgba(224, 242, 254, 0.88) 100%);
+  border-color: rgba(56, 189, 248, 0.36);
+  color: #0f4c81;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.landing-blue-icon {
+  background: linear-gradient(135deg, #082f49 0%, #0f4c81 48%, #38bdf8 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 76, 129, 0.24);
+}
+
+.landing-blue-button {
+  background: linear-gradient(135deg, #082f49 0%, #0f4c81 42%, #38bdf8 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(15, 76, 129, 0.24);
+}
+
+.landing-blue-button:hover {
+  background: linear-gradient(135deg, #061f33 0%, #0b3d66 46%, #22aee6 100%);
+}
+
+.landing-blue-button-soft {
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.92) 0%, rgba(255, 255, 255, 0.98) 100%);
+  border-color: rgba(125, 211, 252, 0.54);
+  color: #0f4c81;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 10px 22px rgba(15, 76, 129, 0.1);
+}
+
+.landing-blue-button-soft:hover {
+  background: linear-gradient(135deg, rgba(186, 230, 253, 0.96) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.landing-blue-line {
+  background: linear-gradient(90deg, rgba(8, 47, 73, 0.24) 0%, rgba(15, 76, 129, 0.74) 48%, rgba(56, 189, 248, 0.16) 100%);
+}
+
+.landing-blue-text {
+  color: #0f4c81;
+}
+
+.landing-navbar {
+  border-color: rgba(125, 211, 252, 0.24);
+  background:
+    linear-gradient(135deg, rgba(239, 248, 255, 0.9) 0%, rgba(230, 244, 255, 0.84) 100%);
+  box-shadow:
+    0 12px 30px rgba(8, 47, 73, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+}
+
+.landing-navbar-link {
+  position: relative;
+  color: #35556f;
+}
+
+.landing-navbar-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0.2rem;
+  height: 2px;
+  width: calc(100% - 1.6rem);
+  border-radius: 9999px;
+  background: #35556f;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  transition:
+    transform 200ms ease,
+    opacity 200ms ease;
+}
+
+.landing-navbar-link:hover {
+  color: #35556f;
+}
+
+.landing-navbar-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
+.landing-navbar-outline {
+  border-color: rgba(125, 211, 252, 0.34);
+  background: rgba(255, 255, 255, 0.72);
+  color: #0f4c81;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 8px 18px rgba(15, 76, 129, 0.08);
+}
+
+.landing-navbar-outline:hover {
+  border-color: rgba(56, 189, 248, 0.42);
+  background: rgba(255, 255, 255, 0.9);
+  color: #082f49;
+}
+
+.landing-navbar-panel {
+  border-color: rgba(125, 211, 252, 0.24);
+  background:
+    linear-gradient(180deg, rgba(242, 249, 255, 0.96) 0%, rgba(233, 245, 255, 0.92) 100%);
+  box-shadow:
+    0 18px 36px rgba(8, 47, 73, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(16px);
 }
 
 [data-role-surface='staff'] button:not(:disabled),

@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  BadgeCheck,
   Fish,
   MapPinned,
   ScanSearch,
@@ -11,15 +10,10 @@ export function HeroSection() {
   return (
     <section
       id="home"
-      className="bg-blue-600 px-4 py-16 sm:px-6 lg:px-8"
+      className="landing-blue-band px-4 py-16 sm:px-6 lg:px-8"
     >
       <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-sm text-white">
-            <BadgeCheck className="h-4 w-4" />
-            Budidaya berkelanjutan untuk perdagangan hasil perikanan modern
-          </div>
-
           <div className="space-y-5">
             <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
               Ikan Segar Langsung Dari Farm Berkelanjutan
@@ -33,14 +27,14 @@ export function HeroSection() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <a
               href="#marketplace"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-sm font-semibold text-blue-700 transition duration-300 hover:bg-blue-50"
+              className="landing-blue-button-soft inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3.5 text-sm font-semibold transition duration-300"
             >
               Jelajahi Marketplace
               <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#tracking"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white bg-white px-6 py-3.5 text-sm font-semibold text-blue-700 shadow-sm transition duration-300 hover:bg-blue-50"
+              className="landing-blue-button-soft inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3.5 text-sm font-semibold transition duration-300"
             >
               Lacak Batch
               <ScanSearch className="h-4 w-4" />
@@ -49,19 +43,16 @@ export function HeroSection() {
         </div>
 
         <div className="relative">
-          <div className="relative overflow-hidden rounded-xl border border-blue-100 bg-white p-4 shadow-sm">
+          <div className="landing-blue-panel relative overflow-hidden rounded-xl border bg-white p-4">
             <div className="rounded-xl bg-slate-50 p-6">
               <div className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr]">
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-6">
                   <div className="flex h-full min-h-[280px] flex-col justify-between">
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold tracking-[0.22em] text-blue-700 uppercase">
-                        Kartu batch pintar
-                      </span>
+                    <div className="flex items-center justify-end">
                       <ShieldCheck className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div className="space-y-5">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-blue-600 text-white">
+                      <div className="landing-blue-icon flex h-20 w-20 items-center justify-center rounded-xl">
                         <Fish className="h-10 w-10" />
                       </div>
                       <div>
@@ -81,7 +72,7 @@ export function HeroSection() {
                 <div className="space-y-4">
                   <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div className="flex items-center gap-3 text-slate-900">
-                      <MapPinned className="h-5 w-5 text-blue-600" />
+                      <MapPinned className="landing-blue-text h-5 w-5" />
                       <div>
                         <p className="text-sm text-slate-500">Wilayah Farm</p>
                         <p className="font-semibold">Sentra Air Tawar Jawa Barat</p>
