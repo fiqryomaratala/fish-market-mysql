@@ -206,6 +206,9 @@ func (s *checkoutService) processCheckout(
 	}
 
 	if shouldCreatePaymentLink(order.PaymentMethod) {
+		expiresAt := time.Now().Add(24 * time.Hour)
+		order.ExpiresAt = &expiresAt
+
 		if s.paymentGateway == nil || userRepo == nil {
 			return nil, ErrOnlinePaymentUnavailable
 		}

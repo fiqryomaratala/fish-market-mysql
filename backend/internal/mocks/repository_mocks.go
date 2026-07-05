@@ -501,6 +501,7 @@ type MockInventoryService struct {
 	AdjustFunc                       func(input services.InventoryAdjustmentInput) (*dto.InventoryItem, error)
 	RecordOperationalTransactionFunc func(input services.InventoryOperationalTransactionInput) (*dto.InventoryItem, error)
 	DeductProductInventoryFunc       func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error
+	RestoreProductInventoryFunc      func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error
 }
 
 func (m *MockInventoryService) GetAll(params services.InventoryListParams) ([]dto.InventoryItem, map[string]interface{}, error) {
@@ -548,6 +549,13 @@ func (m *MockInventoryService) RecordOperationalTransaction(input services.Inven
 func (m *MockInventoryService) DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error {
 	if m.DeductProductInventoryFunc != nil {
 		return m.DeductProductInventoryFunc(productID, quantity, reference, description, audit)
+	}
+	return nil
+}
+
+func (m *MockInventoryService) RestoreProductInventory(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error {
+	if m.RestoreProductInventoryFunc != nil {
+		return m.RestoreProductInventoryFunc(productID, quantity, reference, description, audit)
 	}
 	return nil
 }

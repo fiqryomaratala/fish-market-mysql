@@ -54,6 +54,7 @@ type InventoryService interface {
 	Adjust(input InventoryAdjustmentInput) (*dto.InventoryItem, error)
 	RecordOperationalTransaction(input InventoryOperationalTransactionInput) (*dto.InventoryItem, error)
 	DeductProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error
+	RestoreProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error
 }
 
 type inventoryService struct {
@@ -374,6 +375,65 @@ func (s *inventoryService) DeductProductInventory(productID uint, quantity float
 	}
 
 	logger.Info("inventory stock out recorded", zap.String("module", "INVENTORY"), zap.Uint("product_id", productID), zap.Float64("quantity", quantity))
+	return nil
+}
+
+func (s *inventoryService) RestoreProductInventory(productID uint, quantity float64, reference string, description string, audit *AuditContext) error {
+	items, err := s.inventoryRepo.FindAvailableByProduct(productID)
+	if err != nil {
+		logger.Error("failed to find inventory before stock restore", err, zap.String("module", "INVENTORY"), zap.Uint("product_id", productID))
+		return err
+	}
+
+	var target *models.Inventory
+	if len(items) > 0 {
+		target = &items[0]
+	} else {
+		product, productErr := s.productRepo.FindByID(productID)
+		if productErr != nil {
+			return productErr
+		}
+		if product == nil {
+			return ErrProductNotFound
+		}
+
+		target, err = s.inventoryRepo.FindByProductAndBatch(productID, product.FishBatchID)
+		if err != nil {
+			return err
+		}
+		if target == nil {
+			target = &models.Inventory{
+				ProductID:   productID,
+				FishBatchID: product.FishBatchID,
+				Quantity:    0,
+				Unit:        "kg",
+				Status:      "available",
+			}
+			if err := s.inventoryRepo.Create(target); err != nil {
+				return err
+			}
+		}
+	}
+
+	target.Quantity += quantity
+	target.Status = normalizeInventoryStatus(target.Quantity)
+	if err := s.inventoryRepo.Update(target); err != nil {
+		logger.Error("failed to update inventory during stock restore", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", target.ID))
+		return err
+	}
+
+	if err := s.inventoryTransactionRepo.Create(&models.InventoryTransaction{
+		InventoryID: target.ID,
+		Type:        "IN",
+		Quantity:    quantity,
+		Description: strings.TrimSpace(description),
+		Reference:   strings.TrimSpace(reference),
+	}); err != nil {
+		logger.Error("failed to create inventory transaction IN during restore", err, zap.String("module", "INVENTORY"), zap.Uint("inventory_id", target.ID))
+		return err
+	}
+
+	logger.Info("inventory stock restored", zap.String("module", "INVENTORY"), zap.Uint("product_id", productID), zap.Float64("quantity", quantity))
 	return nil
 }
 

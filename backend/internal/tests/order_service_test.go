@@ -2,6 +2,7 @@ package tests
 
 import (
 	"testing"
+	"time"
 
 	"github.com/fiqryomaratala/backend/internal/mocks"
 	"github.com/fiqryomaratala/backend/internal/models"
@@ -187,6 +188,68 @@ func TestOrderServiceUpdatePaymentByInvoiceRejectsUnknownStatus(t *testing.T) {
 
 	assert.ErrorIs(t, err, services.ErrInvalidPaymentStatus)
 	assert.Nil(t, result)
+}
+
+func TestOrderServiceCancelByCustomerRestoresInventory(t *testing.T) {
+	SetupTest(t)
+
+	order := sampleOrder()
+	restored := false
+	orderRepo := &mocks.MockOrderRepository{
+		FindByIDFunc: func(id uint) (*models.Order, error) {
+			return order, nil
+		},
+		UpdateFunc: func(updated *models.Order) error {
+			order.Status = updated.Status
+			order.PaymentStatus = updated.PaymentStatus
+			order.CancelReason = updated.CancelReason
+			return nil
+		},
+	}
+	inventoryService := &mocks.MockInventoryService{
+		RestoreProductInventoryFunc: func(productID uint, quantity float64, reference string, description string, audit *services.AuditContext) error {
+			restored = true
+			assert.Equal(t, uint(1), productID)
+			assert.Equal(t, float64(2), quantity)
+			assert.Equal(t, "INV-2026-000001", reference)
+			return nil
+		},
+	}
+
+	service := services.NewOrderService(orderRepo, inventoryService)
+	result, err := service.CancelByCustomer(1, 7)
+
+	assert.NoError(t, err)
+	assert.True(t, restored)
+	assert.NotNil(t, result)
+	assert.Equal(t, "cancelled", result.Status)
+}
+
+func TestOrderServiceGetByIDHidesExpiredCustomerOrder(t *testing.T) {
+	SetupTest(t)
+
+	expiredAt := time.Now().Add(-2 * time.Hour)
+	order := sampleOrder()
+	order.ExpiresAt = &expiredAt
+
+	orderRepo := &mocks.MockOrderRepository{
+		FindByIDFunc: func(id uint) (*models.Order, error) {
+			return order, nil
+		},
+		UpdateFunc: func(updated *models.Order) error {
+			order.Status = updated.Status
+			order.PaymentStatus = updated.PaymentStatus
+			order.CancelReason = updated.CancelReason
+			return nil
+		},
+	}
+
+	service := services.NewOrderService(orderRepo)
+	result, err := service.GetByID(1, 7, "customer")
+
+	assert.ErrorIs(t, err, services.ErrOrderNotFound)
+	assert.Nil(t, result)
+	assert.Equal(t, "cancelled", order.Status)
 }
 
 func sampleOrder() *models.Order {

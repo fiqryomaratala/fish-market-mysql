@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Order struct {
 	gorm.Model
@@ -14,6 +18,8 @@ type Order struct {
 	PaymentProvider string
 	PaymentLinkID   string
 	PaymentLinkURL  string
+	ExpiresAt       *time.Time
+	CancelReason    string
 	ShippingAddress string
 
 	User       User

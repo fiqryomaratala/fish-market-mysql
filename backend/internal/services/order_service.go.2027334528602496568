@@ -53,8 +53,8 @@ type OrderService interface {
 }
 
 type orderService struct {
-	orderRepo        repositories.OrderRepository
-	inventoryService InventoryService
+	orderRepo         repositories.OrderRepository
+	inventoryService  InventoryService
 }
 
 func NewOrderService(orderRepo repositories.OrderRepository, inventoryService ...InventoryService) OrderService {

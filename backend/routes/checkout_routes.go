@@ -15,7 +15,11 @@ func RegisterCheckoutRoutes(r *gin.Engine, db *gorm.DB) {
 	checkoutService := services.NewCheckoutService(db)
 	checkoutHandler := handlers.NewCheckoutHandler(checkoutService)
 	orderRepo := repositories.NewOrderRepository(db)
-	orderService := services.NewOrderService(orderRepo)
+	inventoryRepo := repositories.NewInventoryRepository(db)
+	inventoryTransactionRepo := repositories.NewInventoryTransactionRepository(db)
+	productRepo := repositories.NewProductRepository(db)
+	inventoryService := services.NewInventoryService(inventoryRepo, inventoryTransactionRepo, productRepo)
+	orderService := services.NewOrderService(orderRepo, inventoryService)
 	paymentGateway := services.NewXenditPaymentService(config.GetConfig())
 	paymentHandler := handlers.NewPaymentHandler(orderService, paymentGateway)
 

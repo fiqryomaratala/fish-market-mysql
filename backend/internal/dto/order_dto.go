@@ -17,6 +17,8 @@ type OrderResponse struct {
 	PaymentStatus   string              `json:"payment_status"`
 	PaymentMethod   string              `json:"payment_method"`
 	PaymentURL      string              `json:"payment_url,omitempty"`
+	ExpiresAt       string              `json:"expires_at,omitempty"`
+	CanCancel       bool                `json:"can_cancel"`
 	ShippingAddress string              `json:"shipping_address"`
 	CreatedAt       string              `json:"created_at"`
 	Items           []OrderItemResponse `json:"items,omitempty"`

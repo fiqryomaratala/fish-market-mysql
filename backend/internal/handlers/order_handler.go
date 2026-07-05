@@ -90,6 +90,36 @@ func (h *OrderHandler) GetByID(c *gin.Context) {
 	utils.Success(c, "", item)
 }
 
+// CancelByCustomer godoc
+// @Summary Cancel customer order
+// @Description Cancel an unpaid pending order owned by the current customer
+// @Tags Order
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Order ID"
+// @Success 200 {object} APIResponse
+// @Failure 400 {object} APIResponse
+// @Failure 401 {object} APIResponse
+// @Failure 403 {object} APIResponse
+// @Failure 404 {object} APIResponse
+// @Failure 500 {object} APIResponse
+// @Router /orders/{id}/cancel [post]
+func (h *OrderHandler) CancelByCustomer(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		utils.Error(c, http.StatusBadRequest, "Invalid order ID")
+		return
+	}
+
+	item, err := h.orderService.CancelByCustomer(uint(id), currentUserID(c))
+	if err != nil {
+		middleware.HandleError(c, err)
+		return
+	}
+
+	utils.Success(c, "Order cancelled successfully", item)
+}
+
 // UpdateStatus godoc
 // @Summary Update order status
 // @Description Update order lifecycle status
