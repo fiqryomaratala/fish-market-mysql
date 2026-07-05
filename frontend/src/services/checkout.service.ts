@@ -35,6 +35,9 @@ type OrderDetailApiRecord = {
   total_price?: number
   status?: string
   payment_status?: string
+  payment_url?: string
+  expires_at?: string
+  can_cancel?: boolean
   shipping_address?: string
   created_at?: string
   items?: OrderDetailApiItem[]
@@ -92,6 +95,9 @@ function mapOrderDetail(record?: OrderDetailApiRecord): CheckoutOrderDetail {
     total_price: toNumber(record?.total_price),
     status: toStringValue(record?.status, 'pending'),
     payment_status: toStringValue(record?.payment_status, 'unpaid'),
+    payment_url: toStringValue(record?.payment_url),
+    expires_at: toStringValue(record?.expires_at),
+    can_cancel: Boolean(record?.can_cancel),
     shipping_address: toStringValue(record?.shipping_address),
     created_at: toStringValue(record?.created_at),
     items,

@@ -53,6 +53,9 @@ export interface CheckoutOrderDetail {
   total_price: number
   status: string
   payment_status: string
+  payment_url?: string
+  expires_at?: string
+  can_cancel?: boolean
   shipping_address: string
   created_at: string
   items: CheckoutOrderItem[]

@@ -11,9 +11,20 @@ import { TestimonialsSection } from '@/components/landing/TestimonialsSection'
 import { TrackingCTA } from '@/components/landing/TrackingCTA'
 import { WhyChooseUs } from '@/components/landing/WhyChooseUs'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useEffect } from 'react'
 
 function HomePage() {
   usePageTitle('Beranda')
+
+  useEffect(() => {
+    document.documentElement.classList.add('landing-scrollbar')
+    document.body.classList.add('landing-scrollbar')
+
+    return () => {
+      document.documentElement.classList.remove('landing-scrollbar')
+      document.body.classList.remove('landing-scrollbar')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-white text-slate-900">

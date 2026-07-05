@@ -139,6 +139,11 @@ class OrderService {
     return data
   }
 
+  async cancelOrder(id: string) {
+    const { data } = await api.post<ApiResponse<ApiOrder>>(`/orders/${id}/cancel`)
+    return data
+  }
+
   async remove(id: string) {
     const { data } = await api.delete<ApiResponse<null>>(`/orders/${id}`)
     return data
