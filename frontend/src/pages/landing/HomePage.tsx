@@ -27,7 +27,7 @@ function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="landing-page min-h-screen bg-white text-slate-900">
       <Navbar />
       <HeroSection />
       <AboutSection />

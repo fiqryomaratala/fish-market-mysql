@@ -1,10 +1,11 @@
 import {
   ArrowRight,
-  Fish,
   MapPinned,
   ScanSearch,
-  ShieldCheck,
 } from 'lucide-react'
+import { resolveAssetUrl } from '@/utils/asset'
+
+const nilaBatchImage = resolveAssetUrl('/uploads/products/876741e5-0186-45b3-be16-06633e1aeba9.jpg')
 
 export function HeroSection() {
   return (
@@ -46,21 +47,22 @@ export function HeroSection() {
           <div className="landing-blue-panel relative overflow-hidden rounded-xl border bg-white p-4">
             <div className="rounded-xl bg-slate-50 p-6">
               <div className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr]">
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white p-6">
-                  <div className="flex h-full min-h-[280px] flex-col justify-between">
-                    <div className="flex items-center justify-end">
-                      <ShieldCheck className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <div className="space-y-5">
-                      <div className="landing-blue-icon flex h-20 w-20 items-center justify-center rounded-xl">
-                        <Fish className="h-10 w-10" />
-                      </div>
-                      <div>
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <div className="h-48 overflow-hidden border-b border-slate-200 bg-slate-100 lg:h-52">
+                    <img
+                      src={nilaBatchImage}
+                      alt="Batch panen ikan nila"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex h-full min-h-[180px] flex-col justify-between">
+                      <div className="space-y-3">
                         <p className="text-sm text-slate-500">Batch Panen</p>
-                        <p className="mt-2 text-3xl font-semibold text-slate-900">
+                        <p className="text-3xl font-semibold text-slate-900">
                           FM-2406-NILA
                         </p>
-                        <p className="mt-3 max-w-xs text-sm leading-7 text-slate-500">
+                        <p className="max-w-xs text-sm leading-7 text-slate-500">
                           Lacak asal kolam, catatan pakan, jadwal panen, dan
                           status distribusi dalam satu tampilan.
                         </p>
