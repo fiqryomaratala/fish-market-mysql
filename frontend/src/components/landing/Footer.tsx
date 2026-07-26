@@ -1,4 +1,5 @@
-import { Facebook, Instagram, Linkedin, Waves } from 'lucide-react'
+import { Facebook, Instagram, Linkedin } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 
 const quickLinks = [
   { label: 'Beranda', href: '#home' },
@@ -20,9 +21,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.8fr_0.8fr]">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="landing-blue-icon flex h-11 w-11 items-center justify-center rounded-xl">
-              <Waves className="h-5 w-5" />
-            </div>
+            <Logo className="border-sky-100/80 bg-white/75 shadow-[0_10px_24px_rgba(8,47,73,0.1)]" />
             <div>
               <p className="landing-blue-text text-sm font-semibold tracking-[0.26em] uppercase">
                 Fish Market
